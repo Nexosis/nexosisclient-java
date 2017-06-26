@@ -8,6 +8,11 @@ archivesBaseName = 'nexosisclient-java'
 version          = '1.0.1'
 ext.packaging    = 'jar'
 
+def ossrhUser = hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('ossrhUsername')
+def ossrhPass = hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('ossrhPassword')
+
+def skipIntTests = hasProperty('skipIntegrationTests') ? skipIntegrationTests : System.getenv('skipIntegrationTests')
+
 allprojects {
     apply plugin: 'java'
     sourceCompatibility = 1.7
@@ -108,8 +113,14 @@ artifacts {
     archives sourcesJar
 }
 
-def ossrhUser = hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('ossrhUsername')
-def ossrhPass = hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('ossrhPassword')
+
+test {
+    if (skipIntTests) {
+        exclude '**/DataSetIntegrationTests.class'
+        exclude '**/SessionIntegrationTests.class'
+    }
+}
+
 
 uploadArchives {
     repositories {

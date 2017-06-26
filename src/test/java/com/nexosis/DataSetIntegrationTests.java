@@ -21,10 +21,10 @@ import java.util.UUID;
 import static java.util.Collections.sort;
 
 public class DataSetIntegrationTests {
-    private static final String baseURI = "https://api.dev.nexosisdev.com/v1";
-    private static final String absolutePath = System.getProperty("user.dir") + "\\src\\test\\java\\com\\nexosis";
-    private static final String productFilePath = absolutePath + "\\CsvFiles\\producttest.csv";
-    private static final UUID savedSessionId = UUID.fromString("015cdce9-51fd-4e54-be4d-6679e8047bfc");
+    private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
+    private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
+    private static final String productFilePath = absolutePath + "/CsvFiles/producttest.csv";
+    private static final UUID savedSessionId = UUID.fromString("015ce643-f899-405f-8115-7f91ab59e7fa");
 
     private static final String savedDataSet = "alpha.persistent";
     private NexosisClient nexosisClient;
@@ -131,7 +131,7 @@ public class DataSetIntegrationTests {
         Assert.fail();
     }
 
-    //@Test
+
     @Ignore("Only run once on a new account to setup the data for integration tests.")
     public void PopulateDataForTesting() throws FileNotFoundException, NexosisClientException
     {
