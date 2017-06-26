@@ -1,0 +1,161 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group            = 'com.nexosis'
+archivesBaseName = 'nexosisclient-java'
+version          = '0.1.0'
+ext.packaging    = 'jar'
+
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}
+
+buildscript {
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+    repositories {
+        jcenter()
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.6'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.6'
+    compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.8.8'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.8.8'
+    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+}
+
+shadowJar {
+    classifier 'jar'
+    baseName "nexosisapi-client"
+    //noinspection GroovyAssignabilityCheck
+    version version
+}
+
+jar {
+    manifest {
+        //noinspection GroovyAssignabilityCheck
+        attributes("Implementation-Title": "nexosisclient",
+                    "Implementation-Version": version)
+    }
+}
+
+// copy shadowJar to base project directory so they will be in git (and on github for download)
+build << {
+    copy {
+        println "Copying ${shadowJar.archiveName} to $projectDir/repo/com/nexosis/$version"
+        from("$buildDir/libs/${shadowJar.archiveName}")
+        into("$projectDir/repo/com/nexosis/$version")
+    }
+    copy {
+        println "Copying ${shadowJar.archiveName} to $projectDir/repo/com/nexosis"
+        from("$buildDir/libs/${shadowJar.archiveName}")
+        into("$projectDir/repo/com/nexosis")
+    }
+    tasks.renameNexosisVersionJarToNexosisJar.execute()
+}
+
+task renameNexosisVersionJarToNexosisJar {
+    doLast {
+        file("$projectDir/repo/com/nexosis/${shadowJar.archiveName}").renameTo(file("$projectDir/repo/com/nexosis/nexosisclient.jar"))
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+artifacts {
+    archives shadowJar
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        //noinspection GroovyAssignabilityCheck
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Nexosis Client API Library'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'This java client library allows you to quickly and easily communicate with the\n' +
+                        'Nexosis API to add Machine Learning to your applications.'
+                url 'https://github.com/nexosis/nexosisclient-java'
+
+                scm {
+                    connection 'scm:git:git://github.com/Nexosis/nexosisclient-java.git'
+                    developerConnection 'scm:git:git@github.com:Nexosis/nexosisclient-java.git'
+                    url 'https://developers.nexosis.com'
+                }
+
+                issueManagement {
+                    url 'https://github.com/Nexosis/nexosisclient-java/issues'
+                    system 'GitHub Issues'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'jm0nty'
+                        name 'Jason Montgomery'
+                        email 'jason@nexosis.com'
+                    }
+                }
+            }
+        }
+    }
+}
