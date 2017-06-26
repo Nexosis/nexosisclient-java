@@ -76,7 +76,6 @@ public class RemoveTests {
 
         target.getSessions().remove();
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/sessions"), delete.getURI());
     }
 
@@ -88,7 +87,6 @@ public class RemoveTests {
 
         target.getSessions().remove("data-set-name", "event-name", SessionType.FORECAST);
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint+ "/sessions?dataSetName=data-set-name&eventName=event-name&type=forecast"), delete.getURI());
     }
 
@@ -102,12 +100,11 @@ public class RemoveTests {
                 null,
                 null,
                 null,
-                DateTime.parse("2017-02-02 20:20:12 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2017-02-22 21:12:00 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z"))
+                DateTime.parse("2017-02-02T20:20:12Z"),
+                DateTime.parse("2017-02-22T21:12:00Z")
         );
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?requestedAfterDate=2017-02-02T20%3A20%3A12.000&requestedBeforeDate=2017-02-22T21%3A12%3A00.000"), delete.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?requestedAfterDate=2017-02-02T20%3A20%3A12.000Z&requestedBeforeDate=2017-02-22T21%3A12%3A00.000Z"), delete.getURI());
     }
 
     @Test
@@ -119,7 +116,6 @@ public class RemoveTests {
 
         target.getSessions().remove(sessionId);
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/sessions/" + sessionId), delete.getURI());
     }
 }

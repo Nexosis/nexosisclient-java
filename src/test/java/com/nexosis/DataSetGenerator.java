@@ -15,7 +15,7 @@ public class DataSetGenerator {
         for (DateTime timeStamp = startDate; timeStamp.isBefore(endDate); timeStamp = timeStamp.plusDays(1)) {
 
             Map<String, String> row = new HashMap<>();
-            row.put("timestamp",JodaTimeHelper.getIsoFormatter().print(timeStamp));
+            row.put("timestamp", timeStamp.toDateTimeISO().toString());
             row.put(targetKey, Double.toString(rand.nextDouble() * 100));
             rows.add(row);
         }

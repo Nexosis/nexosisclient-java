@@ -76,12 +76,12 @@ public class ListTests {
         SessionResponses result = target.getSessions().list(
                 "alpha",
                 "zulu",
-                DateTime.parse("2017-01-01 00:00:00 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2017-01-11 00:00:00 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z"))
+                DateTime.parse("2017-01-01T00:00:00Z"),
+                DateTime.parse("2017-01-11T00:00:00Z")
         );
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?dataSetName=alpha&eventName=zulu&requestedAfterDate=2017-01-01T00%3A00%3A00.000&requestedBeforeDate=2017-01-11T00%3A00%3A00.000"), get.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?dataSetName=alpha&eventName=zulu&requestedAfterDate=2017-01-01T00%3A00%3A00.000Z&requestedBeforeDate=2017-01-11T00%3A00%3A00.000Z"), get.getURI());
     }
 
     @Test

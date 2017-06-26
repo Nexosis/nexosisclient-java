@@ -89,15 +89,13 @@ public class CreateForecastTests {
         target.getSessions().createForecast(
                 "data-set-name",
                 "target-column",
-                DateTime.parse("2017-12-12 10:11:12 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2017-12-22 22:23:24 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
+                DateTime.parse("2017-12-12T10:11:12Z"),
+                DateTime.parse("2017-12-22T22:23:24Z"),
                 ResultInterval.DAY,
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(HttpMethod.POST.name(), post.getMethod());
-        Assert.assertEquals(
-                new URI(fakeEndpoint + "/sessions/forecast?dataSetName=data-set-name&targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000&endDate=2017-12-22T22%3A23%3A24.000&isEstimate=false&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/forecast?dataSetName=data-set-name&targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
     }
 
     @Test
@@ -105,10 +103,10 @@ public class CreateForecastTests {
         HttpPost post = new HttpPost();
 
         Map<String, String> row1 = new HashMap<>();
-        row1.put("timestamp",JodaTimeHelper.getIsoFormatter().print(DateTime.now()));
+        row1.put("timestamp", DateTime.now().toDateTimeISO().toString());
         row1.put("sales", Double.toString(0.23));
         Map<String, String> row2 = new HashMap<>();
-        row2.put("timestamp",JodaTimeHelper.getIsoFormatter().print(DateTime.now()));
+        row2.put("timestamp", DateTime.now().toDateTimeISO().toString());
         row2.put("sales", Double.toString(123.23));
 
         List<Map<String, String>> rows = new ArrayList<>();
@@ -125,14 +123,13 @@ public class CreateForecastTests {
         target.getSessions().createForecast(
                 data,
                 "target-column",
-                DateTime.parse("2017-12-12 10:11:12 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2017-12-22 22:23:24 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
+                DateTime.parse("2017-12-12T10:11:12Z"),
+                DateTime.parse("2017-12-22T22:23:24Z"),
                 ResultInterval.DAY,
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(HttpMethod.POST.name(), post.getMethod());
-        Assert.assertEquals(post.getURI(), new URI(fakeEndpoint + "/sessions/forecast?targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000&endDate=2017-12-22T22%3A23%3A24.000&isEstimate=false&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"));
+        Assert.assertEquals(post.getURI(), new URI(fakeEndpoint + "/sessions/forecast?targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"));
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
     }
 
@@ -149,14 +146,13 @@ public class CreateForecastTests {
         target.getSessions().createForecast(
                 stream,
                 "beta",
-                DateTime.parse("2017-12-12 10:11:12 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2017-12-22 22:23:24 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
+                DateTime.parse("2017-12-12T10:11:12Z"),
+                DateTime.parse("2017-12-22T22:23:24Z"),
                 ResultInterval.DAY,
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(HttpMethod.POST.name(), post.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/forecast?targetColumn=beta&startDate=2017-12-12T10%3A11%3A12.000&endDate=2017-12-22T22%3A23%3A24.000&isEstimate=false&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"),
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/forecast?targetColumn=beta&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"),
                 post.getURI());
         Assert.assertEquals(fileContent, EntityUtils.toString(post.getEntity()));
     }

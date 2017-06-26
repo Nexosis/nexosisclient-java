@@ -28,7 +28,7 @@ public class NexosisClient implements INexosisClient {
     /**
      * The default URL of the api endpoint.
      */
-    public final static String BASE_URL = "https://ml.nexosis.com/api";
+    public final static String BASE_URL = "https://ml.nexosis.com/v1";
 
     /**
      * The currently configured api key used by this instance of the client.

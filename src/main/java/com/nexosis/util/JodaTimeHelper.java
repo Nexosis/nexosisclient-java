@@ -8,11 +8,11 @@ import org.joda.time.format.ISODateTimeFormat;
 
 public class JodaTimeHelper {
 
-    private static final DateTimeFormatter isoDtFmt = ISODateTimeFormat.dateHourMinuteSecondMillis().withZoneUTC();
+    //private static final DateTimeFormatter isoDtFmt = ISODateTimeFormat.dateHourMinuteSecondMillis().withZoneUTC() ;
 
-    public static DateTimeFormatter getIsoFormatter() {
-        return isoDtFmt;
-    }
+    //public static DateTimeFormatter getIsoFormatter() {
+        //return isoDtFmt;
+    //}
 
     static final public DateTime START_OF_TIME = new DateTime(
             0000,
@@ -33,7 +33,10 @@ public class JodaTimeHelper {
             0,
             DateTimeZone.UTC
     );
-    public static DateTime convertAxonDateTimeString(String timestamp) {
-        return DateTime.parse(timestamp, DateTimeFormat.forPattern("MM/dd/yyyy H:m:s").withZoneUTC());
-    }
+
+//    public static DateTime convertAxonDateTimeString(String timestamp) {
+//        //return DateTime.parse(timestamp, DateTimeFormat.forPattern("MM/dd/yyyy H:m:s").withZoneUTC());
+//
+//        return DateTime.parse(timestamp, DateTimeFormat.forPattern("").withZoneUTC());
+//    }
 }

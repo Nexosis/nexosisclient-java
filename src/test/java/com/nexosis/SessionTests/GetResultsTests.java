@@ -72,7 +72,6 @@ public class GetResultsTests {
 
         target.getSessions().getResults(sessionId);
 
-        Assert.assertEquals(HttpMethod.GET.name(), get.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/sessions/" + sessionId + "/results"), get.getURI());
     }
 

@@ -85,7 +85,6 @@ public class CreateImpactTests {
     public void SetsDataSetNameWhenGiven() throws Exception
     {
         HttpPost post = new HttpPost();
-
         PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
         PowerMockito.whenNew(HttpPost.class).withNoArguments().thenReturn(post);
 
@@ -99,8 +98,7 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(HttpMethod.POST.name(), post.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000&endDate=2017-12-22T22%3A23%3A24.000&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
     }
 
     @Test
@@ -135,8 +133,7 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(HttpMethod.POST.name(), post.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000&endDate=2017-12-22T22%3A23%3A24.000&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
     }
 
@@ -155,14 +152,13 @@ public class CreateImpactTests {
                 stream,
                 "event-name",
                 "beta",
-                DateTime.parse("2017-12-12 10:11:12 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2017-12-22 22:23:24 -00:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
+                DateTime.parse("2017-12-12T10:11:12Z"),
+                DateTime.parse("2017-12-22T22:23:24Z"),
                 ResultInterval.DAY,
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(HttpMethod.POST.name(), post.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=beta&startDate=2017-12-12T10%3A11%3A12.000&endDate=2017-12-22T22%3A23%3A24.000&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"),
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=beta&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"),
                 post.getURI());
         Assert.assertEquals(fileContent, EntityUtils.toString(post.getEntity()));
     }

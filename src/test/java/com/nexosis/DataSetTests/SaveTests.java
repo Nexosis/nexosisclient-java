@@ -113,7 +113,6 @@ public class SaveTests {
 
         target.getDataSets().create("tango", stream);
 
-        Assert.assertEquals(HttpMethod.PUT.name(), put.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/data/tango"), put.getURI());
 
         Assert.assertEquals(fileContent, EntityUtils.toString(put.getEntity()));
@@ -128,7 +127,6 @@ public class SaveTests {
         DataSetData data = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "something");
         target.getDataSets().create("yankee", data);
 
-        Assert.assertEquals(HttpMethod.PUT.name(), put.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/data/yankee"), put.getURI());
 
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(put.getEntity()));

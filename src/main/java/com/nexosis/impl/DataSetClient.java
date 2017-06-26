@@ -147,8 +147,8 @@ public class DataSetClient implements IDataSetClient {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("page", Integer.toString(pageNumber)));
         parameters.add(new BasicNameValuePair("pageSize", Integer.toString(pageSize)));
-        parameters.add(new BasicNameValuePair("startDate", JodaTimeHelper.getIsoFormatter().print(startDate)));
-        parameters.add(new BasicNameValuePair("endDate", JodaTimeHelper.getIsoFormatter().print(endDate)));
+        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
 
         // Append includeColums to parameters
         for(String s: includeColumns) {
@@ -161,19 +161,19 @@ public class DataSetClient implements IDataSetClient {
      * {@inheritDoc}
      */
     @Override
-    public ReturnsStatus get(String dataSetName, OutputStream output) throws NexosisClientException
+    public void get(String dataSetName, OutputStream output) throws NexosisClientException
     {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNull(output, "output");
 
-        return apiConnection.get(ReturnsStatus.class, "data/" + dataSetName, null, null, output, "text/csv");
+        apiConnection.get("data/" + dataSetName, null, null, output, "text/csv");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReturnsStatus get(String dataSetName, OutputStream output, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException
+    public void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException
     {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNull(includeColumns, "includeColumns");
@@ -188,30 +188,30 @@ public class DataSetClient implements IDataSetClient {
             parameters.add(new BasicNameValuePair("include",s));
         }
 
-        return apiConnection.get(ReturnsStatus.class, "data/" + dataSetName, parameters, null, output, "text/csv");
+        apiConnection.get("data/" + dataSetName, parameters, null, output, "text/csv");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReturnsStatus get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate,
+    public void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate,
                           DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException
     {
-        return get(dataSetName, output, pageNumber, pageSize, startDate, endDate, includeColumns, null);
+        get(dataSetName, output, pageNumber, pageSize, startDate, endDate, includeColumns, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReturnsStatus get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate,
+    public void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate,
                           DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
         Argument.IsNotNull(output, "output");
         List<NameValuePair> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
 
-        return apiConnection.get(ReturnsStatus.class, "data/" + dataSetName, parameters, httpMessageTransformer, output, "text/csv");
+        apiConnection.get("data/" + dataSetName, parameters, httpMessageTransformer, output, "text/csv");
     }
 
     /**
@@ -247,8 +247,8 @@ public class DataSetClient implements IDataSetClient {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
 
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("startDate", JodaTimeHelper.getIsoFormatter().print(startDate)));
-        parameters.add(new BasicNameValuePair("endDate", JodaTimeHelper.getIsoFormatter().print(endDate)));
+        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
 
         if (options.contains(DataSetDeleteOptions.CASCADE_FORECAST))
             parameters.add(new BasicNameValuePair("cascade", "forecast"));

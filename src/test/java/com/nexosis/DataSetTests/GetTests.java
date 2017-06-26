@@ -76,7 +76,6 @@ public class GetTests {
 
         target.getDataSets().get("test");
 
-        Assert.assertEquals("GET", get.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/data/test?page=0&pageSize=" + NexosisClient.getMaxPageSize()), get.getURI());
     }
 
@@ -94,8 +93,7 @@ public class GetTests {
                 DateTime.parse("2017-01-31T00:00:00Z"),
                 new ArrayList<String>() {{ add("test1"); add("test2");}});
 
-        Assert.assertEquals(HttpMethod.GET.name(), get.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/data/test?page=10&pageSize=10&startDate=2017-01-01T00%3A00%3A00.000&endDate=2017-01-31T00%3A00%3A00.000&include=test1&include=test2"), get.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/data/test?page=10&pageSize=10&startDate=2017-01-01T00%3A00%3A00.000Z&endDate=2017-01-31T00%3A00%3A00.000Z&include=test1&include=test2"), get.getURI());
     }
 
     @Test //(expected = IllegalArgumentException.class)
@@ -123,10 +121,8 @@ public class GetTests {
         PowerMockito.whenNew(ReturnsStatus.class).withNoArguments().thenReturn(returnsStatus);
         PowerMockito.when(returnsStatus.getSessionStatus()).thenReturn(SessionStatus.COMPLETED);
 
-        ReturnsStatus status = target.getDataSets().get("kilo", baos);
+        target.getDataSets().get("kilo", baos);
 
-        Assert.assertEquals(HttpMethod.GET.name(), get.getMethod());
-        Assert.assertEquals(status.getSessionStatus(), SessionStatus.COMPLETED);
         Assert.assertEquals(new URI(fakeEndpoint + "/data/kilo"), get.getURI());
         Assert.assertEquals(fileContent, new String(baos.toByteArray(), "UTF-8"));
     }

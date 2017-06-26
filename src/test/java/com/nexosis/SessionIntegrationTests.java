@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class SessionIntegrationTests {
+    private static final String baseURI = "https://api.dev.nexosisdev.com/v1";
     private static final String absolutePath = System.getProperty("user.dir") + "\\src\\test\\java\\com\\nexosis";
     private static final String productFilePath = absolutePath + "\\CsvFiles\\producttest.csv";
     private static final UUID savedSessionId = UUID.fromString("015ce131-fefb-4de2-b138-bc1d9efc4a24");
@@ -24,7 +25,7 @@ public class SessionIntegrationTests {
 
     @Before
     public void beforeClass() {
-        nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), "https://api.dev.nexosisdev.com/api/");
+        nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
     }
 
     @Test
@@ -72,14 +73,12 @@ public class SessionIntegrationTests {
                 ResultInterval.DAY
         );
 
-
-
         Assert.assertNotNull(actual.getSessionId());
     }
 
     @Test
     public void ForcastFromSavedDataSetStartsNewSession() throws NexosisClientException {
-        String dataSetName = "testDataSet-" + JodaTimeHelper.getIsoFormatter().print(DateTime.now());
+        String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
 
         DataSetData dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
@@ -151,7 +150,7 @@ public class SessionIntegrationTests {
 
     @Test
     public void StartImpactFromSavedDataSetStartsNewSession() throws NexosisClientException {
-        String dataSetName = "testDataSet-" + JodaTimeHelper.getIsoFormatter().print(DateTime.now());
+        String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
 
         DataSetData dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
@@ -208,13 +207,11 @@ public class SessionIntegrationTests {
         }
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.getLinks().size());
+        Assert.assertEquals(2, result.getLinks().size());
         Assert.assertEquals("results", result.getLinks().get(0).getRel());
-        Assert.assertEquals("model", result.getLinks().get(1).getRel());
-        Assert.assertEquals("data", result.getLinks().get(2).getRel());
-        Assert.assertEquals("https://api.dev.nexosisdev.com/api/sessions/" + savedSessionId + "/results", result.getLinks().get(0).getHref());
-        Assert.assertEquals("https://api.dev.nexosisdev.com/api/data/forecast." + savedSessionId +"/forecast/model/instances", result.getLinks().get(1).getHref());
-        Assert.assertEquals("https://api.dev.nexosisdev.com/api/data/forecast." + savedSessionId, result.getLinks().get(2).getHref());
+        Assert.assertEquals("data", result.getLinks().get(1).getRel());
+        Assert.assertEquals(baseURI + "/sessions/" + savedSessionId + "/results", result.getLinks().get(0).getHref());
+        Assert.assertEquals(baseURI + "/data/forecast." + savedSessionId, result.getLinks().get(1).getHref());
     }
 
     @Test
@@ -272,7 +269,7 @@ public class SessionIntegrationTests {
 
         SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
                 dataSet,
-                "charlie-delta-" + JodaTimeHelper.getIsoFormatter().print(DateTime.now()),
+                "charlie-delta-" + DateTime.now().toDateTimeISO().toString(),
                 "instances",
                 DateTime.parse("2016-11-26", DateTimeFormat.forPattern("yyyy-MM-dd")),
                 DateTime.parse("2016-12-25", DateTimeFormat.forPattern("yyyy-MM-dd")),
@@ -295,8 +292,8 @@ public class SessionIntegrationTests {
     @Test
     public void CheckingSessionStatusReturnsExpcetedValue() throws NexosisClientException {
         DataSetData dataSet = DataSetGenerator.Run(
-                DateTime.parse("2016-08-01", DateTimeFormat.forPattern("yyyy-MM-dd")),
-                DateTime.parse("2017-03-26", DateTimeFormat.forPattern("yyyy-MM-dd")),
+                DateTime.parse("2016-08-01T00:00:00Z"),
+                DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances"
         );
 

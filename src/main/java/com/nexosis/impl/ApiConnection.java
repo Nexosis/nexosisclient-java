@@ -65,9 +65,28 @@ public class ApiConnection {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    public <T> T get(Class<T> type, String path, List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output) throws NexosisClientException {
-        return get(type, path, parameters, httpMessageTransformer, output, null);
+    public void get(String path, List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output) throws NexosisClientException {
+        get(path, parameters, httpMessageTransformer, output, null);
     }
+
+    public void get(String path, List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output, String acceptType) throws NexosisClientException {
+        try {
+
+            if (StringUtils.isEmpty(acceptType)) {
+                acceptType = "application/json";
+            }
+
+            URI uri = prepareURI(path, parameters);
+            HttpGet request = new HttpGet();
+            request.setURI(uri);
+
+            request.addHeader("accept", acceptType);
+            makeRequest(request, httpMessageTransformer, output);
+        } catch (URISyntaxException use) {
+            throw new NexosisClientException("Internal Error.", use);
+        }
+    }
+
 
     public <T> T get(Class<T> type, String path, List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output, String acceptType) throws NexosisClientException {
         try {
@@ -85,6 +104,10 @@ public class ApiConnection {
         } catch (URISyntaxException use) {
             throw new NexosisClientException("Internal Error.", use);
         }
+    }
+
+    public <T> T get(Class<T> type, String path, List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output) throws NexosisClientException {
+        return get(type, path, parameters, httpMessageTransformer, output, null);
     }
 
     public <T> T get(Class<T> type, String path, List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
@@ -248,6 +271,29 @@ public class ApiConnection {
             throw nce;
         } catch (Exception e) {
             throw new NexosisClientException("Error while making HTTP Request: " + e.getMessage(), e);
+        }
+    }
+
+    private void makeRequest(HttpRequestBase request, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output) throws NexosisClientException {
+        HttpResponse response;
+        HttpEntity entity = null;
+
+        try (CloseableHttpClient httpClient = httpClientFactory.createClient()) {
+
+            response = makeRequest(request, httpMessageTransformer, httpClient);
+            StatusLine status = response.getStatusLine();
+
+            if (isSuccessStatusCode(status.getStatusCode())) {
+
+
+                // Write content to stream if status is complete
+                entity = response.getEntity();
+                entity.writeTo(output);
+            } else {
+                ProcessFailureResponse(response);
+            }
+        } catch (IOException ioe) {
+            throw new NexosisClientException("IO Error while making HTTP Request: " + ioe.getMessage());
         }
     }
 

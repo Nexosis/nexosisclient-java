@@ -65,7 +65,6 @@ public class GetSessionTests {
 
         target.getSessions().get(sessionId);
 
-        Assert.assertEquals("GET", get.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/sessions/" + sessionId.toString()), get.getURI());
     }
 }

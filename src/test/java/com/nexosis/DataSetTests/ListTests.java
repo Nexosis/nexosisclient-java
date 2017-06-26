@@ -65,7 +65,6 @@ public class ListTests {
         PowerMockito.whenNew(HttpGet.class).withNoArguments().thenReturn(get);
         target.getDataSets().list();
 
-        Assert.assertEquals("GET", get.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/data"), get.getURI());
 
     }
@@ -76,7 +75,6 @@ public class ListTests {
         PowerMockito.whenNew(HttpGet.class).withNoArguments().thenReturn(get);
         target.getDataSets().list("partialSomething");
 
-        Assert.assertEquals("GET", get.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/data?partialName=partialSomething"), get.getURI());
     }
 }

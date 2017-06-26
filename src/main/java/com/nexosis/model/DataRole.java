@@ -10,7 +10,7 @@ public enum DataRole {
     NONE("none"),
     TIMESTAMP("timestamp"),
     TARGET("target"),
-    REGRESSOR("regressor");
+    FEATURE("feature");
     private final String value;
     private final static Map<String, DataRole> CONSTANTS = new HashMap<>();
 

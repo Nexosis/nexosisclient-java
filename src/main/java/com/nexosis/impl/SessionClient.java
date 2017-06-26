@@ -321,8 +321,8 @@ public class SessionClient implements ISessionClient {
     {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("targetColumn",targetColumn));
-        parameters.add(new BasicNameValuePair("startDate", JodaTimeHelper.getIsoFormatter().print(startDate)));
-        parameters.add(new BasicNameValuePair("endDate", JodaTimeHelper.getIsoFormatter().print(endDate)));
+        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
 
         if (!StringUtils.isEmpty(eventName))
@@ -343,8 +343,8 @@ public class SessionClient implements ISessionClient {
     {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("targetColumn", targetColumn));
-        parameters.add(new BasicNameValuePair("startDate", JodaTimeHelper.getIsoFormatter().print(startDate)));
-        parameters.add(new BasicNameValuePair("endDate", JodaTimeHelper.getIsoFormatter().print(endDate)));
+        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
 
         if (!StringUtils.isEmpty(eventName))
@@ -366,8 +366,8 @@ public class SessionClient implements ISessionClient {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
         parameters.add(new BasicNameValuePair("targetColumn", targetColumn));
-        parameters.add(new BasicNameValuePair("startDate", JodaTimeHelper.getIsoFormatter().print(startDate) ));
-        parameters.add(new BasicNameValuePair("endDate", JodaTimeHelper.getIsoFormatter().print(endDate)));
+        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
 
         if (!StringUtils.isEmpty(eventName)) {
@@ -430,8 +430,8 @@ public class SessionClient implements ISessionClient {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
         parameters.add(new BasicNameValuePair("eventName", eventName));
-        parameters.add(new BasicNameValuePair("requestedAfterDate", JodaTimeHelper.getIsoFormatter().print(requestedAfterDate) ));
-        parameters.add(new BasicNameValuePair("requestedBeforeDate", JodaTimeHelper.getIsoFormatter().print(requestedBeforeDate)));
+        parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString() ));
+        parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
 
         return listSessionsInternal(parameters, httpMessageTransformer);
     }
@@ -510,8 +510,8 @@ public class SessionClient implements ISessionClient {
     @Override
     public void remove(String dataSetName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("requestedAfterDate", JodaTimeHelper.getIsoFormatter().print(requestedAfterDate)));
-        parameters.add(new BasicNameValuePair("requestedBeforeDate", JodaTimeHelper.getIsoFormatter().print(requestedBeforeDate)));
+        parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
 
         if (!StringUtils.isEmpty(dataSetName))
         {

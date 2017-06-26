@@ -54,7 +54,6 @@ public class RemoveTests {
     private String fakeApiKey = "abcdefg";
     private URI apiFakeEndpointUri;
 
-
     @Before
     public void setUp() throws Exception {
         target = new NexosisClient(fakeApiKey, fakeEndpoint, httpClientFactory);
@@ -85,7 +84,6 @@ public class RemoveTests {
         PowerMockito.whenNew(HttpDelete.class).withNoArguments().thenReturn(delete);
         target.getDataSets().remove("sierra", DataSetDeleteOptions.CASCASE_BOTH);
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
         Assert.assertEquals(new URI(fakeEndpoint + "/data/sierra?cascade=forecast&cascade=sessions"), delete.getURI());
     }
 
@@ -96,7 +94,6 @@ public class RemoveTests {
         PowerMockito.whenNew(HttpDelete.class).withNoArguments().thenReturn(delete);
         target.getDataSets().remove("november", DataSetDeleteOptions.CASCADE_NONE);
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
         Assert.assertEquals(new URI( fakeEndpoint+"/data/november"), delete.getURI());
     }
 
@@ -114,7 +111,6 @@ public class RemoveTests {
                 DataSetDeleteOptions.CASCADE_NONE
         );
 
-        Assert.assertEquals(HttpMethod.DELETE.name(), delete.getMethod());
-        Assert.assertEquals(new URI(fakeEndpoint + "/data/oscar?startDate=2015-10-13T02%3A23%3A24.000&endDate=2015-10-31T23%3A47%3A00.000"), delete.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/data/oscar?startDate=2015-10-12T22%3A23%3A24.000-04%3A00&endDate=2015-10-31T19%3A47%3A00.000-04%3A00"), delete.getURI());
     }
 }

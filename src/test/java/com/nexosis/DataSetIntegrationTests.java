@@ -21,6 +21,7 @@ import java.util.UUID;
 import static java.util.Collections.sort;
 
 public class DataSetIntegrationTests {
+    private static final String baseURI = "https://api.dev.nexosisdev.com/v1";
     private static final String absolutePath = System.getProperty("user.dir") + "\\src\\test\\java\\com\\nexosis";
     private static final String productFilePath = absolutePath + "\\CsvFiles\\producttest.csv";
     private static final UUID savedSessionId = UUID.fromString("015cdce9-51fd-4e54-be4d-6679e8047bfc");
@@ -30,7 +31,7 @@ public class DataSetIntegrationTests {
 
     @Before
     public void beforeClass() {
-        nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), "https://api.dev.nexosisdev.com/api/");
+        nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
     }
 
     @Test
@@ -52,13 +53,9 @@ public class DataSetIntegrationTests {
         DataSetData result = nexosisClient.getDataSets().get("whiskey");
 
         Assert.assertEquals("whiskey",result.getDataSetName());
-        Assert.assertEquals(3, result.getLinks().size());
-        Assert.assertEquals("forecast", result.getLinks().get(0).getRel());
-        Assert.assertEquals("model", result.getLinks().get(1).getRel());
-        Assert.assertEquals("sessions", result.getLinks().get(2).getRel());
-        Assert.assertEquals("https://api.dev.nexosisdev.com/api/data/whiskey/forecast", result.getLinks().get(0).getHref());
-        Assert.assertEquals("https://api.dev.nexosisdev.com/api/data/whiskey/forecast/model", result.getLinks().get(1).getHref());
-        Assert.assertEquals("https://api.dev.nexosisdev.com/api/sessions?dataSetName=whiskey", result.getLinks().get(2).getHref());
+        Assert.assertEquals(1, result.getLinks().size());
+        Assert.assertEquals("sessions", result.getLinks().get(0).getRel());
+        Assert.assertEquals(baseURI + "/sessions?dataSetName=whiskey", result.getLinks().get(0).getHref());
     }
 
     @Test
@@ -69,14 +66,14 @@ public class DataSetIntegrationTests {
                 "hotel"
         );
 
-        nexosisClient.getDataSets().create("india", data);
+        nexosisClient.getDataSets().create("india2", data);
 
-        DataSetData result = nexosisClient.getDataSets().get("india");
+        DataSetData result = nexosisClient.getDataSets().get("india2");
 
         Assert.assertTrue(result.getData().get(0).containsKey("hotel"));
         Assert.assertTrue(result.getData().get(0).containsKey("timestamp"));
 
-        DateTime receivedDt = JodaTimeHelper.convertAxonDateTimeString(result.getData().get(0).get("timestamp"));
+        DateTime receivedDt = DateTime.parse(result.getData().get(0).get("timestamp"));
         Assert.assertTrue(DateTime.parse("2017-01-01T00:00Z").compareTo(receivedDt) == 0);
     }
 
@@ -95,12 +92,12 @@ public class DataSetIntegrationTests {
 
         DataSetData result = nexosisClient.getDataSets().get("charley");
 
-        // TODO - these should probably be sorted
+        // TODO - these should probably be sorted??
         //Collections.sort(result.getData());
 
-        DateTime firstDate = JodaTimeHelper.convertAxonDateTimeString(result.getData().get(0).get("timestamp"));
+        DateTime firstDate = DateTime.parse(result.getData().get(0).get("timestamp"));
         Assert.assertTrue(DateTime.parse("2017-01-01T00:00Z").compareTo(firstDate) == 0);
-        DateTime lastDate = JodaTimeHelper.convertAxonDateTimeString(result.getData().get(result.getData().size()-1).get("timestamp"));
+        DateTime lastDate = DateTime.parse(result.getData().get(result.getData().size()-1).get("timestamp"));
         Assert.assertTrue(DateTime.parse("2017-02-28T00:00Z").compareTo(lastDate) == 0);
     }
 

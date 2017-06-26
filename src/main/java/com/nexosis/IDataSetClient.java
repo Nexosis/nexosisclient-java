@@ -166,10 +166,9 @@ public interface IDataSetClient {
      * @param pageNumber             Zero-based page number of results to retrieve.
      * @param pageSize               Count of results to retrieve in each page (max 100).
      * @param includeColumns         Limits results to the specified columns of the data set.
-     * @return A {@link ReturnsStatus ReturnsStatus} to indicate the job status. If it's not completed the data won't be ready to retrieve.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    ReturnsStatus get(String dataSetName, OutputStream output, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException;
+    void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException;
 
     /**
      * Get the data in the set and write it to the output stream.
@@ -178,10 +177,9 @@ public interface IDataSetClient {
      * <P>
      * @param dataSetName            Name of the dataset for which to retrieve data.
      * @param output                 An output stream to write the data set to
-     * @return A {@link ReturnsStatus ReturnsStatus} to indicate the job status. If it's not completed the data won't be ready to retrieve.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    ReturnsStatus get(String dataSetName, OutputStream output) throws NexosisClientException;
+    void get(String dataSetName, OutputStream output) throws NexosisClientException;
 
     /**
      * Get the data in the set and write it to the output stream, optionally filtering it.
@@ -195,10 +193,9 @@ public interface IDataSetClient {
      * @param startDate              Limits results to those on or after the specified date.
      * @param endDate                Limits results to those on or before the specified date.
      * @param includeColumns         Limits results to the specified columns of the data set.
-     * @return A {@link ReturnsStatus ReturnsStatus} to indicate the job status. If it's not completed the data won't be ready to retrieve.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    ReturnsStatus get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException;
+    void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException;
 
     /**
      * Get the data in the set and write it to the output stream, optionally filtering it.
@@ -213,10 +210,9 @@ public interface IDataSetClient {
      * @param endDate                Limits results to those on or before the specified date.
      * @param includeColumns         Limits results to the specified columns of the data set.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link ReturnsStatus ReturnsStatus} to indicate the job status. If it's not completed the data won't be ready to retrieve.
      * @throws NexosisClientException
      */
-    ReturnsStatus get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Remove data from a data set or the entire set.
