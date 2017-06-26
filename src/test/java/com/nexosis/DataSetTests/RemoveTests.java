@@ -106,11 +106,11 @@ public class RemoveTests {
 
         target.getDataSets().remove(
                 "oscar",
-                DateTime.parse("2015-10-12 22:23:24 -04:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
-                DateTime.parse("2015-10-31 19:47:00 -04:00", DateTimeFormat.forPattern("yyyy-MM-dd H:m:s Z")),
+                DateTime.parse("2015-10-12T00:00:00Z"),
+                DateTime.parse("2015-10-31T19:47:00Z"),
                 DataSetDeleteOptions.CASCADE_NONE
         );
 
-        Assert.assertEquals(new URI(fakeEndpoint + "/data/oscar?startDate=2015-10-12T22%3A23%3A24.000-04%3A00&endDate=2015-10-31T19%3A47%3A00.000-04%3A00"), delete.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/data/oscar?startDate=2015-10-12T00%3A00%3A00.000Z&endDate=2015-10-31T19%3A47%3A00.000Z"), delete.getURI());
     }
 }
