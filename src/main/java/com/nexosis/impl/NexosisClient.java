@@ -102,34 +102,6 @@ public class NexosisClient implements INexosisClient {
         dataSets = new DataSetClient(apiConnection);
     }
 
-    public static void main(String[] args) {
-        NexosisClient client = new NexosisClient("6c17e4c6bd274ee88201c323366c537d");
-
-        try {
-            AccountBalance balance = client.getAccountBalance();
-            System.out.println("Balance: "
-                    + balance.getBalance().getCurrency().getSymbol()
-                    + balance.getBalance().getAmount() +
-                    " " + balance.getBalance().getCurrency().getDisplayName());
-
-            System.out.println("Cost: "
-                    + balance.getCost().getCurrency().getSymbol()
-                    + balance.getCost().getAmount() +
-                    " " + balance.getCost().getCurrency().getDisplayName());
-
-
-            DataSetList dataSets = client.getDataSets().list();
-            System.out.println("Number of datasets: " + dataSets.getItems().size());
-
-            DataSetList dataSets2 = client.getDataSets().list("");
-            System.out.println("Number of datasets: " + dataSets2.getItems().size());
-
-        } catch (NexosisClientException nce) {
-            System.out.println("Status: " + nce.getStatusCode());
-            System.out.println("Status: " + nce.getMessage());
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
