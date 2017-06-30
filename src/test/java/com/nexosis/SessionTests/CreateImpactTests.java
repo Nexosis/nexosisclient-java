@@ -7,8 +7,7 @@ import com.nexosis.impl.ApiConnection;
 import com.nexosis.impl.HttpClientFactory;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
-import com.nexosis.model.DataSetData;
-import com.nexosis.model.ResultInterval;
+import com.nexosis.model.*;
 import com.nexosis.util.HttpMethod;
 import com.nexosis.util.JodaTimeHelper;
 import org.apache.http.HttpEntity;
@@ -136,6 +135,37 @@ public class CreateImpactTests {
         Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
     }
+
+    @Test
+    public void SetsMetadataOnRequestWhenGiven() throws Exception
+    {
+        HttpPost post = new HttpPost();
+
+        Columns c = new Columns();
+        c.setColumnMetadata("date", DataType.DATE, DataRole.TIMESTAMP);
+        c.setColumnMetadata("target-column", DataType.NUMERIC, DataRole.TARGET);
+
+        DataSetData data = new DataSetData();
+        data.setDataSetName("dataset-name");
+        data.setColumns(c);
+
+        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
+        PowerMockito.whenNew(HttpPost.class).withNoArguments().thenReturn(post);
+
+        target.getSessions().analyzeImpact(
+                "dataset-name",
+                c,
+                "event-name",
+                DateTime.parse("2017-12-12T10:11:12Z"),
+                DateTime.parse("2017-12-22T22:23:24Z"),
+                ResultInterval.DAY,
+                "http://this.is.a.callback.url"
+        );
+
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=dataset-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
+    }
+
 
     @Test
     public void SerializesCSVToBodyWhenGiven() throws Exception

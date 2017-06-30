@@ -26,9 +26,6 @@ import java.util.List;
 
 import com.nexosis.IHttpClientFactory;
 
-/**
- *
- */
 public class ApiConnection {
 
     private String key;

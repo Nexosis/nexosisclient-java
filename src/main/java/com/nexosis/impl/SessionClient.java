@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -105,7 +106,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
 
-        return createSessionInternal("sessions/forecast", dataSetName, null, targetColumn, startDate, endDate, resulltInterval, statusCallbackUrl, httpMessageTransformer, false);
+        return createSessionInternal("sessions/forecast", dataSetName, (String)null, targetColumn, startDate, endDate, resulltInterval, statusCallbackUrl, httpMessageTransformer, false);
     }
 
     /**
@@ -197,6 +198,45 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
+    public SessionResponse analyzeImpact(String dataSetName, Columns metaData, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
+        return analyzeImpact(dataSetName, metaData, eventName, startDate, endDate, resultInterval, null );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SessionResponse analyzeImpact(String dataSetName, Columns metaData, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException {
+        return analyzeImpact(dataSetName, metaData, eventName, startDate, endDate, resultInterval, statusCallbackUrl, null );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SessionResponse analyzeImpact(String dataSetName, Columns metaData, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
+        Argument.IsNotNull(metaData, "metaData");
+        Argument.IsNotNullOrEmpty(eventName, "eventName");
+
+        boolean foundTarget = false;
+        for (Map.Entry<String, ColumnsProperty> column : metaData.getsetColumnMetadata().entrySet()) {
+          if (column.getValue().getRole() == DataRole.TARGET) {
+              foundTarget = true;
+              break;
+          }
+        }
+
+        if (!foundTarget)
+            throw new IllegalArgumentException("Columns metadata must contain a TARGET column.");
+
+        return createSessionInternal("sessions/impact", dataSetName, metaData, eventName, startDate, endDate, resultInterval, statusCallbackUrl, httpMessageTransformer, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SessionResponse estimateForecast(InputStream input, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
         return estimateForecast(input, targetColumn, startDate, endDate, resultInterval,null);
     }
@@ -248,7 +288,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
 
-        return createSessionInternal("sessions/forecast", dataSetName, null /* eventName */, targetColumn, startDate, endDate, resultInterval, null, httpMessageTransformer, true);
+        return createSessionInternal("sessions/forecast", dataSetName, (String)null /* eventName */, targetColumn, startDate, endDate, resultInterval, null, httpMessageTransformer, true);
 
     }
 
@@ -339,10 +379,15 @@ public class SessionClient implements ISessionClient {
     }
 
     private SessionResponse createSessionInternal(String path, DataSetData data, String eventName, String targetColumn, DateTime startDate,
-                                                        DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
+                                                   DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
     {
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("targetColumn", targetColumn));
+        if (!StringUtils.isEmpty(data.getDataSetName())) {
+            parameters.add(new BasicNameValuePair("dataSetName", data.getDataSetName()));
+        }
+        if (!StringUtils.isEmpty(targetColumn)) {
+            parameters.add(new BasicNameValuePair("targetColumn", targetColumn));
+        }
         parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
@@ -360,6 +405,34 @@ public class SessionClient implements ISessionClient {
 
         return apiConnection.post(SessionResponse.class, path, parameters, data, httpMessageTransformer);
     }
+
+    private SessionResponse createSessionInternal(String path, String dataSetName, Columns metadata, String eventName, DateTime startDate,
+                                                  DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
+    {
+        DataSetData data = new DataSetData();
+        data.setDataSetName(dataSetName);
+        data.setColumns(metadata);
+
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
+        parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
+
+        if (!StringUtils.isEmpty(eventName))
+        {
+            parameters.add(new BasicNameValuePair("eventName", eventName));
+        }
+
+        parameters.add(new BasicNameValuePair("resultInterval", resultInterval.value()));
+        if (!StringUtils.isEmpty((statusCallbackUrl)))
+        {
+            parameters.add(new BasicNameValuePair("callbackUrl", statusCallbackUrl));
+        }
+
+        return apiConnection.post(SessionResponse.class, path, parameters, data, httpMessageTransformer);
+    }
+
 
     private SessionResponse createSessionInternal(String path, String dataSetName, String eventName, String targetColumn, DateTime startDate,
                                                   DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException  {

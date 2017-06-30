@@ -123,6 +123,8 @@ public class SessionIntegrationTests {
         Assert.assertNotNull(actual.getSessionId());
     }
 
+
+
     @Test
     public void StartImpactWithDataDirectlyStartsNewSession() throws NexosisClientException {
         DataSetData dataSet = DataSetGenerator.Run(

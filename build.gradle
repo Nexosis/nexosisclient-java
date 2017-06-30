@@ -5,7 +5,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group            = 'com.nexosis'
 archivesBaseName = 'nexosisclient-java'
-version          = '1.0.1'
+version          = '1.0.2'
 ext.packaging    = 'jar'
 
 def ossrhUser = hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('ossrhUsername')
@@ -116,8 +116,8 @@ artifacts {
 
 test {
     if (skipIntTests) {
-        exclude '**/DataSetIntegrationTests.class'
-        exclude '**/SessionIntegrationTests.class'
+        //exclude '**/DataSetIntegrationTests.class'
+        //exclude '**/SessionIntegrationTests.class'
     }
 }
 
