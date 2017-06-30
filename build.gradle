@@ -116,8 +116,8 @@ artifacts {
 
 test {
     if (skipIntTests) {
-        //exclude '**/DataSetIntegrationTests.class'
-        //exclude '**/SessionIntegrationTests.class'
+        exclude '**/DataSetIntegrationTests.class'
+        exclude '**/SessionIntegrationTests.class'
     }
 }
 
