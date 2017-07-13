@@ -97,27 +97,21 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
     }
 
     @Test
-    public void SetsDataOnRequestWhenGiven() throws Exception
+    public void SetsColumnsOnRequestWhenGiven() throws Exception
     {
         HttpPost post = new HttpPost();
 
-        Map<String, String> row1 = new HashMap<>();
-        row1.put("timestamp",DateTime.now().toString());
-        row1.put("sales", Double.toString(0.23));
+        Columns cols = new Columns();
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
 
-        Map<String, String> row2 = new HashMap<>();
-        row2.put("timestamp",DateTime.now().toString());
-        row2.put("sales", Double.toString(123.23));
-
-        DataSetData data = new DataSetData();
-        data.getData().add(0, row1);
-        data.getData().add(1, row2);
-
-        //data.setData(rows);
+        SessionData data = new SessionData();
+        data.setDataSetName("data-set-name");
+        data.setColumns(cols);
 
         PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
         PowerMockito.whenNew(HttpPost.class).withNoArguments().thenReturn(post);
@@ -125,72 +119,14 @@ public class CreateImpactTests {
         target.getSessions().analyzeImpact(
                 data,
                 "event-name",
-                "target-column",
                 DateTime.parse("2017-12-12T10:11:12Z"),
                 DateTime.parse("2017-12-22T22:23:24Z"),
                 ResultInterval.DAY,
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=target-column&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
-    }
-
-    @Test
-    public void SetsMetadataOnRequestWhenGiven() throws Exception
-    {
-        HttpPost post = new HttpPost();
-
-        Columns c = new Columns();
-        c.setColumnMetadata("date", DataType.DATE, DataRole.TIMESTAMP);
-        c.setColumnMetadata("target-column", DataType.NUMERIC, DataRole.TARGET);
-
-        DataSetData data = new DataSetData();
-        data.setDataSetName("dataset-name");
-        data.setColumns(c);
-
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        PowerMockito.whenNew(HttpPost.class).withNoArguments().thenReturn(post);
-
-        target.getSessions().analyzeImpact(
-                "dataset-name",
-                c,
-                "event-name",
-                DateTime.parse("2017-12-12T10:11:12Z"),
-                DateTime.parse("2017-12-22T22:23:24Z"),
-                ResultInterval.DAY,
-                "http://this.is.a.callback.url"
-        );
-
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=dataset-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
-        Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
-    }
-
-
-    @Test
-    public void SerializesCSVToBodyWhenGiven() throws Exception
-    {
-        HttpPost post = new HttpPost();
-
-        String fileContent = "timestamp,alpha,beta\r\n2017-01-01,10,14\r\n2017-01-02,11,13\r\n2017-01-03,12,12";
-        InputStream stream = new ByteArrayInputStream(fileContent.getBytes("UTF8"));
-
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        PowerMockito.whenNew(HttpPost.class).withNoArguments().thenReturn(post);
-
-        target.getSessions().analyzeImpact(
-                stream,
-                "event-name",
-                "beta",
-                DateTime.parse("2017-12-12T10:11:12Z"),
-                DateTime.parse("2017-12-22T22:23:24Z"),
-                ResultInterval.DAY,
-                "http://this.is.a.callback.url"
-        );
-
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?targetColumn=beta&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"),
-                post.getURI());
-        Assert.assertEquals(fileContent, EntityUtils.toString(post.getEntity()));
     }
 
     @Test
@@ -200,9 +136,8 @@ public class CreateImpactTests {
         thrown.expectMessage("Object data cannot be null.");
 
         target.getSessions().analyzeImpact(
-                (DataSetData) null,
+                (SessionData) null,
                 "event",
-                "",
                 JodaTimeHelper.START_OF_TIME,
                 JodaTimeHelper.END_OF_TIME,
                 ResultInterval.DAY
@@ -217,22 +152,6 @@ public class CreateImpactTests {
 
         target.getSessions().analyzeImpact(
                 (String) null,
-                "event",
-                "",
-                JodaTimeHelper.START_OF_TIME,
-                JodaTimeHelper.END_OF_TIME,
-                ResultInterval.DAY
-        );
-    }
-
-    @Test
-    public void ReqiresNotNullStreamReader() throws NexosisClientException
-    {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Object input cannot be null.");
-
-        target.getSessions().analyzeImpact(
-                (InputStream) null,
                 "event",
                 "",
                 JodaTimeHelper.START_OF_TIME,

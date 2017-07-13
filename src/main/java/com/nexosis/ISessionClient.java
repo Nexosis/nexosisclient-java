@@ -18,67 +18,18 @@ import java.util.UUID;
  */
 public interface ISessionClient {
     /**
-     * Forecast from the contents of a Reader formatted in CSV .
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param input          A reference to a local file which contains the data you wish to submit.
-     * @param targetColumn   The name of the column that should be used as the source data for prediction.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(InputStream input, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Forecast from the contents of a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param input             A reference to a local file which contains the data you wish to submit.
-     * @param targetColumn      The name of the column that should be used as the source data for prediction.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(InputStream input, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl)  throws NexosisClientException;
-
-    /**
-     * Forecast from the contents of a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param input                  A reference to a local file which contains the data you wish to submit.
-     * @param targetColumn           The name of the column that should be used as the source data for prediction.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(InputStream input, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
      * Forecast from data posted in the request.
      * <P>
      * POST to https://ml.nexosis.com/api/sessions/forecast
      * <P>
      * @param data          A list of data set rows containing the data used for the forecast.
-     * @param targetColumn  The name of the column that should be used as the source data.
      * @param startDate     The starting date of the forecast period.
      * @param endDate       The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse createForecast(DataSetData data, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
+    SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
 
     /**
      * Forecast from data posted in the request.
@@ -86,7 +37,6 @@ public interface ISessionClient {
      * POST to https://ml.nexosis.com/api/sessions/forecast
      * <P>
      * @param data              A list of data set rows containing the data used for the forecast.
-     * @param targetColumn      The name of the column that should be used as the source data.
      * @param startDate         The starting date of the forecast period.
      * @param endDate           The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
@@ -94,7 +44,7 @@ public interface ISessionClient {
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse createForecast(DataSetData data, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
+    SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
 
     /**
      * Forecast from data posted in the request.
@@ -102,7 +52,6 @@ public interface ISessionClient {
      * POST to https://ml.nexosis.com/api/sessions/forecast
      * <P>
      * @param data                   A list of data set rows containing the data used for the forecast.
-     * @param targetColumn           The name of the column that should be used as the source data.
      * @param startDate              The starting date of the forecast period.
      * @param endDate                The ending date of the forecast period.
      * @param resultInterval         The interval at which predictions should be generated.
@@ -111,7 +60,7 @@ public interface ISessionClient {
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse createForecast(DataSetData data, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Forecast from data already saved to the API.
@@ -162,71 +111,19 @@ public interface ISessionClient {
     SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
-     * Analyze impact for an event with data from a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param input          A reference to a local file which contains the data you wish to submit.
-     * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(InputStream input, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data from a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param input             A reference to a local file which contains the data you wish to submit.
-     * @param eventName         The name of the event.
-     * @param targetColumn      The name of the column that should be used as the source data.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval    The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(InputStream input, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data from a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param input                  A reference to a local file which contains the data you wish to submit.
-     * @param eventName              The name of the event.
-     * @param targetColumn           The name of the column that should be used as the source data.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(InputStream input, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
      * Analyze impact for an event with data in the request.
      * <P>
      * POST to https://ml.nexosis.com/api/sessions/impact
      * <P>
-     * @param data           The data to run the impact analysis on.
+     * @param data           The name of the saved data set that has the data to run the impact analysis on.
      * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse analyzeImpact(DataSetData data, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
+    SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
 
     /**
      * Analyze impact for an event with data in the request.
@@ -235,7 +132,6 @@ public interface ISessionClient {
      * <P>
      * @param data              The data to run the impact analysis on.
      * @param eventName         The name of the event.
-     * @param targetColumn      The name of the column that should be used as the source data.
      * @param startDate         The starting date of the forecast period.
      * @param endDate           The ending date of the forecast period.
      * @param resultInterval    The interval at which predictions should be generated.
@@ -243,7 +139,7 @@ public interface ISessionClient {
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse analyzeImpact(DataSetData data, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
+    SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
 
     /**
      * Analyze impact for an event with data in the request.
@@ -252,7 +148,6 @@ public interface ISessionClient {
      * <P>
      * @param data                   The data to run the impact analysis on.
      * @param eventName              The name of the event.
-     * @param targetColumn           The name of the column that should be used as the source data.
      * @param startDate              The starting date of the forecast period.
      * @param endDate                The ending date of the forecast period.
      * @param resultInterval         The interval at which predictions should be generated.
@@ -261,7 +156,7 @@ public interface ISessionClient {
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse analyzeImpact(DataSetData data, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Analyze impact for an event with data already saved to the API.
@@ -313,103 +208,20 @@ public interface ISessionClient {
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSetName    The name of the saved data set that has the data to run the impact analysis on.
-     * @param metaData       Specify a metadata change to the submitted named Dataset. You must specifiy a target and DATE/Timestamp in the metadata.
-     * @param eventName      The name of the event.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(String dataSetName, Columns metaData, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSetName       The name of the saved data set that has the data to run the impact analysis on.
-     * @param metaData          Specify a metadata change to the submitted named Dataset. You must specifiy a target and DATE/Timestamp in the metadata.
-     * @param eventName         The name of the event.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval    The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(String dataSetName, Columns metaData, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSetName            The name of the saved data set that has the data to run the impact analysis on.
-     * @param metaData               Specify a metadata change to the submitted named Dataset. You must specifiy a target and DATE/Timestamp in the metadata.
-     * @param eventName              The name of the event.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(String dataSetName, Columns metaData, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of a forecast from the contents of a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param input          A reference to a local file which contains the data you wish to submit.
-     * @param targetColumn   The name of the column that should be used as the source data for prediction.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateForecast(InputStream input, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of a forecast from the contents of a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param input                  A reference to a local file which contains the data you wish to submit.
-     * @param targetColumn           The name of the column that should be used as the source data for prediction.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateForecast(InputStream input, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
+    
     /**
      * Estimate the cost of a forecast from data posted in the request.
      * <P>
      * POST to https://ml.nexosis.com/api/sessions/forecast
      * <P>
      * @param data           A list of data set rows containing the data used for the forecast.
-     * @param targetColumn   The name of the column that should be used as the source data.
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse estimateForecast(DataSetData data, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
+    SessionResponse estimateForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
 
     /**
      * Estimate the cost of a forecast from data posted in the request.
@@ -417,7 +229,6 @@ public interface ISessionClient {
      * POST to https://ml.nexosis.com/api/sessions/forecast
      * <P>
      * @param data                   A list of data set rows containing the data used for the forecast.
-     * @param targetColumn           The name of the column that should be used as the source data.
      * @param startDate              The starting date of the forecast period.
      * @param endDate                The ending date of the forecast period.
      * @param resultInterval         The interval at which predictions should be generated.
@@ -425,7 +236,7 @@ public interface ISessionClient {
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse estimateForecast(DataSetData data, String targetColumn, org.joda.time.DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponse estimateForecast(SessionData data, org.joda.time.DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Estimate the cost of a forecast from data already saved to the API.
@@ -459,63 +270,27 @@ public interface ISessionClient {
     SessionResponse estimateForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
-     * Estimate the cost of impact analysis for an event with data from a CSV file.
+     * Estimate the cost of impact analysis for an event with data in the request.
      * <P>
      * POST to https://ml.nexosis.com/api/sessions/impact
      * <P>
-     * @param input          A reference to a local file which contains the data you wish to submit.
+     * @param data           The name of the saved data set that has the data to run the impact analysis on.
      * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse estimateImpact(InputStream input, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of impact analysis for an event with data from a CSV file.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param input                  A reference to a local file which contains the data you wish to submit.
-     * @param eventName              The name of the event.
-     * @param targetColumn           The name of the column that should be used as the source data.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateImpact(InputStream input, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
+    SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
 
     /**
      * Estimate the cost of impact analysis for an event with data in the request.
      * <P>
      * POST to https://ml.nexosis.com/api/sessions/impact
      * <P>
-     * @param data           The data to run the impact analysis on.
+     * @param data           The name of the saved data set that has the data to run the impact analysis on.
      * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateImpact(DataSetData data, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of impact analysis for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param data           The data to run the impact analysis on.
-     * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
@@ -523,7 +298,7 @@ public interface ISessionClient {
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse estimateImpact(DataSetData data, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Estimate the cost of impact analysis for an event with data in the request.
