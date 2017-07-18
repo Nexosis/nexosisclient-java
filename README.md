@@ -5,4 +5,4 @@ You can read about the Nexosis API at [https://developers.nexosis.com](https://d
 
 *Pull requests are welcome*
 
-[![Build Status](https://travis-ci.org/Nexosis/nexosisclient-java.svg?branch=master)](https://github.com/Nexosis/nexosisclient-java)
+[![Build Status](https://travis-ci.org/Nexosis/nexosisclient-java.svg?branch=master)](https://travis-ci.org/Nexosis/nexosisclient-java)
