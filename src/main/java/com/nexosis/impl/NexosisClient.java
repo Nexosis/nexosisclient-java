@@ -87,9 +87,11 @@ public class NexosisClient implements INexosisClient {
      * @param endpoint URL of Nexosis API
      * @param httpClientFactory An IHttpClientFactory to provide mock class for unit tests
      */
-    public NexosisClient(String key, String endpoint, IHttpClientFactory httpClientFactory) {
+    public NexosisClient(String key, String endpoint, IHttpClientFactory httpClientFactory) throws IllegalArgumentException {
         this.key = key;
 
+        if(endpoint == null || endpoint.isEmpty())
+            throw new IllegalArgumentException("No value was provided for the endpoint. If you do not know the value, use the ctor with the api key only");
         if (!endpoint.endsWith("/")) {
             endpoint = endpoint + "/";
         }

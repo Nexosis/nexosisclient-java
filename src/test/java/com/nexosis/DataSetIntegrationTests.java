@@ -50,6 +50,12 @@ public class DataSetIntegrationTests {
     @Test
     public void gettingDataSetGivesBackLinks() throws NexosisClientException
     {
+        DataSetData data = DataSetGenerator.Run(
+                DateTime.parse("2017-01-01T00:00Z"),
+                DateTime.parse("2017-03-31T00:00Z"),
+                "hotel"
+        );
+        nexosisClient.getDataSets().create("whiskey", data);
         DataSetData result = nexosisClient.getDataSets().get("whiskey");
 
         Assert.assertEquals("whiskey",result.getDataSetName());
