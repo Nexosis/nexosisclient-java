@@ -1,19 +1,22 @@
 package com.nexosis.model;
-import java.util.UUID;
+import org.joda.time.DateTime;
+import java.util.*;
 
 public class ImportDetail
     {
         private UUID ImportId;
 
        /**
-        * The <see cref="ImportType">type</see> of import
+        * The type of import
+        * @see ImportType
         */
         private ImportType Type;
 
        /**
-        * The current <see cref="Status">status</see> of the import
+        * The current status of the import
+        * @see SessionStatus
         */
-        private Status Status;
+        private SessionStatus Status;
 
        /**
         * The DataSet into which the data was imported
@@ -23,27 +26,27 @@ public class ImportDetail
        /**
         * Additional data used as part of configuring the import
         */
-        private Dictionary<String, String> Parameters; = new Dictionary<String, String>();
+        private Map<String, String> Parameters = new HashMap<String, String>();
 
        /**
         * The date and time that the import was initially requested
         */
-        private DateTimeOffset RequestedDate;
+        private DateTime RequestedDate;
 
        /**
         * The history of status changes on the import
         */
-        private List<StatusChange> StatusHistory; = new List<StatusChange>();
+        private List<SessionStatusHistory> StatusHistory = new ArrayList<SessionStatusHistory>();
 
        /**
         * Messages to the user about the import
         */
-        private List<StatusMessage> Messages; = new List<StatusMessage>();
+        private List<StatusMessage> Messages = new ArrayList<StatusMessage>();
 
        /**
         * Metadata about which
         */
-        private Dictionary<String, ColumnMetadata> Columns;
+        private Columns Columns  = new Columns();
 
         /**
          * The unique identifier of the Import
@@ -64,11 +67,11 @@ public class ImportDetail
             Type = type;
         }
 
-        public Status getStatus() {
+        public SessionStatus getStatus() {
             return Status;
         }
 
-        public void setStatus(Status status) {
+        public void setStatus(SessionStatus status) {
             Status = status;
         }
 
@@ -80,27 +83,27 @@ public class ImportDetail
             DataSetName = dataSetName;
         }
 
-        public Dictionary<String, String> getParameters() {
+        public Map<String, String> getParameters() {
             return Parameters;
         }
 
-        public void setParameters(Dictionary<String, String> parameters) {
+        public void setParameters(Map<String, String> parameters) {
             Parameters = parameters;
         }
 
-        public DateTimeOffset getRequestedDate() {
+        public DateTime getRequestedDate() {
             return RequestedDate;
         }
 
-        public void setRequestedDate(DateTimeOffset requestedDate) {
+        public void setRequestedDate(DateTime requestedDate) {
             RequestedDate = requestedDate;
         }
 
-        public List<StatusChange> getStatusHistory() {
+        public List<SessionStatusHistory> getStatusHistory() {
             return StatusHistory;
         }
 
-        public void setStatusHistory(List<StatusChange> statusHistory) {
+        public void setStatusHistory(List<SessionStatusHistory> statusHistory) {
             StatusHistory = statusHistory;
         }
 
@@ -112,13 +115,12 @@ public class ImportDetail
             Messages = messages;
         }
 
-        public Dictionary<String, ColumnMetadata> getColumns() {
+        public Columns getColumns() {
             return Columns;
         }
 
-        public void setColumns(Dictionary<String, ColumnMetadata> columns) {
+        public void setColumns(Columns columns) {
             Columns = columns;
-        } =
-        new Dictionary<String, ColumnMetadata>(StringComparer.OrdinalIgnoreCase);
+        }
     }
 
