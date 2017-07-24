@@ -7,6 +7,7 @@ import com.nexosis.model.ImportDetails;
 import org.joda.time.DateTime;
 import org.junit.*;
 
+import java.util.UUID;
 import java.util.Iterator;
 
 public class ImportIntegrationTests {
@@ -14,13 +15,18 @@ public class ImportIntegrationTests {
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
     private NexosisClient nexosisClient;
     private static final String EXISTING_DATASET = "Location-A";
+    private static UUID existingId;
 
     @Before
     public void beforeClass() throws NexosisClientException {
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
-        ImportDetails existing = nexosisClient.getImports().list(EXISTING_DATASET, 0, 1);
-        if (existing.getItems().size() <= 0)
-            nexosisClient.getImports().importFromS3(EXISTING_DATASET, "nexosis-sample-data", "LocationA.csv", "us-east-1");
+        ImportDetails existingList = nexosisClient.getImports().list(EXISTING_DATASET, 0, 1);
+        ImportDetail existing = null;
+        if (existingList.getItems().size() <= 0)
+            existing = nexosisClient.getImports().importFromS3(EXISTING_DATASET, "nexosis-sample-data", "LocationA.csv", "us-east-1");
+        else
+            existing = existingList.getItems().get(0);
+        existingId = existing.getImportId();
     }
 
     @Test
@@ -49,6 +55,13 @@ public class ImportIntegrationTests {
             Assert.assertTrue(current.getRequestedDate().isAfter(afterDate));
             Assert.assertTrue(current.getRequestedDate().isBefore(beforeDate));
         }
+    }
+
+    @Test
+    public void getShouldReturnExistingImport() throws NexosisClientException {
+        ImportDetail actual = nexosisClient.getImports().get(existingId);
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(existingId,actual.getImportId());
     }
 
 }

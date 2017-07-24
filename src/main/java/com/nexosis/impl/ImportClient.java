@@ -29,7 +29,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetails list(int page, int pageSize) throws NexosisClientException {
-        return this.list(null, null, null,page,pageSize, null);
+        return this.list(null, null, null, page, pageSize, null);
     }
 
     /**
@@ -37,7 +37,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetails list(String dataSetName, int page, int pageSize) throws NexosisClientException {
-        return this.list(dataSetName,null,null,page,pageSize, null );
+        return this.list(dataSetName, null, null, page, pageSize, null);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetails list(String dataSetName, DateTime requestedAfterDate, DateTime requestedBeforeDate, int page, int pageSize) throws NexosisClientException {
-        return this.list(dataSetName,requestedAfterDate,requestedBeforeDate,page,pageSize,null);
+        return this.list(dataSetName, requestedAfterDate, requestedBeforeDate, page, pageSize, null);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ImportClient implements IImportClient {
             parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
         }
         parameters.add(new BasicNameValuePair("page", Integer.toString(page)));
-        parameters.add(new BasicNameValuePair("pageSize",Integer.toString(pageSize)));
+        parameters.add(new BasicNameValuePair("pageSize", Integer.toString(pageSize)));
         return apiConnection.get(ImportDetails.class, path, parameters, httpMessageTransformer);
     }
 
@@ -74,7 +74,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail get(UUID id) throws NexosisClientException {
-        return null;
+        return this.get(id,null);
     }
 
     /**
@@ -82,7 +82,9 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail get(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return null;
+        Argument.IsNotNull(id, "id");
+        String path = String.format("imports/%s", id.toString());
+        return apiConnection.get(ImportDetail.class, path, null, httpMessageTransformer);
     }
 
     /**
