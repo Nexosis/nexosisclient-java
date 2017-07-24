@@ -1,9 +1,6 @@
 package com.nexosis.impl;
 
-import com.nexosis.IDataSetClient;
-import com.nexosis.IHttpClientFactory;
-import com.nexosis.INexosisClient;
-import com.nexosis.ISessionClient;
+import com.nexosis.*;
 import com.nexosis.model.AccountBalance;
 import com.nexosis.model.DataSetList;
 import com.nexosis.util.Action;
@@ -19,7 +16,7 @@ public class NexosisClient implements INexosisClient {
     private final static int maxPageSize = 100;
     private ISessionClient sessions;
     private IDataSetClient dataSets;
-
+    private IImportClient imports;
     /**
      * The client id and version sent as the User-Agent header
      */
@@ -44,7 +41,6 @@ public class NexosisClient implements INexosisClient {
     /// </summary>
 
     /**
-     *
      * @return
      */
     public String getConfiguredUrl() {
@@ -64,7 +60,8 @@ public class NexosisClient implements INexosisClient {
 
     /**
      * Constructs a instance of the client with the api key as a parameter.
-     * <P>
+     * <p>
+     *
      * @param key The api key from your account.
      */
     public NexosisClient(String key) {
@@ -73,24 +70,27 @@ public class NexosisClient implements INexosisClient {
 
     /**
      * Internal provided for testing use only
-     * <P>
-     * @param key The api key from your account.
+     * <p>
+     *
+     * @param key      The api key from your account.
      * @param endpoint URL of Nexosis API
      */
     public NexosisClient(String key, String endpoint) {
         this(key, endpoint, new HttpClientFactory());
     }
+
     /**
      * Internal provided for testing use only
-     * <P>
-     * @param key The api key from your account.
-     * @param endpoint URL of Nexosis API
+     * <p>
+     *
+     * @param key               The api key from your account.
+     * @param endpoint          URL of Nexosis API
      * @param httpClientFactory An IHttpClientFactory to provide mock class for unit tests
      */
     public NexosisClient(String key, String endpoint, IHttpClientFactory httpClientFactory) throws IllegalArgumentException {
         this.key = key;
 
-        if(endpoint == null || endpoint.isEmpty())
+        if (endpoint == null || endpoint.isEmpty())
             throw new IllegalArgumentException("No value was provided for the endpoint. If you do not know the value, use the ctor with the api key only");
         if (!endpoint.endsWith("/")) {
             endpoint = endpoint + "/";
@@ -102,6 +102,7 @@ public class NexosisClient implements INexosisClient {
 
         sessions = new SessionClient(apiConnection);
         dataSets = new DataSetClient(apiConnection);
+        imports = new ImportClient(apiConnection);
     }
 
     /**
@@ -138,5 +139,15 @@ public class NexosisClient implements INexosisClient {
     @Override
     public void setDataSets(IDataSetClient dataSets) {
         this.dataSets = dataSets;
+    }
+
+    @Override
+    public IImportClient getImports() {
+        return imports;
+    }
+
+    @Override
+    public void setImports(IImportClient imports) {
+        this.imports = imports;
     }
 }
