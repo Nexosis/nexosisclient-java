@@ -61,7 +61,14 @@ public class ImportIntegrationTests {
     public void getShouldReturnExistingImport() throws NexosisClientException {
         ImportDetail actual = nexosisClient.getImports().get(existingId);
         Assert.assertNotNull(actual);
-        Assert.assertEquals(existingId,actual.getImportId());
+        Assert.assertEquals(existingId, actual.getImportId());
+    }
+
+    @Test
+    public void postNewImportReturnsNewId() throws NexosisClientException {
+        ImportDetail actual = nexosisClient.getImports().importFromS3("JavaTest-WillFail", "NoBucket", "NoPath.csv", "No-Region");
+        Assert.assertNotNull(actual);
+        Assert.assertNotNull(actual.getImportId());
     }
 
 }

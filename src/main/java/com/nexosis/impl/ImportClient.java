@@ -1,10 +1,7 @@
 package com.nexosis.impl;
 
 import com.nexosis.IImportClient;
-import com.nexosis.model.Columns;
-import com.nexosis.model.ImportDetail;
-import com.nexosis.model.ImportDetails;
-import com.nexosis.model.SessionResponse;
+import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpRequest;
@@ -74,7 +71,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail get(UUID id) throws NexosisClientException {
-        return this.get(id,null);
+        return this.get(id, null);
     }
 
     /**
@@ -92,7 +89,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail importFromS3(String dataSetName, String bucket, String path, String region) throws NexosisClientException {
-        return null;
+        return this.importFromS3(dataSetName, bucket, path, region, null, null);
     }
 
     /**
@@ -100,7 +97,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail importFromS3(String dataSetName, String bucket, String path, String region, Columns columns) throws NexosisClientException {
-        return null;
+        return this.importFromS3(dataSetName, bucket, path, region, columns, null);
     }
 
     /**
@@ -108,7 +105,7 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail importFromS3(String dataSetName, String bucket, String path, String region, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return null;
+        return this.importFromS3(dataSetName, bucket, path, region, null, httpMessageTransformer);
     }
 
     /**
@@ -116,6 +113,12 @@ public class ImportClient implements IImportClient {
      */
     @Override
     public ImportDetail importFromS3(String dataSetName, String bucket, String path, String region, Columns columns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return null;
+        ImportData body = new ImportData();
+        body.setDataSetName(dataSetName);
+        body.setBucket(bucket);
+        body.setPath(path);
+        body.setRegion(region);
+        body.setColumns(columns);
+        return apiConnection.post(ImportDetail.class, "imports/s3", null, body, httpMessageTransformer);
     }
 }
