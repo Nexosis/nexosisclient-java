@@ -114,10 +114,14 @@ artifacts {
 }
 
 test {
-    if (skipIntTests) {
-        exclude '**/DataSetIntegrationTests.class'
-        exclude '**/SessionIntegrationTests.class'
-        exclude '**/ImportIntegrationTests.java'
+    testLogging {
+        events "PASSED", "STARTED", "FAILED", "SKIPPED"
+    }
+    if (skipIntTests.toBoolean()) {
+        println 'Skipping integration tests...'
+        exclude '**/*IntegrationTests*'
+    } else {
+        println 'Running integration tests.'
     }
 }
 

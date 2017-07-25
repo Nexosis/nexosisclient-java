@@ -208,7 +208,7 @@ public class SessionIntegrationTests {
             ReturnsStatus status = nexosisClient.getSessions().getResults(savedSessionId, output);
 
             if (status.getSessionStatus() != SessionStatus.COMPLETED) {
-                Assert.fail("Session is not completed. Current status is " + status.getSessionStatus() + ". Make sure to run SessionIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
+                Assert.fail("Session is not completed. Current status is " + status.getSessionStatus() + ". Make sure to run DataSetIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
                 return;
             }
 
