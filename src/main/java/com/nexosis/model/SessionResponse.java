@@ -34,7 +34,7 @@ import javax.xml.transform.Result;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SessionResult.class)
 })
-public class SessionResponse implements Serializable
+public class SessionResponse extends ReturnsCost implements Serializable
 {
     @JsonProperty("sessionId")
     private UUID sessionId;

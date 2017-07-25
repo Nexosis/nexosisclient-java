@@ -26,7 +26,7 @@ public interface ISessionClient {
      * @param startDate     The starting date of the forecast period.
      * @param endDate       The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -41,7 +41,7 @@ public interface ISessionClient {
      * @param endDate           The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
@@ -57,7 +57,7 @@ public interface ISessionClient {
      * @param resultInterval         The interval at which predictions should be generated.
      * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -72,7 +72,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -88,7 +88,7 @@ public interface ISessionClient {
      * @param endDate           The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
@@ -105,7 +105,7 @@ public interface ISessionClient {
      * @param resultInterval         The interval at which predictions should be generated.
      * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -120,7 +120,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -136,7 +136,7 @@ public interface ISessionClient {
      * @param endDate           The ending date of the forecast period.
      * @param resultInterval    The interval at which predictions should be generated.
      * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
@@ -153,7 +153,7 @@ public interface ISessionClient {
      * @param resultInterval         The interval at which predictions should be generated.
      * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -169,7 +169,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -186,7 +186,7 @@ public interface ISessionClient {
      * @param endDate           The ending date of the forecast period.
      * @param resultInterval    The interval at which predictions should be generated.
      * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
@@ -204,7 +204,7 @@ public interface ISessionClient {
      * @param resultInterval         The interval at which predictions should be generated.
      * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -218,7 +218,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -233,7 +233,7 @@ public interface ISessionClient {
      * @param endDate                The ending date of the forecast period.
      * @param resultInterval         The interval at which predictions should be generated.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateForecast(SessionData data, org.joda.time.DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -248,7 +248,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -264,7 +264,7 @@ public interface ISessionClient {
      * @param endDate                The ending date of the forecast period.
      * @param resultInterval         The interval at which predictions should be generated.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -279,7 +279,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -295,7 +295,7 @@ public interface ISessionClient {
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -312,7 +312,7 @@ public interface ISessionClient {
      * @param endDate                The ending date of the forecast period.
      * @param resultInterval         The interval at which predictions should be generated.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
@@ -328,7 +328,7 @@ public interface ISessionClient {
      * @param startDate      The starting date of the forecast period.
      * @param endDate        The ending date of the forecast period.
      * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse estimateImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
@@ -339,7 +339,7 @@ public interface ISessionClient {
      * <P>
      * GET of https://ml.nexosis.com/api/sessions
      * <P>
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponses list() throws NexosisClientException;
@@ -351,7 +351,7 @@ public interface ISessionClient {
      * GET of https://ml.nexosis.com/api/sessions
      * <P>
      * @param dataSetName Limits sessions to those with the specified name.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the sesssion.
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponses list(String dataSetName) throws NexosisClientException;

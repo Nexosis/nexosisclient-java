@@ -58,4 +58,18 @@ public interface INexosisClient
      */
     void setDataSets(IDataSetClient dataSets);
 
+    /**
+     * Access to the Imports based operations in the API.
+     * <p>
+     * @return
+     */
+    public IImportClient getImports();
+
+    /**
+     * Access to the Imports based operations in the API. (private)
+     * <p>
+     * @param imports
+     */
+    void setImports(IImportClient imports);
+
 }

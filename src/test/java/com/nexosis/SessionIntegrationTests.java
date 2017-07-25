@@ -16,15 +16,26 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class SessionIntegrationTests {
-    private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
+    private static String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
-    private static final String productFilePath = absolutePath + "/CsvFiles/producttest.csv";
-    private static final UUID savedSessionId = UUID.fromString("015ce643-f899-405f-8115-7f91ab59e7fa");
+    private static String savedSessionData;
+    private static UUID savedSessionId;
+    private static final String savedDataSet = "alpha.persistent";
     private NexosisClient nexosisClient;
 
     @Before
-    public void beforeClass() {
+    public void beforeClass() throws NexosisClientException{
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
+        SessionResponses responses = nexosisClient.getSessions().list();
+        for (SessionResponse session : responses.getItems()) {
+            if (session.getDataSetName().equals(savedDataSet)) {
+                savedSessionId = session.getSessionId();
+                savedSessionData = session.getDataSetName();
+            }
+        }
+
+        Assert.assertNotNull(savedSessionId);
+        Assert.assertNotNull(savedSessionData);
     }
 
     @Test
@@ -186,7 +197,7 @@ public class SessionIntegrationTests {
         Assert.assertEquals("results", result.getLinks().get(0).getRel());
         Assert.assertEquals("data", result.getLinks().get(1).getRel());
         Assert.assertEquals(baseURI + "/sessions/" + savedSessionId + "/results", result.getLinks().get(0).getHref());
-        Assert.assertEquals(baseURI + "/data/forecast." + savedSessionId, result.getLinks().get(1).getHref());
+        Assert.assertEquals(baseURI + "/data/" + savedSessionData, result.getLinks().get(1).getHref());
     }
 
     @Test
@@ -197,7 +208,6 @@ public class SessionIntegrationTests {
                 + ".csv";
 
         OutputStream output = null;
-
         try {
             File workingFile = new File(filename);
             workingFile.createNewFile();
@@ -206,7 +216,7 @@ public class SessionIntegrationTests {
             ReturnsStatus status = nexosisClient.getSessions().getResults(savedSessionId, output);
 
             if (status.getSessionStatus() != SessionStatus.COMPLETED) {
-                Assert.fail("Session is not completed. Current status is " + status.getSessionStatus() + ". Make sure to run SessionIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
+                Assert.fail("Session is not completed. Current status is " + status.getSessionStatus() + ". Make sure to run DataSetIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
                 return;
             }
 
@@ -215,7 +225,7 @@ public class SessionIntegrationTests {
             String results = new String(encoded, StandardCharsets.UTF_8);
 
             Assert.assertTrue(file.length() > 0);
-            Assert.assertTrue(results.startsWith("timestamp,"));
+            Assert.assertTrue(results.toLowerCase().startsWith("timestamp,".toLowerCase()));
         } finally {
             if (output != null) {
              output.flush();
