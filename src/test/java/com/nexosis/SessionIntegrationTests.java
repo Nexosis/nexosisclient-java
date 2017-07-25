@@ -20,14 +20,22 @@ public class SessionIntegrationTests {
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
     private static String savedSessionData;
     private static UUID savedSessionId;
+    private static final String savedDataSet = "alpha.persistent";
     private NexosisClient nexosisClient;
 
     @Before
     public void beforeClass() throws NexosisClientException{
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
         SessionResponses responses = nexosisClient.getSessions().list();
-        savedSessionId = responses.getItems().get(0).getSessionId();
-        savedSessionData = responses.getItems().get(0).getDataSetName();
+        for (SessionResponse session : responses.getItems()) {
+            if (session.getDataSetName().equals(savedDataSet)) {
+                savedSessionId = session.getSessionId();
+                savedSessionData = session.getDataSetName();
+            }
+        }
+
+        Assert.assertNotNull(savedSessionId);
+        Assert.assertNotNull(savedSessionData);
     }
 
     @Test
@@ -217,7 +225,7 @@ public class SessionIntegrationTests {
             String results = new String(encoded, StandardCharsets.UTF_8);
 
             Assert.assertTrue(file.length() > 0);
-            Assert.assertTrue(results.startsWith("timestamp,"));
+            Assert.assertTrue(results.toLowerCase().startsWith("timestamp,".toLowerCase()));
         } finally {
             if (output != null) {
              output.flush();
