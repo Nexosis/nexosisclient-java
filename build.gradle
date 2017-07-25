@@ -113,14 +113,13 @@ artifacts {
     archives sourcesJar
 }
 
-
 test {
     if (skipIntTests) {
         exclude '**/DataSetIntegrationTests.class'
         exclude '**/SessionIntegrationTests.class'
+        exclude '**/ImportIntegrationTests.java'
     }
 }
-
 
 uploadArchives {
     repositories {
