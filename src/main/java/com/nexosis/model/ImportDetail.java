@@ -1,7 +1,6 @@
 package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.*;
-import com.sun.tools.internal.ws.wsdl.document.Import;
 import org.joda.time.DateTime;
 
 import java.util.*;
