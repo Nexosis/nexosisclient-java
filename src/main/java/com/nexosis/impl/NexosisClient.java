@@ -13,7 +13,7 @@ public class NexosisClient implements INexosisClient {
     private String key;
     private String configuredUrl;
     private ApiConnection apiConnection;
-    private final static int maxPageSize = 100;
+    private final static int maxPageSize = 1000;
     private ISessionClient sessions;
     private IDataSetClient dataSets;
     private IImportClient imports;
