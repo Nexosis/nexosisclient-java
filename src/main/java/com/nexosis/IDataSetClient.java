@@ -116,7 +116,7 @@ public interface IDataSetClient {
      * <P>
      * @param dataSetName    Name of the dataset for which to retrieve data.
      * @param pageNumber     Zero-based page number of results to retrieve.
-     * @param pageSize       Count of results to retrieve in each page (max 100).
+     * @param pageSize       Count of results to retrieve in each page (max 1000).
      * @param includeColumns Limits results to the specified columns of the data set.
      * @return A {@link DataSetData DataSetData} object containing the data by name filter.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
@@ -130,7 +130,7 @@ public interface IDataSetClient {
      * <P>
      * @param dataSetName    Name of the dataset for which to retrieve data.
      * @param pageNumber     Zero-based page number of results to retrieve.
-     * @param pageSize       Count of results to retrieve in each page (max 100).
+     * @param pageSize       Count of results to retrieve in each page (max 1000).
      * @param startDate      Limits results to those on or after the specified date.
      * @param endDate        Limits results to those on or before the specified date.
      * @param includeColumns Limits results to the specified columns of the data set.
@@ -146,7 +146,7 @@ public interface IDataSetClient {
      * <P>
      * @param dataSetName            Name of the dataset for which to retrieve data.
      * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 100).
+     * @param pageSize               Count of results to retrieve in each page (max 1000).
      * @param startDate              Limits results to those on or after the specified date.
      * @param endDate                Limits results to those on or before the specified date.
      * @param includeColumns         Limits results to the specified columns of the data set.
@@ -164,7 +164,7 @@ public interface IDataSetClient {
      * @param dataSetName            Name of the dataset for which to retrieve data.
      * @param output                 An output stream to write the data set to
      * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 100).
+     * @param pageSize               Count of results to retrieve in each page (max 1000).
      * @param includeColumns         Limits results to the specified columns of the data set.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
@@ -189,7 +189,7 @@ public interface IDataSetClient {
      * @param dataSetName            Name of the dataset for which to retrieve data.
      * @param output                 An output stream to write the data set to
      * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 100).
+     * @param pageSize               Count of results to retrieve in each page (max 1000).
      * @param startDate              Limits results to those on or after the specified date.
      * @param endDate                Limits results to those on or before the specified date.
      * @param includeColumns         Limits results to the specified columns of the data set.
@@ -205,7 +205,7 @@ public interface IDataSetClient {
      * @param dataSetName            Name of the dataset for which to retrieve data.
      * @param output                 An output stream to write the data set to
      * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 100).
+     * @param pageSize               Count of results to retrieve in each page (max 1000).
      * @param startDate              Limits results to those on or after the specified date.
      * @param endDate                Limits results to those on or before the specified date.
      * @param includeColumns         Limits results to the specified columns of the data set.
