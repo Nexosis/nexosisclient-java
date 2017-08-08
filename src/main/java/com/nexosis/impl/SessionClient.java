@@ -77,7 +77,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
 
         Columns columns = new Columns();
-        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET);
+        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
         data.setDataSetName(dataSetName);
@@ -140,7 +140,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
         Columns columns = new Columns();
-        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET);
+        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
         data.setDataSetName(dataSetName);
@@ -185,7 +185,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
 
         Columns columns = new Columns();
-        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET);
+        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
         data.setDataSetName(dataSetName);
@@ -232,7 +232,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
         Columns columns = new Columns();
-        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET);
+        columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
         data.setDataSetName(dataSetName);

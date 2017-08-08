@@ -85,7 +85,7 @@ public class PostTests {
         PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
         PowerMockito.whenNew(HttpPost.class).withNoArguments().thenReturn(post);
         Columns columns = new Columns();
-        columns.setColumnMetadata("TestColumn", DataType.NUMERIC, DataRole.TARGET);
+        columns.setColumnMetadata("TestColumn", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         data.setColumns(columns);
         ImportDetail actual = target.getImports().importFromS3(dataSetName, bucket, path, region, columns);
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));

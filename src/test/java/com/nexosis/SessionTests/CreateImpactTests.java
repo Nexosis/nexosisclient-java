@@ -106,8 +106,8 @@ public class CreateImpactTests {
         HttpPost post = new HttpPost();
 
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
         data.setDataSetName("data-set-name");

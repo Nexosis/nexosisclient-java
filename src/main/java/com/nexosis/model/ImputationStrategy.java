@@ -6,22 +6,21 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum DataType {
-    STRING("string"),
-    NUMERIC("numeric"),
-    LOGICAL("logical"),
-    DATE("date"),
-    NUMERICMEASURE("numericMeasure");
+public enum ImputationStrategy {
+    ZEROES("zeroes"),
+    MEAN("mean"),
+    MEDIAN("median"),
+    MODE("mode");
     private final String value;
-    private final static Map<String, DataType> CONSTANTS = new HashMap<String, DataType>();
+    private final static Map<String, ImputationStrategy> CONSTANTS = new HashMap<String, ImputationStrategy>();
 
     static {
-        for (DataType c: values()) {
+        for (ImputationStrategy c: values()) {
             CONSTANTS.put(c.value, c);
         }
     }
 
-    private DataType(String value) {
+    private ImputationStrategy(String value) {
         this.value = value;
     }
 
@@ -36,8 +35,8 @@ public enum DataType {
     }
 
     @JsonCreator
-    public static DataType fromValue(String value) {
-        DataType constant = CONSTANTS.get(value);
+    public static ImputationStrategy fromValue(String value) {
+        ImputationStrategy constant = CONSTANTS.get(value);
         if (constant == null) {
             throw new IllegalArgumentException(value);
         } else {
