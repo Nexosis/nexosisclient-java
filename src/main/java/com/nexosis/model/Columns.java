@@ -36,6 +36,18 @@ public class Columns implements Serializable
     }
 
     @JsonIgnore
+    public void setColumnMetadata(String columnName, DataType dataType, DataRole role
+            , ImputationStrategy imputation
+            , AggregationStrategy aggregation) {
+        ColumnsProperty prop = new ColumnsProperty();
+        prop.setDataType(dataType);
+        prop.setRole(role);
+        prop.setAggregation(aggregation);
+        prop.setImputation(imputation);
+        this.columnMetadata.put(columnName, prop);
+    }
+
+    @JsonIgnore
     public void setColumnMetadata(String columnName, DataType dataType, DataRole role) {
         ColumnsProperty prop = new ColumnsProperty();
         prop.setDataType(dataType);

@@ -20,7 +20,6 @@ public class SessionIntegrationTests {
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
     private static String savedSessionData;
     private static UUID savedSessionId;
-    private static final String savedDataSet = "alpha.persistent";
     private NexosisClient nexosisClient;
 
     @Before
@@ -28,7 +27,7 @@ public class SessionIntegrationTests {
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
         SessionResponses responses = nexosisClient.getSessions().list();
         for (SessionResponse session : responses.getItems()) {
-            if (session.getDataSetName().equals(savedDataSet)) {
+            if (session.getStatus().equals(SessionStatus.COMPLETED)) {
                 savedSessionId = session.getSessionId();
                 savedSessionData = session.getDataSetName();
             }
@@ -57,8 +56,8 @@ public class SessionIntegrationTests {
 
         // setup some column metadata
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData session = new SessionData();
         session.setDataSetName(dataSetName);
@@ -85,8 +84,8 @@ public class SessionIntegrationTests {
 
         // setup column metadata
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
         // create dataset
@@ -117,8 +116,8 @@ public class SessionIntegrationTests {
 
         // setup some column metadata
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData session = new SessionData();
         session.setDataSetName(dataSetName);
@@ -145,8 +144,8 @@ public class SessionIntegrationTests {
 
         // setup some column metadata
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
         nexosisClient.getDataSets().create(dataSetName, dataSet);
@@ -248,8 +247,8 @@ public class SessionIntegrationTests {
 
         // setup some column metadata
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
         nexosisClient.getDataSets().create(dataSetName, dataSet);
@@ -287,8 +286,8 @@ public class SessionIntegrationTests {
 
         // setup some column metadata
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
         nexosisClient.getDataSets().create(dataSetName, dataSet);

@@ -8,7 +8,7 @@ import com.nexosis.impl.ApiConnection;
 import com.nexosis.impl.HttpClientFactory;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
-import com.nexosis.model.DataSetData;
+import com.nexosis.model.*;
 import com.nexosis.util.HttpMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -130,6 +130,20 @@ public class SaveTests {
         Assert.assertEquals(new URI(fakeEndpoint + "/data/yankee"), put.getURI());
 
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(put.getEntity()));
+    }
+
+    @Test
+    public void willSaveWithMeasureColumnData() throws Exception{
+        HttpPut put = new HttpPut();
+        PowerMockito.whenNew(HttpPut.class).withNoArguments().thenReturn(put);
+        Columns columns = new Columns();
+        ColumnsProperty props = new ColumnsProperty();
+        props.setImputation(ImputationStrategy.MEAN);
+        props.setDataType(DataType.NUMERICMEASURE);
+        columns.setColumnMetadata("Foo", props);
+        DataSetData data = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "something");
+        data.setColumns(columns);
+        target.getDataSets().create("yankee", data);
     }
 }
 

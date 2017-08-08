@@ -23,6 +23,10 @@ public class ColumnsProperty implements Serializable
     private DataType dataType;
     @JsonProperty("role")
     private DataRole dataRole;
+    @JsonProperty("imputation")
+    private ImputationStrategy imputation;
+    @JsonProperty("aggregation")
+    private AggregationStrategy aggregation;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
     private final static long serialVersionUID = -7704235352454871348L;
@@ -71,11 +75,23 @@ public class ColumnsProperty implements Serializable
             return false;
         }
         ColumnsProperty rhs = ((ColumnsProperty) other);
-        return new EqualsBuilder().append(dataType, rhs.dataType).append(dataRole, rhs.dataRole).append(additionalProperties, rhs.additionalProperties).isEquals();
+        return new EqualsBuilder().append(dataType, rhs.dataType).append(dataRole, rhs.dataRole).append(imputation,rhs.imputation).append(aggregation,rhs.aggregation).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
-
-
-
-
+    @JsonProperty("imputation")
+    public ImputationStrategy getImputation() {
+        return this.imputation;
+    }
+    @JsonProperty("imputation")
+    public void setImputation(ImputationStrategy imputation) {
+        this.imputation = imputation;
+    }
+    @JsonProperty("aggregation")
+    public AggregationStrategy getAggregation() {
+        return this.aggregation;
+    }
+    @JsonProperty("aggregation")
+    public void setAggregation(AggregationStrategy aggregation) {
+        this.aggregation = aggregation;
+    }
 }

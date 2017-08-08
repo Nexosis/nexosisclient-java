@@ -7,12 +7,7 @@ import com.nexosis.impl.ApiConnection;
 import com.nexosis.impl.HttpClientFactory;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
-import com.nexosis.model.Columns;
-import com.nexosis.model.DataSetData;
-import com.nexosis.model.DataRole;
-import com.nexosis.model.DataType;
-import com.nexosis.model.ResultInterval;
-import com.nexosis.model.SessionData;
+import com.nexosis.model.*;
 import com.nexosis.util.JodaTimeHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -100,8 +95,8 @@ public class CreateForecastTests {
         HttpPost post = new HttpPost();
 
         Columns cols = new Columns();
-        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP);
-        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET);
+        cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
+        cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
         data.setDataSetName("data-set-name");
