@@ -8,10 +8,14 @@ archivesBaseName = 'nexosisclient-java'
 version          = '1.1.2'
 ext.packaging    = 'jar'
 
-def ossrhUser = hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('ossrhUsername')
-def ossrhPass = hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('ossrhPassword')
+def ossrhUser = hasProperty('ossrhUsername') ? project.ossrhUsername : System.getenv('ossrhUsername')
+def ossrhPass = hasProperty('ossrhPassword') ? project.ossrhPassword : System.getenv('ossrhPassword')
 
-def skipIntTests = hasProperty('skipIntegrationTests') ? skipIntegrationTests : System.getenv('skipIntegrationTests')
+def skipIntTestsString = hasProperty('skipIntegrationTests') ? skipIntegrationTests : System.getenv('skipIntegrationTests')
+def skipIntTests = true
+if(skipIntTestsString != null){
+    skipIntTests = skipIntTestsString.ToBoolean()
+}
 
 allprojects {
     apply plugin: 'java'
@@ -117,7 +121,7 @@ test {
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }
-    if (skipIntTests.toBoolean()) {
+    if (skipIntTests) {
         println 'Skipping integration tests...'
         exclude '**/*IntegrationTests*'
     } else {
