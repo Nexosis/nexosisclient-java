@@ -15,7 +15,7 @@ def skipIntTestsString = "false"
 skipIntTestsString = hasProperty('skipIntegrationTests') ? getProperty('skipIntegrationTests') : System.getenv('skipIntegrationTests')
 def skipIntTests = true
 if(skipIntTestsString != null){
-    skipIntTests = skipIntTestsString.ToBoolean()
+    skipIntTests = skipIntTestsString.toBoolean()
 }
 
 allprojects {
