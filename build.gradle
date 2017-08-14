@@ -11,7 +11,8 @@ ext.packaging    = 'jar'
 def ossrhUser = hasProperty('ossrhUsername') ? project.ossrhUsername : System.getenv('ossrhUsername')
 def ossrhPass = hasProperty('ossrhPassword') ? project.ossrhPassword : System.getenv('ossrhPassword')
 
-def skipIntTestsString = hasProperty('skipIntegrationTests') ? skipIntegrationTests : System.getenv('skipIntegrationTests')
+def skipIntTestsString = "false"
+skipIntTestsString = hasProperty('skipIntegrationTests') ? getProperty('skipIntegrationTests') : System.getenv('skipIntegrationTests')
 def skipIntTests = true
 if(skipIntTestsString != null){
     skipIntTests = skipIntTestsString.ToBoolean()
