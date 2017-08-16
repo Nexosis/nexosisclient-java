@@ -72,4 +72,17 @@ public interface INexosisClient
      */
     void setImports(IImportClient imports);
 
+    /**
+     * Access to the Views based operations in the API.
+     * <p>
+     * @return
+     */
+    public IViewClient getViews();
+
+    /**
+     * Access to the Views based operations in the API. (private)
+     * @param views
+     */
+    void setViews(IViewClient views);
+
 }

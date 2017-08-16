@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+        "dataSourceName",
         "dataSetName",
         "columns",
         "links"
@@ -29,6 +30,8 @@ public class SessionData implements Serializable
     private Columns columns;
     @JsonProperty("dataSetName")
     private String dataSetName;
+    @JsonProperty("dataSourceName")
+    private String dataSourceName;
     @JsonProperty("links")
     private List<Link> links = null;
     @JsonIgnore
@@ -46,6 +49,10 @@ public class SessionData implements Serializable
     }
 
     @JsonProperty("dataSetName")
+    @Deprecated
+    /**
+     * @deprecated prefer {@link getDataSourceName()}
+     */
     public String getDataSetName() {
         return dataSetName;
     }
@@ -53,6 +60,15 @@ public class SessionData implements Serializable
     @JsonProperty("dataSetName")
     public void setDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
+    }
+
+    @JsonProperty("dataSourceName")
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+    @JsonProperty("dataSourceName")
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     @JsonProperty("links")

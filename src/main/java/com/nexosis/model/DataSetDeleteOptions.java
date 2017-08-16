@@ -11,9 +11,13 @@ import java.util.Map;
 // cascade
 public enum DataSetDeleteOptions {
     CASCADE_FORECAST("forecast"),
-    CASCADE_SESSION("sessions");
+    CASCADE_SESSION("session"),
+    CASCADE_VIEW("view");
+
+
     public static final EnumSet<DataSetDeleteOptions> CASCADE_NONE = EnumSet.noneOf(DataSetDeleteOptions.class);
     public static final EnumSet<DataSetDeleteOptions> CASCASE_BOTH = EnumSet.of(DataSetDeleteOptions.CASCADE_FORECAST, DataSetDeleteOptions.CASCADE_SESSION);
+    public static final EnumSet<DataSetDeleteOptions> CASCASE_ALL = EnumSet.of(DataSetDeleteOptions.CASCADE_FORECAST, DataSetDeleteOptions.CASCADE_SESSION, DataSetDeleteOptions.CASCADE_VIEW);
 
     private final String value;
     private final static Map<String, DataSetDeleteOptions> CONSTANTS = new HashMap<String, DataSetDeleteOptions>();
