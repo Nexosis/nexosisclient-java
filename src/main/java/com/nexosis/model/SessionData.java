@@ -58,6 +58,10 @@ public class SessionData implements Serializable
     }
 
     @JsonProperty("dataSetName")
+    @Deprecated
+    /**
+     * @deprecated prefer {@link getDataSourceName()}
+     */
     public void setDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
     }

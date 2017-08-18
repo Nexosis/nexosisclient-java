@@ -244,6 +244,20 @@ public class ViewClient implements IViewClient {
      * <p>
      *
      * @param viewName               Name of the dataset from which to remove data.
+     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    @Override
+    public void remove(String viewName) throws NexosisClientException {
+        remove(viewName,false,null);
+    }
+
+    /**
+     * Remove the view.
+     * <p>
+     * DELETE to https://ml.nexosis.com/api/views/{viewName}
+     * <p>
+     *
+     * @param viewName               Name of the dataset from which to remove data.
      * @param cascadeSessions  Determine whether all sessions created from the named view are also removed.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.

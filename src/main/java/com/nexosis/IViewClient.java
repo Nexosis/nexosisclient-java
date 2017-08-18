@@ -142,6 +142,17 @@ public interface IViewClient {
      * <p>
      *
      * @param viewName   Name of the view to remove.
+     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    public void remove(String viewName) throws NexosisClientException;
+
+    /**
+     * Remove the view.
+     * <p>
+     * DELETE to https://ml.nexosis.com/api/views/{viewName}
+     * <p>
+     *
+     * @param viewName   Name of the view to remove.
      * @param cascadeSessions  Determine whether all sessions created from the named view are also removed.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
