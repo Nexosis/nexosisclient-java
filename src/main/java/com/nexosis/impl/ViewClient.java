@@ -8,10 +8,8 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.joda.time.DateTime;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class ViewClient implements IViewClient {
@@ -37,7 +35,19 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewDefinition create(String viewName, String dataSetName, String rightDataSetName, Columns columnDef) throws NexosisClientException {
-        return null;
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
+        Argument.IsNotNullOrEmpty(dataSetName,"dataSetName");
+        Argument.IsNotNullOrEmpty(rightDataSetName,"rightDataSetName");
+        ViewDefinition definition = new ViewDefinition();
+        definition.setViewName(viewName);
+        definition.setDataSetName(dataSetName);
+        definition.setColumns(columnDef);
+        Join join = new Join();
+        join.setDataSetName(rightDataSetName);
+        List<Join> joins = new ArrayList<Join>();
+        joins.add(join);
+        definition.setJoins(joins);
+        return create(definition, null);
     }
 
     /**
@@ -53,7 +63,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewDefinition create(ViewDefinition definition, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return null;
+        return apiConnection.put(ViewDefinition.class,"views/" + definition.getViewName(),null,definition,httpMessageTransformer);
     }
 
     /**
@@ -130,6 +140,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewData get(String viewName) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
         return get(viewName,new ListQuery(0,50,null,null),null);
     }
 
@@ -146,6 +157,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewData get(String viewName, ListQuery query) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
         return get(viewName, query, null);
     }
 
@@ -163,6 +175,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewData get(String viewName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
         List<NameValuePair> parameters = ProcessDataSetGetParameters(query);
         return apiConnection.get(ViewData.class, "views/" + viewName, parameters, httpMessageTransformer);
     }
@@ -201,7 +214,8 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public void get(String viewName, OutputStream output, ListQuery query) throws NexosisClientException {
-
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
+        get(viewName,output,query,null);
     }
 
     /**
@@ -218,41 +232,28 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public void get(String viewName, OutputStream output, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
+        List<NameValuePair> parameters = ProcessDataSetGetParameters(query);
+        apiConnection.get(ViewData.class,"views" + viewName, parameters,httpMessageTransformer, output);
     }
 
     /**
-     * Remove data from a data set or the entire set.
+     * Remove the view.
      * <p>
-     * DELETE to https://ml.nexosis.com/api/data/{viewName}
-     * <p>
-     *
-     * @param viewName  Name of the dataset from which to remove data.
-     * @param startDate Limits data removed to those on or after the specified date.
-     * @param endDate   Limits data removed to those on or before the specified date.
-     * @param options   Controls the options associated with the removal.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    @Override
-    public void remove(String viewName, DateTime startDate, DateTime endDate, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException {
-
-    }
-
-    /**
-     * Remove data from a data set or the entire set.
-     * <p>
-     * DELETE to https://ml.nexosis.com/api/data/{viewName}
+     * DELETE to https://ml.nexosis.com/api/views/{viewName}
      * <p>
      *
      * @param viewName               Name of the dataset from which to remove data.
-     * @param startDate              Limits data removed to those on or after the specified date.
-     * @param endDate                Limits data removed to those on or before the specified date.
-     * @param options                Controls the options associated with the removal.
+     * @param cascadeSessions  Determine whether all sessions created from the named view are also removed.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     @Override
-    public void remove(String viewName, DateTime startDate, DateTime endDate, EnumSet<DataSetDeleteOptions> options, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-
+    public void remove(String viewName, boolean cascadeSessions, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
+        List<NameValuePair> parameters = new ArrayList<>();
+        if(cascadeSessions)
+            parameters.add( new BasicNameValuePair("cascade", "session"));
+        apiConnection.delete("views/" + viewName, parameters, httpMessageTransformer);
     }
 }

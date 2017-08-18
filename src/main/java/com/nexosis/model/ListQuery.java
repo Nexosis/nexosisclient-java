@@ -10,6 +10,10 @@ public class ListQuery {
     org.joda.time.DateTime endDate;
     Iterable<String> includeColumns;
 
+    public ListQuery(){
+
+    }
+
     /**
      *
      * @param pageNumber - The page of results to return. Defaults to 0

@@ -15,7 +15,7 @@ public interface IViewClient {
     /**
      * Create a new view.
      * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
+     * PUT of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param viewName The unique name of the view to create (must be unique across views and datasets)
      * @param dataSetName Name of the dataset to which to add data.
@@ -29,7 +29,7 @@ public interface IViewClient {
     /**
      * Create a new view.
      * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
+     * PUT of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param definition  The definition of the view to create
      * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
@@ -42,7 +42,7 @@ public interface IViewClient {
     /**
      * Gets the list of all views that have been saved to the system.
      * <P>
-     * GET of https://ml.nexosis.com/api/data
+     * GET of https://ml.nexosis.com/api/views
      * <P>
      * @return A {@link ViewDefinitionList ViewDefinitionList} object c
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
@@ -52,7 +52,7 @@ public interface IViewClient {
     /**
      * Gets the list of views that have been saved to the system, filtering by partial name match.
      * <P>
-     * GET of https://ml.nexosis.com/api/data
+     * GET of https://ml.nexosis.com/api/views
      * <P>
      * @param nameFilter Limits results to only those views with names containing the specified value
      * @param dataSetNameFilter Limits results to only those views based on datasets with the name
@@ -64,7 +64,7 @@ public interface IViewClient {
     /**
      * Gets the list of views that have been saved to the system, filtering by partial name match.
      * <P>
-     * GET of https://ml.nexosis.com/api/data
+     * GET of https://ml.nexosis.com/api/views
      * <P>
      * @param nameFilter Limits results to only those views with names containing the specified value
      * @param dataSetNameFilter Limits results to only those views based on datasets with the name
@@ -75,9 +75,9 @@ public interface IViewClient {
     ViewDefinitionList list(String nameFilter, String dataSetNameFilter, int page, int pageSize, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
-     * Get the data in the set, optionally filtering it.
+     * Get the data in the view, optionally filtering it.
      * <P>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
+     * GET of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param viewName Name of the dataset for which to retrieve data.
      * @return A {@link ViewData ViewData} object containing the data by name filter.
@@ -88,7 +88,7 @@ public interface IViewClient {
     /**
      * Get the data in the view, optionally filtering it.
      * <P>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
+     * GET of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param viewName    Name of the view for which to retrieve data.
      * @param query Additional parameters to limit the data returned
@@ -98,9 +98,9 @@ public interface IViewClient {
     ViewData get(String viewName, ListQuery query) throws NexosisClientException;
 
     /**
-     * Get the data in the set, optionally filtering it.
+     * Get the data in the view, optionally filtering it.
      * <P>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
+     * GET of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param viewName            Name of the dataset for which to retrieve data.
      * @param query Additional parameters to limit the data returned
@@ -111,9 +111,9 @@ public interface IViewClient {
     ViewData get(String viewName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
-     * Get the data in the set, optionally filtering it.
+     * Get the data in the view, optionally filtering it.
      * <P>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
+     * GET of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param viewName            Name of the dataset for which to retrieve data.
      * @param output                 An output stream to write the data set to
@@ -125,10 +125,10 @@ public interface IViewClient {
     /**
      * Get the data in the set and write it to the output stream, optionally filtering it.
      * <P>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
+     * GET of https://ml.nexosis.com/api/views/{viewName}
      * <P>
-     * @param viewName            Name of the dataset for which to retrieve data.
-     * @param output                 An output stream to write the data set to
+     * @param viewName            Name of the view for which to retrieve data.
+     * @param output                 An output stream to write the data to
      * @param query Additional parameters to limit the data returned
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException
@@ -136,29 +136,15 @@ public interface IViewClient {
     void get(String viewName, OutputStream output, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
-     * Remove data from a data set or the entire set.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/data/{viewName}
-     * <P>
-     * @param viewName   Name of the dataset from which to remove data.
-     * @param startDate     Limits data removed to those on or after the specified date.
-     * @param endDate       Limits data removed to those on or before the specified date.
-     * @param options       Controls the options associated with the removal.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String viewName, org.joda.time.DateTime startDate, org.joda.time.DateTime endDate, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException;
-
-    /**
-     * Remove data from a data set or the entire set.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/data/{viewName}
-     * <P>
-     * @param viewName            Name of the dataset from which to remove data.
-     * @param startDate              Limits data removed to those on or after the specified date.
-     * @param endDate                Limits data removed to those on or before the specified date.
-     * @param options                Controls the options associated with the removal.
+     * Remove the view.
+     * <p>
+     * DELETE to https://ml.nexosis.com/api/views/{viewName}
+     * <p>
+     *
+     * @param viewName   Name of the view to remove.
+     * @param cascadeSessions  Determine whether all sessions created from the named view are also removed.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    void remove(String viewName, org.joda.time.DateTime startDate, org.joda.time.DateTime endDate, EnumSet<DataSetDeleteOptions> options,  Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    public void remove(String viewName, boolean cascadeSessions, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 }
