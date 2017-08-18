@@ -59,6 +59,7 @@ public class RemoveTests {
         PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
         PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
         PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
     }
 
     @Test

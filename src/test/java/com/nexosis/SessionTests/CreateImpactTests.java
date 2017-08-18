@@ -97,7 +97,7 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSourceName=data-set-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class CreateImpactTests {
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
-        data.setDataSetName("data-set-name");
+        data.setDataSourceName("data-set-name");
         data.setColumns(cols);
 
         PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
@@ -125,7 +125,7 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSetName=data-set-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions/impact?dataSourceName=data-set-name&startDate=2017-12-12T10%3A11%3A12.000Z&endDate=2017-12-22T22%3A23%3A24.000Z&isEstimate=false&eventName=event-name&resultInterval=day&callbackUrl=http%3A%2F%2Fthis.is.a.callback.url"), post.getURI());
         Assert.assertEquals(mapper.writeValueAsString(data), EntityUtils.toString(post.getEntity()));
     }
 
@@ -145,10 +145,10 @@ public class CreateImpactTests {
     }
 
     @Test
-    public void ReqiresNotNullOrEmptyDataSetName() throws NexosisClientException
+    public void ReqiresNotNullOrEmptyDataSourceName() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value dataSetName cannot be null or empty.");
+        thrown.expectMessage("Value dataSourceName cannot be null or empty.");
 
         target.getSessions().analyzeImpact(
                 (String) null,

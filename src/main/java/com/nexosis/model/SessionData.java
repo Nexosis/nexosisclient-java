@@ -54,7 +54,7 @@ public class SessionData implements Serializable
      * @deprecated prefer {@link getDataSourceName()}
      */
     public String getDataSetName() {
-        return dataSetName;
+        return getDataSourceName();
     }
 
     @JsonProperty("dataSetName")
@@ -63,7 +63,7 @@ public class SessionData implements Serializable
      * @deprecated prefer {@link getDataSourceName()}
      */
     public void setDataSetName(String dataSetName) {
-        this.dataSetName = dataSetName;
+        setDataSourceName(dataSetName);
     }
 
     @JsonProperty("dataSourceName")

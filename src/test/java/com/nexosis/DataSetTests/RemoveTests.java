@@ -84,7 +84,7 @@ public class RemoveTests {
         PowerMockito.whenNew(HttpDelete.class).withNoArguments().thenReturn(delete);
         target.getDataSets().remove("sierra", DataSetDeleteOptions.CASCASE_BOTH);
 
-        Assert.assertEquals(new URI(fakeEndpoint + "/data/sierra?cascade=forecast&cascade=sessions"), delete.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/data/sierra?cascade=forecast&cascade=session"), delete.getURI());
     }
 
     @Test public void doesNotSetCascadeWhenNoneOptionGiven() throws Exception

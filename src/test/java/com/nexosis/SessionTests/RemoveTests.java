@@ -87,7 +87,7 @@ public class RemoveTests {
 
         target.getSessions().remove("data-set-name", "event-name", SessionType.FORECAST);
 
-        Assert.assertEquals(new URI(fakeEndpoint+ "/sessions?dataSetName=data-set-name&eventName=event-name&type=forecast"), delete.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint+ "/sessions?dataSourceName=data-set-name&eventName=event-name&type=forecast"), delete.getURI());
     }
 
         @Test

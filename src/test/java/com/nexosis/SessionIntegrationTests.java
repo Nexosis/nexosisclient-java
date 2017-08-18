@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class SessionIntegrationTests {
-    private static String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
+    private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
     private static String savedSessionData;
     private static UUID savedSessionId;
@@ -105,14 +105,14 @@ public class SessionIntegrationTests {
 
     @Test
     public void StartImpactWithDataStartsNewSession() throws NexosisClientException {
-        String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
+        String dataSourceName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
         DataSetData dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
                 DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances"
         );
 
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(dataSourceName, dataSet);
 
         // setup some column metadata
         Columns cols = new Columns();
@@ -120,7 +120,7 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData session = new SessionData();
-        session.setDataSetName(dataSetName);
+        session.setDataSourceName(dataSourceName);
         session.setColumns(cols);
 
         SessionResponse actual = nexosisClient.getSessions().analyzeImpact(

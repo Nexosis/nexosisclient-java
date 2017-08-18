@@ -81,7 +81,7 @@ public class ListTests {
         );
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?dataSetName=alpha&eventName=zulu&requestedAfterDate=2017-01-01T00%3A00%3A00.000Z&requestedBeforeDate=2017-01-11T00%3A00%3A00.000Z"), get.getURI());
+        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?dataSourceName=alpha&eventName=zulu&requestedAfterDate=2017-01-01T00%3A00%3A00.000Z&requestedBeforeDate=2017-01-11T00%3A00%3A00.000Z"), get.getURI());
     }
 
     @Test

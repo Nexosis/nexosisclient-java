@@ -61,7 +61,7 @@ public class DataSetIntegrationTests {
         Assert.assertEquals("whiskey",result.getDataSetName());
         Assert.assertEquals(1, result.getLinks().size());
         Assert.assertEquals("sessions", result.getLinks().get(0).getRel());
-        Assert.assertEquals(baseURI + "/sessions?dataSetName=whiskey", result.getLinks().get(0).getHref());
+        Assert.assertEquals(baseURI + "/sessions?dataSourceName=whiskey", result.getLinks().get(0).getHref());
     }
 
     @Test
