@@ -29,7 +29,7 @@ public class SessionIntegrationTests {
         for (SessionResponse session : responses.getItems()) {
             if (session.getStatus().equals(SessionStatus.COMPLETED)) {
                 savedSessionId = session.getSessionId();
-                savedSessionData = session.getDataSetName();
+                savedSessionData = session.getDataSourceName();
             }
         }
 
@@ -60,7 +60,7 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData session = new SessionData();
-        session.setDataSetName(dataSetName);
+        session.setDataSourceName(dataSetName);
         session.setColumns(cols);
 
         // 2016-08-01 to 2017-03-26
