@@ -224,7 +224,9 @@ public class DataSetClient implements IDataSetClient {
         if (options.contains(DataSetDeleteOptions.CASCADE_FORECAST))
             parameters.add(new BasicNameValuePair("cascade", "forecast"));
         if (options.contains(DataSetDeleteOptions.CASCADE_SESSION))
-            parameters.add(new BasicNameValuePair("cascade", "sessions"));
+            parameters.add(new BasicNameValuePair("cascade", "session"));
+        if (options.contains(DataSetDeleteOptions.CASCADE_VIEW))
+            parameters.add(new BasicNameValuePair("cascade", "view"));
 
         apiConnection.delete("data/" + dataSetName, parameters, null);
     }

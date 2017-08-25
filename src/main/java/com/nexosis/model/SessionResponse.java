@@ -50,6 +50,8 @@ public class SessionResponse extends ReturnsCost implements Serializable
     private Columns columns;
     @JsonProperty("dataSetName")
     private String dataSetName;
+    @JsonProperty("dataSourceName")
+    private String dataSourceName;
     @JsonProperty("targetColumn")
     private String targetColumn;
     @JsonProperty("requestedDate")
@@ -130,6 +132,10 @@ public class SessionResponse extends ReturnsCost implements Serializable
 
 
     @JsonProperty("dataSetName")
+    @Deprecated
+    /**
+     * @deprecated prefer {@link getDataSourceName()}
+     */
     public String getDataSetName() {
         return dataSetName;
     }
@@ -137,6 +143,15 @@ public class SessionResponse extends ReturnsCost implements Serializable
     @JsonProperty("dataSetName")
     public void setDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
+    }
+
+    @JsonProperty("dataSourceName")
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+    @JsonProperty("dataSourceName")
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     @JsonProperty("targetColumn")
@@ -221,7 +236,7 @@ public class SessionResponse extends ReturnsCost implements Serializable
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(sessionId).append(type).append(status).append(statusHistory).append(extraParameters).append(columns).append(dataSetName).append(targetColumn).append(requestedDate).append(startDate).append(endDate).append(callbackUrl).append(resultInterval).append(links).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(sessionId).append(type).append(status).append(statusHistory).append(extraParameters).append(columns).append(dataSourceName).append(targetColumn).append(requestedDate).append(startDate).append(endDate).append(callbackUrl).append(resultInterval).append(links).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -233,6 +248,6 @@ public class SessionResponse extends ReturnsCost implements Serializable
             return false;
         }
         SessionResponse rhs = ((SessionResponse) other);
-        return new EqualsBuilder().append(sessionId, rhs.sessionId).append(type, rhs.type).append(status, rhs.status).append(statusHistory, rhs.statusHistory).append(extraParameters, rhs.extraParameters).append(columns, rhs.columns).append(dataSetName, rhs.dataSetName).append(targetColumn, rhs.targetColumn).append(requestedDate, rhs.requestedDate).append(startDate, rhs.startDate).append(endDate, rhs.endDate).append(callbackUrl, rhs.callbackUrl).append(resultInterval, rhs.resultInterval).append(links, rhs.links).append(additionalProperties, rhs.additionalProperties).isEquals();
+        return new EqualsBuilder().append(sessionId, rhs.sessionId).append(type, rhs.type).append(status, rhs.status).append(statusHistory, rhs.statusHistory).append(extraParameters, rhs.extraParameters).append(columns, rhs.columns).append(dataSourceName, rhs.dataSourceName).append(targetColumn, rhs.targetColumn).append(requestedDate, rhs.requestedDate).append(startDate, rhs.startDate).append(endDate, rhs.endDate).append(callbackUrl, rhs.callbackUrl).append(resultInterval, rhs.resultInterval).append(links, rhs.links).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 }

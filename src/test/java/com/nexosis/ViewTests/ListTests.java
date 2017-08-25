@@ -1,4 +1,4 @@
-package com.nexosis.SessionTests;
+package com.nexosis.ViewTests;
 
 import com.nexosis.impl.ApiConnection;
 import com.nexosis.impl.HttpClientFactory;
@@ -6,6 +6,7 @@ import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.SessionResponse;
 import com.nexosis.model.SessionResponses;
+import com.nexosis.model.ViewDefinitionList;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,7 +54,6 @@ public class ListTests {
     private String fakeApiKey = "abcdefg";
     private URI apiFakeEndpointUri;
 
-
     @Before
     public void setUp() throws Exception {
         target = new NexosisClient(fakeApiKey, fakeEndpoint, httpClientFactory);
@@ -67,32 +67,24 @@ public class ListTests {
     }
 
     @Test
-    public void formatsPropertiesForListSessions() throws Exception
+    public void formatsPropertiesForListViews() throws Exception
     {
         HttpGet get = new HttpGet();
         PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
         PowerMockito.whenNew(HttpGet.class).withNoArguments().thenReturn(get);
 
-        SessionResponses result = target.getSessions().list(
+        ViewDefinitionList result = target.getViews().list(
                 "alpha",
                 "zulu",
-                DateTime.parse("2017-01-01T00:00:00Z"),
-                DateTime.parse("2017-01-11T00:00:00Z")
+                0,
+                50,
+                null
         );
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions?dataSourceName=alpha&eventName=zulu&requestedAfterDate=2017-01-01T00%3A00%3A00.000Z&requestedBeforeDate=2017-01-11T00%3A00%3A00.000Z"), get.getURI());
-    }
-
-    @Test
-    public void excludesPropertiesWhenNoneGiven() throws Exception {
-        HttpGet get = new HttpGet();
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        PowerMockito.whenNew(HttpGet.class).withNoArguments().thenReturn(get);
-
-        SessionResponses result = target.getSessions().list();
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(new URI(fakeEndpoint + "/sessions"), get.getURI());
+        Assert.assertEquals(new URI("https://nada.nexosis.com/not-here/views?page=0&pageSize=50&partialName=alpha&dataSetName=zulu"), get.getURI());
     }
+
 }
+

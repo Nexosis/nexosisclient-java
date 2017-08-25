@@ -47,7 +47,7 @@ public class SessionClient implements ISessionClient {
     @Override
     public SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
-        Argument.IsNotNullOrEmpty(data.getDataSetName(), "dataSetName");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSourceName");
 
         return createSessionInternal("sessions/forecast", data, null /* eventName */, startDate, endDate, resultInterval, statusCallbackUrl, httpMessageTransformer, false);
     }
@@ -56,31 +56,31 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
-        return createForecast(dataSetName, targetColumn, startDate, endDate, resultInterval, null);
+    public SessionResponse createForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
+        return createForecast(dataSourceName, targetColumn, startDate, endDate, resultInterval, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException {
-        return createForecast(dataSetName, targetColumn, startDate, endDate, resultInterval, statusCallbackUrl, null);
+    public SessionResponse createForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException {
+        return createForecast(dataSourceName, targetColumn, startDate, endDate, resultInterval, statusCallbackUrl, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse createForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
+    public SessionResponse createForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(dataSourceName, "dataSourceName");
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
 
         Columns columns = new Columns();
         columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
-        data.setDataSetName(dataSetName);
+        data.setDataSourceName(dataSourceName);
         data.setColumns(columns);
 
         return createForecast(data, startDate, endDate, resultInterval, statusCallbackUrl, httpMessageTransformer);
@@ -108,7 +108,7 @@ public class SessionClient implements ISessionClient {
     @Override
     public SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
-        Argument.IsNotNullOrEmpty(data.getDataSetName(), "dataSetName");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSourceName");
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
         return createSessionInternal("sessions/impact", data, eventName, startDate, endDate, resultInterval, statusCallbackUrl, httpMessageTransformer, false);
@@ -118,24 +118,24 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
-        return analyzeImpact(dataSetName, eventName, targetColumn, startDate, endDate, resultInterval, null);
+    public SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
+        return analyzeImpact(dataSourceName, eventName, targetColumn, startDate, endDate, resultInterval, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException {
-        return analyzeImpact(dataSetName, eventName, targetColumn, startDate, endDate, resultInterval, statusCallbackUrl, null);
+    public SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException {
+        return analyzeImpact(dataSourceName, eventName, targetColumn, startDate, endDate, resultInterval, statusCallbackUrl, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse analyzeImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
+    public SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(dataSourceName, "dataSourceName");
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
@@ -143,7 +143,7 @@ public class SessionClient implements ISessionClient {
         columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
-        data.setDataSetName(dataSetName);
+        data.setDataSourceName(dataSourceName);
         data.setColumns(columns);
 
         return analyzeImpact(data, eventName, startDate, endDate, resultInterval, statusCallbackUrl, httpMessageTransformer);
@@ -163,7 +163,7 @@ public class SessionClient implements ISessionClient {
     @Override
     public SessionResponse estimateForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
-        Argument.IsNotNullOrEmpty(data.getDataSetName(), "dataSetName");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSourceName");
 
         return createSessionInternal("sessions/forecast", data, null /* eventName */, startDate, endDate, resultInterval,null, httpMessageTransformer, true);
     }
@@ -172,23 +172,23 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse estimateForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
-        return estimateForecast(dataSetName, targetColumn, startDate, endDate, resultInterval, null);
+    public SessionResponse estimateForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
+        return estimateForecast(dataSourceName, targetColumn, startDate, endDate, resultInterval, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse estimateForecast(String dataSetName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
+    public SessionResponse estimateForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(dataSourceName, "dataSourceName");
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
 
         Columns columns = new Columns();
         columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
-        data.setDataSetName(dataSetName);
+        data.setDataSourceName(dataSourceName);
         data.setColumns(columns);
 
         return estimateForecast(data, startDate, endDate, resultInterval, httpMessageTransformer);
@@ -208,7 +208,7 @@ public class SessionClient implements ISessionClient {
     @Override
     public SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
-        Argument.IsNotNullOrEmpty(data.getDataSetName(), "dataSetName");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSourceName");
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
         return createSessionInternal("sessions/impact", data, eventName, startDate, endDate, resultInterval,null, httpMessageTransformer, true);
@@ -218,16 +218,16 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse estimateImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
-        return estimateImpact(dataSetName, eventName, targetColumn, startDate, endDate, resultInterval, null);
+    public SessionResponse estimateImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
+        return estimateImpact(dataSourceName, eventName, targetColumn, startDate, endDate, resultInterval, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse estimateImpact(String dataSetName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
+    public SessionResponse estimateImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(dataSourceName, "dataSourceName");
         Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
@@ -235,7 +235,7 @@ public class SessionClient implements ISessionClient {
         columns.setColumnMetadata(targetColumn, DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
         SessionData data = new SessionData();
-        data.setDataSetName(dataSetName);
+        data.setDataSourceName(dataSourceName);
         data.setColumns(columns);
 
         return estimateImpact(data, eventName, startDate, endDate, resultInterval, httpMessageTransformer);
@@ -245,7 +245,7 @@ public class SessionClient implements ISessionClient {
                                                    DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
     {
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSetName", data.getDataSetName()));
+        parameters.add(new BasicNameValuePair("dataSourceName", data.getDataSourceName()));
         parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
@@ -276,9 +276,9 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSetName) throws NexosisClientException {
+    public SessionResponses list(String dataSourceName) throws NexosisClientException {
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+        parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
 
         return listSessionsInternal(parameters, null);
     }
@@ -287,9 +287,9 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSetName, String eventName) throws NexosisClientException {
+    public SessionResponses list(String dataSourceName, String eventName) throws NexosisClientException {
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+        parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
         parameters.add(new BasicNameValuePair("eventName", eventName));
 
         return listSessionsInternal(parameters, null);
@@ -299,17 +299,17 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSetName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException {
-        return list(dataSetName, eventName, requestedAfterDate, requestedBeforeDate, null);
+    public SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException {
+        return list(dataSourceName, eventName, requestedAfterDate, requestedBeforeDate, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSetName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+        parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
         parameters.add(new BasicNameValuePair("eventName", eventName));
         parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString() ));
         parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
@@ -334,8 +334,8 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName) throws NexosisClientException {
-        remove(dataSetName, (SessionType)null);
+    public void remove(String dataSourceName) throws NexosisClientException {
+        remove(dataSourceName, (SessionType)null);
     }
 
     /**
@@ -350,20 +350,20 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName, SessionType type) throws NexosisClientException {
-        remove(dataSetName, null, type);
+    public void remove(String dataSourceName, SessionType type) throws NexosisClientException {
+        remove(dataSourceName, null, type);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName, String eventName, SessionType type) throws NexosisClientException {
+    public void remove(String dataSourceName, String eventName, SessionType type) throws NexosisClientException {
 
         List<NameValuePair> parameters = new ArrayList<>();
-        if (!StringUtils.isEmpty(dataSetName))
+        if (!StringUtils.isEmpty(dataSourceName))
         {
-            parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+            parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
         }
         if (!StringUtils.isEmpty(eventName))
         {
@@ -381,22 +381,22 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException {
-        remove(dataSetName, eventName, type, requestedAfterDate, requestedBeforeDate, null);
+    public void remove(String dataSourceName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException {
+        remove(dataSourceName, eventName, type, requestedAfterDate, requestedBeforeDate, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public void remove(String dataSourceName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString()));
         parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
 
-        if (!StringUtils.isEmpty(dataSetName))
+        if (!StringUtils.isEmpty(dataSourceName))
         {
-            parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+            parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
         }
         if (!StringUtils.isEmpty(eventName))
         {

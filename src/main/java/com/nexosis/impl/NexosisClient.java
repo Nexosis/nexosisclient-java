@@ -17,6 +17,7 @@ public class NexosisClient implements INexosisClient {
     private ISessionClient sessions;
     private IDataSetClient dataSets;
     private IImportClient imports;
+    private IViewClient views;
     /**
      * The client id and version sent as the User-Agent header
      */
@@ -103,6 +104,7 @@ public class NexosisClient implements INexosisClient {
         sessions = new SessionClient(apiConnection);
         dataSets = new DataSetClient(apiConnection);
         imports = new ImportClient(apiConnection);
+        views = new ViewClient(apiConnection);
     }
 
     /**
@@ -149,5 +151,15 @@ public class NexosisClient implements INexosisClient {
     @Override
     public void setImports(IImportClient imports) {
         this.imports = imports;
+    }
+
+    @Override
+    public IViewClient getViews() {
+        return views;
+    }
+
+    @Override
+    public void setViews(IViewClient views) {
+        this.views = views;
     }
 }
