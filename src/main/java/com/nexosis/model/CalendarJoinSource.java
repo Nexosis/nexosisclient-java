@@ -61,7 +61,7 @@ public class CalendarJoinSource {
 
     /**
      * The url of an iCal calendar to download. Exclusive of name.
-     * @return
+     * @param url the full path to a publicly accessible iCal config
      */
     @JsonProperty("url")
     public void setUrl(URI url) {
