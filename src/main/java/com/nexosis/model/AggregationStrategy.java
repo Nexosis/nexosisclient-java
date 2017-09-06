@@ -10,7 +10,9 @@ public enum AggregationStrategy {
     SUM("sum"),
     MEAN("mean"),
     MEDIAN("median"),
-    MODE("mode");
+    MODE("mode"),
+    MAX("max"),
+    MIN("min");
     private final String value;
     private final static Map<String, AggregationStrategy> CONSTANTS = new HashMap<String, AggregationStrategy>();
 

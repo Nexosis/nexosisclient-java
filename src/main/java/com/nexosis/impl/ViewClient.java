@@ -1,5 +1,6 @@
 package com.nexosis.impl;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.IViewClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
@@ -9,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,39 @@ public class ViewClient implements IViewClient {
         definition.setColumns(columnDef);
         Join join = new Join();
         join.setDataSetName(rightDataSetName);
+        List<Join> joins = new ArrayList<Join>();
+        joins.add(join);
+        definition.setJoins(joins);
+        return create(definition, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ViewDefinition create(String viewName, String dataSetName, URI iCalUri, java.util.TimeZone timeZone, Columns columnDef) throws NexosisClientException{
+        CalendarJoinSource joinSource = new CalendarJoinSource(null,iCalUri, timeZone);
+        return createWithCalendar(viewName,dataSetName,joinSource,columnDef);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ViewDefinition create(String viewName, String dataSetName, CountryCode calendarCountry, java.util.TimeZone timeZone, Columns columnDef) throws NexosisClientException{
+        CalendarJoinSource joinSource = new CalendarJoinSource(calendarCountry,null, timeZone);
+        return createWithCalendar(viewName,dataSetName,joinSource,columnDef);
+    }
+
+    private ViewDefinition createWithCalendar(String viewName, String dataSetName, CalendarJoinSource calendarJoin, Columns columnDef) throws NexosisClientException{
+        Argument.IsNotNullOrEmpty(viewName,"viewName");
+        Argument.IsNotNullOrEmpty(dataSetName,"dataSetName");
+        ViewDefinition definition = new ViewDefinition();
+        definition.setViewName(viewName);
+        definition.setDataSetName(dataSetName);
+        definition.setColumns(columnDef);
+        Join join = new Join();
+        join.setCalendar(calendarJoin);
         List<Join> joins = new ArrayList<Join>();
         joins.add(join);
         definition.setJoins(joins);

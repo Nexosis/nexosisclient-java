@@ -1,5 +1,6 @@
 package com.nexosis;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
@@ -102,5 +103,14 @@ public class ViewIntegrationTests {
         DateTime sessionEnd = DateTime.parse("2017-02-05T00:00:00.000-00:00");
         SessionResponse session = nexosisClient.getSessions().createForecast(preExistingView,"foxtrot",sessionStart,sessionEnd,ResultInterval.DAY );
         Assert.assertNotNull(session);
+    }
+
+    @Test
+    public void canCreateWithCalendar() throws Exception{
+        String viewName = "TestJavaCalendarView";
+        ViewDefinition actual = nexosisClient.getViews().create(viewName, dataSetName, CountryCode.CA, null,null);
+        Assert.assertNotNull(actual);
+        Assert.assertEquals("Nexosis.Holidays-CA", actual.getJoins().get(0).getCalendar().getName());
+        nexosisClient.getViews().remove(viewName);
     }
 }
