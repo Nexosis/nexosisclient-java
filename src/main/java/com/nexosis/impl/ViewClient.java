@@ -227,11 +227,7 @@ public class ViewClient implements IViewClient {
                 parameters.put("endDate", query.getEndDate().toDateTimeISO().toString());
 
             // Append includeColums to parameters
-            if (query.getIncludeColumns() != null) {
-                for (String s : query.getIncludeColumns()) {
-                    parameters.put("include", s);
-                }
-            }
+            parameters.put("include", query.getIncludeColumns());
         }
         return parameters;
     }

@@ -104,7 +104,8 @@ public class CreateForecastTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(request.getUrl(), fakeEndpoint + "/sessions/forecast?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&isEstimate=false&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z");
+        Assert.assertEquals(request.getUrl(), fakeEndpoint + "/sessions/forecast?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&"+
+                "isEstimate=false&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z");
         Assert.assertEquals(mapper.writeValueAsString(data), mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
     }
 
