@@ -2,7 +2,7 @@ package com.nexosis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexosis.impl.ApiConnection;
-import com.nexosis.impl.HttpClientFactory;
+//import com.nexosis.impl.HttpClientFactory;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.AccountBalance;
@@ -15,8 +15,8 @@ import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.impl.client.CloseableHttpClient;
+//import org.apache.http.client.methods.CloseableHttpResponse;
+//import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,16 +41,16 @@ public class NexosisClientTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @Mock
-    private HttpClientFactory httpClientFactory;
-    @Mock
-    private CloseableHttpClient httpClient;
-    @Mock
-    private CloseableHttpResponse httpResponse;
+    //@Mock
+    //private HttpClientFactory httpClientFactory;
+    //@Mock
+    //private CloseableHttpClient httpClient;
+    //@Mock
+    //private CloseableHttpResponse httpResponse;
     @Mock
     private HttpEntity httpEntity;
     @Mock
-    private StatusLine statusLine;
+    //private StatusLine statusLine;
     private String fakeEndpoint = "https://nada.nexosis.com/not-here";
     private URI apiFakeEndpointUri;
 
@@ -100,14 +100,14 @@ public class NexosisClientTest {
     public void addsApiKeyHeaderToRequest() throws Exception {
         HttpGet get = new HttpGet(apiFakeEndpointUri);
 
-        PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
+        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
+        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
         PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
+        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
         PowerMockito.whenNew(HttpGet.class).withAnyArguments().thenReturn(get);
-        PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint, httpClientFactory);
+        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
+        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
         AccountBalance balance = target.getAccountBalance();
 
         Assert.assertTrue(get.getHeaders("api-key") != null);
@@ -119,14 +119,14 @@ public class NexosisClientTest {
     public void addsUserAgentToRequest() throws Exception {
         HttpGet get = new HttpGet(apiFakeEndpointUri);
 
-        PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
+       //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
+        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
         PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        PowerMockito.when(httpClient.execute(any(HttpRequestBase.class))).thenReturn(httpResponse);
+        //PowerMockito.when(httpClient.execute(any(HttpRequestBase.class))).thenReturn(httpResponse);
         PowerMockito.whenNew(HttpGet.class).withAnyArguments().thenReturn(get);
-        PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint, httpClientFactory);
+        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
+        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
         AccountBalance balance = target.getAccountBalance();
 
         Assert.assertTrue(get.getHeaders("User-Agent") != null);
@@ -141,14 +141,14 @@ public class NexosisClientTest {
                 new BasicHeader("nexosis-account-balance", "999.99 USD")
         };
 
-        PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
+        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
+        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
         PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        PowerMockito.when(httpResponse.getAllHeaders()).thenReturn(fakeHeaders);
-        PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint, httpClientFactory);
+        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
+        //PowerMockito.when(httpResponse.getAllHeaders()).thenReturn(fakeHeaders);
+        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
+        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
         AccountBalance result = target.getAccountBalance();
 
         // Test Cost
@@ -175,17 +175,17 @@ public class NexosisClientTest {
 
         ObjectMapper om = mock(ObjectMapper.class);
 
-        PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
+        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
+        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
+        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
         PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        PowerMockito.when(statusLine.getStatusCode()).thenReturn(500);
+        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(500);
         PowerMockito.whenNew(ObjectMapper.class).withNoArguments().thenReturn(om);
         PowerMockito.when(om.readValue("{}", ErrorResponse.class)).thenReturn(errorData);
 
         try {
-            NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint, httpClientFactory);
+            NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
             target.getAccountBalance();
         } catch (NexosisClientException exception) {
             Assert.assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, exception.getStatusCode());

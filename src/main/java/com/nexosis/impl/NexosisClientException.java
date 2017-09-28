@@ -26,10 +26,10 @@ public class NexosisClientException extends Exception {
         this.errorResponse = response;
     }
 
-    public NexosisClientException(String message, StatusLine status)
+    public NexosisClientException(String message, int statusCode)
     {
         super(message);
-        this.statusCode = status.getStatusCode();
+        this.statusCode = statusCode;
     }
 
     public int getStatusCode() {

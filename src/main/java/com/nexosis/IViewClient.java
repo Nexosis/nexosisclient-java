@@ -4,8 +4,8 @@ import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 
 import javax.swing.text.View;
 import java.io.InputStream;

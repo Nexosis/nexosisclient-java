@@ -1,11 +1,13 @@
 package com.nexosis.impl;
 
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.nexosis.*;
 import com.nexosis.model.AccountBalance;
 import com.nexosis.model.DataSetList;
 import com.nexosis.util.Action;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -66,7 +68,7 @@ public class NexosisClient implements INexosisClient {
      * @param key The api key from your account.
      */
     public NexosisClient(String key) {
-        this(key, BASE_URL, new HttpClientFactory());
+        this(key, BASE_URL, new NetHttpTransport());
     }
 
     /**
@@ -77,7 +79,7 @@ public class NexosisClient implements INexosisClient {
      * @param endpoint URL of Nexosis API
      */
     public NexosisClient(String key, String endpoint) {
-        this(key, endpoint, new HttpClientFactory());
+        this(key, endpoint, new NetHttpTransport());
     }
 
     /**
@@ -86,9 +88,9 @@ public class NexosisClient implements INexosisClient {
      *
      * @param key               The api key from your account.
      * @param endpoint          URL of Nexosis API
-     * @param httpClientFactory An IHttpClientFactory to provide mock class for unit tests
+     * @param httpTransport     The Hto provide mock class for unit tests
      */
-    public NexosisClient(String key, String endpoint, IHttpClientFactory httpClientFactory) throws IllegalArgumentException {
+    public NexosisClient(String key, String endpoint, HttpTransport httpTransport) throws IllegalArgumentException {
         this.key = key;
 
         if (endpoint == null || endpoint.isEmpty())
@@ -99,7 +101,7 @@ public class NexosisClient implements INexosisClient {
 
         configuredUrl = endpoint;
 
-        apiConnection = new ApiConnection(endpoint, key, httpClientFactory);
+        apiConnection = new ApiConnection(endpoint, key, httpTransport);
 
         sessions = new SessionClient(apiConnection);
         dataSets = new DataSetClient(apiConnection);

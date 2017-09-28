@@ -3,8 +3,8 @@ package com.nexosis;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.AccountBalance;
 import com.nexosis.util.Action;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 
 /**
  * The primary interface to the Nexosis API.

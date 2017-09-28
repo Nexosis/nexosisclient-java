@@ -1,9 +1,7 @@
 package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-
+import com.google.api.client.http.HttpHeaders;
 import java.math.BigDecimal;
 import java.util.Currency;
 
@@ -20,16 +18,14 @@ public abstract class ReturnsCost {
         return cost;
     }
 
-    public void AssignCost(Header[] headersArray)
+    public void AssignCost(HttpHeaders headers)
     {
-        if (headersArray != null) {
-            for (Header h : headersArray) {
-                if (h.getName().equalsIgnoreCase("nexosis-request-cost")) {
-                    cost = ParseValue(h.getValue());
-                }
-                if (h.getName().equalsIgnoreCase("nexosis-account-balance")) {
-                    balance = ParseValue(h.getValue());
-                }
+        if (headers != null) {
+            if (headers.containsKey("nexosis-request-cost")) {
+                cost = ParseValue((String)headers.get("nexosis-request-cost"));
+            }
+            if (headers.containsKey("nexosis-account-balance")) {
+                balance = ParseValue((String)headers.get("nexosis-account-balance"));
             }
         }
     }

@@ -1,19 +1,21 @@
 package com.nexosis.impl;
 
+import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.json.JsonHttpContent;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.nexosis.ISessionClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.*;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  *
@@ -244,21 +246,21 @@ public class SessionClient implements ISessionClient {
     private SessionResponse createSessionInternal(String path, SessionData data, String eventName, DateTime startDate,
                                                    DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
     {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSourceName", data.getDataSourceName()));
-        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
-        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
-        parameters.add(new BasicNameValuePair("isEstimate", Boolean.toString(isEstimate)));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("dataSourceName", data.getDataSourceName());
+        parameters.put("startDate", startDate.toDateTimeISO().toString());
+        parameters.put("endDate", endDate.toDateTimeISO().toString());
+        parameters.put("isEstimate", Boolean.toString(isEstimate));
 
         if (!StringUtils.isEmpty(eventName))
         {
-            parameters.add(new BasicNameValuePair("eventName", eventName));
+            parameters.put("eventName", eventName);
         }
 
-        parameters.add(new BasicNameValuePair("resultInterval", resultInterval.value()));
+        parameters.put("resultInterval", resultInterval.value());
         if (!StringUtils.isEmpty((statusCallbackUrl)))
         {
-            parameters.add(new BasicNameValuePair("callbackUrl", statusCallbackUrl));
+            parameters.put("callbackUrl", statusCallbackUrl);
         }
 
         return apiConnection.post(SessionResponse.class, path, parameters, data, httpMessageTransformer);
@@ -269,7 +271,7 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponses list() throws NexosisClientException {
-        return listSessionsInternal(new ArrayList<NameValuePair>(), null);
+        return listSessionsInternal(new HashMap<String,Object>(), null);
     }
 
     /**
@@ -277,8 +279,8 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponses list(String dataSourceName) throws NexosisClientException {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("dataSourceName", dataSourceName);
 
         return listSessionsInternal(parameters, null);
     }
@@ -288,9 +290,9 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponses list(String dataSourceName, String eventName) throws NexosisClientException {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
-        parameters.add(new BasicNameValuePair("eventName", eventName));
+        Map<String,Object> parameters = new HashMap<>();
+        parameters.put("dataSourceName", dataSourceName);
+        parameters.put("eventName", eventName);
 
         return listSessionsInternal(parameters, null);
     }
@@ -308,16 +310,16 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
-        parameters.add(new BasicNameValuePair("eventName", eventName));
-        parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString() ));
-        parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
+        Map<String,Object> parameters = new HashMap<>();
+        parameters.put("dataSourceName", dataSourceName);
+        parameters.put("eventName", eventName);
+        parameters.put("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString());
+        parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
 
         return listSessionsInternal(parameters, httpMessageTransformer);
     }
 
-    private SessionResponses listSessionsInternal(List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
+    private SessionResponses listSessionsInternal(Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
         return apiConnection.get(SessionResponses.class, "sessions", parameters, httpMessageTransformer);
     }
@@ -360,18 +362,18 @@ public class SessionClient implements ISessionClient {
     @Override
     public void remove(String dataSourceName, String eventName, SessionType type) throws NexosisClientException {
 
-        List<NameValuePair> parameters = new ArrayList<>();
+        Map<String, Object> parameters = new HashMap<>();
         if (!StringUtils.isEmpty(dataSourceName))
         {
-            parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
+            parameters.put("dataSourceName", dataSourceName);
         }
         if (!StringUtils.isEmpty(eventName))
         {
-            parameters.add(new BasicNameValuePair("eventName", eventName));
+            parameters.put("eventName", eventName);
         }
         if (type != null)
         {
-            parameters.add(new BasicNameValuePair("type", type.value()));
+            parameters.put("type", type.value());
         }
 
         removeSessionsInternal(parameters, null);
@@ -390,27 +392,27 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public void remove(String dataSourceName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString()));
-        parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString());
+        parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
 
         if (!StringUtils.isEmpty(dataSourceName))
         {
-            parameters.add(new BasicNameValuePair("dataSourceName", dataSourceName));
+            parameters.put("dataSourceName", dataSourceName);
         }
         if (!StringUtils.isEmpty(eventName))
         {
-            parameters.add(new BasicNameValuePair("eventName", eventName));
+            parameters.put("eventName", eventName);
         }
         if (type != null)
         {
-            parameters.add(new BasicNameValuePair("type", type.value()));
+            parameters.put("type", type.value());
         }
 
         removeSessionsInternal(parameters, httpMessageTransformer);
     }
 
-    private void removeSessionsInternal(List<NameValuePair> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
+    private void removeSessionsInternal(Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
         apiConnection.delete("sessions", parameters, httpMessageTransformer);
     }
@@ -528,25 +530,24 @@ public class SessionClient implements ISessionClient {
         public void invoke(HttpRequest request, HttpResponse response) throws Exception {
             if (
                     (response != null) &&
-                            (ApiConnection.isSuccessStatusCode(response.getStatusLine().getStatusCode())) &&
-                            (response.getHeaders("Nexosis-Session-Status") != null)
+                            (response.isSuccessStatusCode()) &&
+                            (response.getHeaders().containsKey("Nexosis-Session-Status"))
                     ) {
 
                 SessionResultStatus sessionStatus = new SessionResultStatus();
                 sessionStatus.setSessionId(sessionId);
-                sessionStatus.setStatus(SessionStatus.fromValue(response.getHeaders("Nexosis-Session-Status")[0].getValue()));
-
-                HttpEntity entity = new StringEntity(apiConnection.getObjectMapper().writeValueAsString(sessionStatus));
-                response.setEntity(entity);
+                sessionStatus.setStatus(SessionStatus.fromValue((String)response.getHeaders().get("Nexosis-Session-Status")));
+                // TODO: modify response with Session Status
+                //HttpEntity entity = new StringEntity(apiConnection.getObjectMapper().writeValueAsString(sessionStatus));
+                //response.setEntity(entity);
+                //HttpContent contentSend = new JsonHttpContent(new JacksonFactory(), sessionStatus);
+                //response.
             }
 
             if (httpMessageTransformer != null) {
                 httpMessageTransformer.invoke(request, response);
             }
         }
-
-
     }
-
 
 }

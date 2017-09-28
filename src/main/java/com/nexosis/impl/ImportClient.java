@@ -3,16 +3,13 @@ package com.nexosis.impl;
 import com.nexosis.IImportClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ImportClient implements IImportClient {
     private ApiConnection apiConnection;
@@ -51,18 +48,18 @@ public class ImportClient implements IImportClient {
     @Override
     public ImportDetails list(String dataSetName, DateTime requestedAfterDate, DateTime requestedBeforeDate, int page, int pageSize, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         String path = "/imports";
-        List<NameValuePair> parameters = new ArrayList<>();
+        Map<String, Object> parameters = new HashMap<>();
         if (dataSetName != null && !dataSetName.isEmpty()) {
-            parameters.add(new BasicNameValuePair("dataSetName", dataSetName));
+            parameters.put("dataSetName", dataSetName);
         }
         if (requestedAfterDate != null) {
-            parameters.add(new BasicNameValuePair("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString()));
+            parameters.put("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString());
         }
         if (requestedBeforeDate != null) {
-            parameters.add(new BasicNameValuePair("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString()));
+            parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
         }
-        parameters.add(new BasicNameValuePair("page", Integer.toString(page)));
-        parameters.add(new BasicNameValuePair("pageSize", Integer.toString(pageSize)));
+        parameters.put("page", Integer.toString(page));
+        parameters.put("pageSize", Integer.toString(pageSize));
         return apiConnection.get(ImportDetails.class, path, parameters, httpMessageTransformer);
     }
 

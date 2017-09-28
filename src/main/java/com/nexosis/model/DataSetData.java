@@ -30,12 +30,16 @@ public class DataSetData implements Serializable
 
     @JsonProperty("columns")
     private Columns columns;
+
     @JsonProperty("data")
     private List<Map<String, String>> data = null;
+
     @JsonProperty("dataSetName")
     private String dataSetName;
+
     @JsonProperty("links")
     private List<Link> links = null;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = 7159522227188063616L;
@@ -45,37 +49,37 @@ public class DataSetData implements Serializable
         return columns;
     }
 
-    @JsonProperty("columns")
+    //@JsonProperty("columns")
     public void setColumns(Columns columns) {
         this.columns = columns;
     }
 
-    @JsonProperty("data")
+    //@JsonProperty("data")
     public List<Map<String, String>> getData() {
         return data;
     }
 
-    @JsonProperty("data")
+    //@JsonProperty("data")
     public void setData(List<Map<String, String>> data) {
         this.data = data;
     }
 
-    @JsonProperty("dataSetName")
+    //@JsonProperty("dataSetName")
     public String getDataSetName() {
         return dataSetName;
     }
 
-    @JsonProperty("dataSetName")
+    //@JsonProperty("dataSetName")
     public void setDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
     }
 
-    @JsonProperty("links")
+    //@JsonProperty("links")
     public List<Link> getLinks() {
         return links;
     }
 
-    @JsonProperty("links")
+    //@JsonProperty("links")
     public void setLinks(List<Link> links) {
         this.links = links;
     }

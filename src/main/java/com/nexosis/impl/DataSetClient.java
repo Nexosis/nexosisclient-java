@@ -4,17 +4,17 @@ import com.nexosis.IDataSetClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
-
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class DataSetClient implements IDataSetClient {
     private ApiConnection apiConnection;
@@ -83,10 +83,10 @@ public class DataSetClient implements IDataSetClient {
      */
     @Override
     public DataSetList list(String nameFilter, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        List<NameValuePair> queryParams = new ArrayList<>();
+        Map<String,Object> queryParams = new HashMap<>();
 
         if (!StringUtils.isEmpty(nameFilter)) {
-            queryParams.add(new BasicNameValuePair("partialName", nameFilter));
+            queryParams.put("partialName", nameFilter);
         }
 
         return apiConnection.get(DataSetList.class, "data", queryParams, httpMessageTransformer);
@@ -108,14 +108,10 @@ public class DataSetClient implements IDataSetClient {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNull(includeColumns, "includeColumns");
 
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("page", Integer.toString(pageNumber)));
-        parameters.add(new BasicNameValuePair("pageSize", Integer.toString(pageSize)));
-
-        // Append includeColums to parameters
-        for(String s: includeColumns) {
-            parameters.add(new BasicNameValuePair("include",s));
-        }
+        Map<String,Object> parameters = new HashMap<String,Object>();
+        parameters.put("page", Integer.toString(pageNumber));
+        parameters.put("pageSize", Integer.toString(pageSize));
+        parameters.put("include",includeColumns);
 
         return apiConnection.get(DataSetData.class,"data/" + dataSetName, parameters, null);
     }
@@ -133,26 +129,22 @@ public class DataSetClient implements IDataSetClient {
      */
     @Override
     public DataSetData get(String dataSetName, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        List<NameValuePair> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
+        Map<String, Object> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
         return apiConnection.get(DataSetData.class, "data/" + dataSetName, parameters, httpMessageTransformer);
     }
 
-    private static List<NameValuePair> ProcessDataSetGetParameters(String dataSetName, int pageNumber, int pageSize,
+    private static Map<String,Object> ProcessDataSetGetParameters(String dataSetName, int pageNumber, int pageSize,
                                                                                          DateTime startDate, DateTime endDate, Iterable<String> includeColumns)
     {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNull(includeColumns, "includeColumns");
 
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("page", Integer.toString(pageNumber)));
-        parameters.add(new BasicNameValuePair("pageSize", Integer.toString(pageSize)));
-        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
-        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
-
-        // Append includeColums to parameters
-        for(String s: includeColumns) {
-            parameters.add(new BasicNameValuePair("include",s));
-        }
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("page", Integer.toString(pageNumber));
+        parameters.put("pageSize", Integer.toString(pageSize));
+        parameters.put("startDate", startDate.toDateTimeISO().toString());
+        parameters.put("endDate", endDate.toDateTimeISO().toString());
+        parameters.put("include", includeColumns);
         return parameters;
     }
 
@@ -178,14 +170,10 @@ public class DataSetClient implements IDataSetClient {
         Argument.IsNotNull(includeColumns, "includeColumns");
         Argument.IsNotNull(output, "output");
 
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("page", Integer.toString(pageNumber)));
-        parameters.add(new BasicNameValuePair("pageSize", Integer.toString(pageSize)));
-
-        // Append includeColums to parameters
-        for(String s: includeColumns) {
-            parameters.add(new BasicNameValuePair("include",s));
-        }
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("page", Integer.toString(pageNumber));
+        parameters.put("pageSize", Integer.toString(pageSize));
+        parameters.put("include",includeColumns);
 
         apiConnection.get("data/" + dataSetName, parameters, null, output, "text/csv");
     }
@@ -208,7 +196,7 @@ public class DataSetClient implements IDataSetClient {
                           DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
         Argument.IsNotNull(output, "output");
-        List<NameValuePair> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
+        Map<String, Object> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
 
         apiConnection.get("data/" + dataSetName, parameters, httpMessageTransformer, output, "text/csv");
     }
@@ -220,13 +208,19 @@ public class DataSetClient implements IDataSetClient {
     public void remove(String dataSetName, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
 
-        List<NameValuePair> parameters = new ArrayList<>();
+        Map<String, Object> parameters = new HashMap<>();
+        ArrayList<String> set = new ArrayList<>();
+
         if (options.contains(DataSetDeleteOptions.CASCADE_FORECAST))
-            parameters.add(new BasicNameValuePair("cascade", "forecast"));
+            set.add("forecast");
         if (options.contains(DataSetDeleteOptions.CASCADE_SESSION))
-            parameters.add(new BasicNameValuePair("cascade", "session"));
+            set.add( "session");
         if (options.contains(DataSetDeleteOptions.CASCADE_VIEW))
-            parameters.add(new BasicNameValuePair("cascade", "view"));
+            set.add("view");
+
+        if (set.size() > 0) {
+            parameters.put("cascade", set);
+        }
 
         apiConnection.delete("data/" + dataSetName, parameters, null);
     }
@@ -247,15 +241,19 @@ public class DataSetClient implements IDataSetClient {
     public void remove(String dataSetName, DateTime startDate, DateTime endDate, EnumSet<DataSetDeleteOptions> options, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
 
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("startDate", startDate.toDateTimeISO().toString()));
-        parameters.add(new BasicNameValuePair("endDate", endDate.toDateTimeISO().toString()));
+        Map<String,Object> parameters = new HashMap<>();
+        parameters.put("startDate", startDate.toDateTimeISO().toString());
+        parameters.put("endDate", endDate.toDateTimeISO().toString());
 
+        ArrayList<String> set = new ArrayList<>();
         if (options.contains(DataSetDeleteOptions.CASCADE_FORECAST))
-            parameters.add(new BasicNameValuePair("cascade", "forecast"));
+            set.add("forecast");
         if (options.contains(DataSetDeleteOptions.CASCADE_SESSION))
-            parameters.add(new BasicNameValuePair("cascade", "sessions"));
+            set.add( "sessions");
 
+        if (set.size() > 0) {
+            parameters.put("cascade",set);
+        }
         apiConnection.delete("data/" + dataSetName, parameters, httpMessageTransformer);
     }
 }

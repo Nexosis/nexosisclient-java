@@ -1,20 +1,17 @@
 package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.http.Header;
+import com.google.api.client.http.HttpHeaders;
 
 public class ReturnsStatus {
     @JsonIgnore
     private SessionStatus sessionStatus;
 
-    public void AssignStatus(Header[] headersArray)
+    public void AssignStatus(HttpHeaders headersArray)
     {
         if (headersArray != null) {
-            for (Header h : headersArray) {
-                if (h.getName().equalsIgnoreCase("Nexosis-Session-Status")) {
-                    this.sessionStatus  = SessionStatus.fromValue(h.getValue().toLowerCase());
-                    break;
-                }
+            if (headersArray.containsKey("Nexosis-Session-Status")) {
+                this.sessionStatus = SessionStatus.fromValue(((String)headersArray.get("Nexosis-Session-Status")).toLowerCase());
             }
         }
     }

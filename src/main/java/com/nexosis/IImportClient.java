@@ -11,8 +11,8 @@ import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.ImportDetail;
 import com.nexosis.model.Columns;
 import com.nexosis.util.Action;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 
 public interface IImportClient {
     /**

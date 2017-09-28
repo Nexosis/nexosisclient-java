@@ -1,17 +1,17 @@
 package com.nexosis.SessionTests;
 
 import com.nexosis.impl.ApiConnection;
-import com.nexosis.impl.HttpClientFactory;
+//import com.nexosis.impl.HttpClientFactory;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.SessionType;
 import com.nexosis.util.HttpMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
+//import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
+//import org.apache.http.impl.client.CloseableHttpClient;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Assert;
@@ -39,12 +39,12 @@ public class RemoveTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @Mock
-    private HttpClientFactory httpClientFactory;
-    @Mock
-    private CloseableHttpClient httpClient;
-    @Mock
-    private CloseableHttpResponse httpResponse;
+    //@Mock
+    // private HttpClientFactory httpClientFactory;
+    //@Mock
+    //private CloseableHttpClient httpClient;
+    //@Mock
+    //private CloseableHttpResponse httpResponse;
     @Mock
     private HttpEntity httpEntity;
     @Mock
@@ -57,14 +57,14 @@ public class RemoveTests {
 
     @Before
     public void setUp() throws Exception {
-        target = new NexosisClient(fakeApiKey, fakeEndpoint, httpClientFactory);
+        target = new NexosisClient(fakeApiKey, fakeEndpoint);
         apiFakeEndpointUri = new URI(fakeEndpoint);
 
-        PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
+        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
+        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
         PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
+        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
         PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
     }
 

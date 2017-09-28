@@ -5,14 +5,14 @@ import com.nexosis.IViewClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ViewClient implements IViewClient {
     private ApiConnection apiConnection;
@@ -147,17 +147,17 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewDefinitionList list(String nameFilter, String dataSetNameFilter, int page, int pageSize, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        List<NameValuePair> queryParams = new ArrayList<>();
+        Map<String, Object> queryParams = new HashMap<>();
 
-        queryParams.add(new BasicNameValuePair("page", String.valueOf(page)));
-        queryParams.add(new BasicNameValuePair("pageSize", String.valueOf(pageSize)));
+        queryParams.put("page", String.valueOf(page));
+        queryParams.put("pageSize", String.valueOf(pageSize));
 
         if (!StringUtils.isEmpty(nameFilter)) {
-            queryParams.add(new BasicNameValuePair("partialName", nameFilter));
+            queryParams.put("partialName", nameFilter);
         }
 
         if (!StringUtils.isEmpty(dataSetNameFilter)) {
-            queryParams.add(new BasicNameValuePair("dataSetName", dataSetNameFilter));
+            queryParams.put("dataSetName", dataSetNameFilter);
         }
 
         return apiConnection.get(ViewDefinitionList.class, "views", queryParams, httpMessageTransformer);
@@ -211,25 +211,25 @@ public class ViewClient implements IViewClient {
     @Override
     public ViewData get(String viewName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
-        List<NameValuePair> parameters = ProcessDataSetGetParameters(query);
+        Map<String,Object> parameters = ProcessDataSetGetParameters(query);
         return apiConnection.get(ViewData.class, "views/" + viewName, parameters, httpMessageTransformer);
     }
 
-    private List<NameValuePair> ProcessDataSetGetParameters(ListQuery query) {
-        List<NameValuePair> parameters = new ArrayList<>();
+    private Map<String,Object> ProcessDataSetGetParameters(ListQuery query) {
+        Map<String,Object> parameters = new HashMap<>();
 
         if(query != null) {
-            parameters.add(new BasicNameValuePair("page", Integer.toString(query.getPageNumber())));
-            parameters.add(new BasicNameValuePair("pageSize", Integer.toString(query.getPageSize())));
+            parameters.put("page", Integer.toString(query.getPageNumber()));
+            parameters.put("pageSize", Integer.toString(query.getPageSize()));
             if (query.getStartDate() != null)
-                parameters.add(new BasicNameValuePair("startDate", query.getStartDate().toDateTimeISO().toString()));
+                parameters.put("startDate", query.getStartDate().toDateTimeISO().toString());
             if (query.getEndDate() != null)
-                parameters.add(new BasicNameValuePair("endDate", query.getEndDate().toDateTimeISO().toString()));
+                parameters.put("endDate", query.getEndDate().toDateTimeISO().toString());
 
             // Append includeColums to parameters
             if (query.getIncludeColumns() != null) {
                 for (String s : query.getIncludeColumns()) {
-                    parameters.add(new BasicNameValuePair("include", s));
+                    parameters.put("include", s);
                 }
             }
         }
@@ -268,7 +268,7 @@ public class ViewClient implements IViewClient {
     @Override
     public void get(String viewName, OutputStream output, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
-        List<NameValuePair> parameters = ProcessDataSetGetParameters(query);
+        Map<String,Object> parameters = ProcessDataSetGetParameters(query);
         apiConnection.get(ViewData.class,"views" + viewName, parameters,httpMessageTransformer, output);
     }
 
@@ -300,9 +300,9 @@ public class ViewClient implements IViewClient {
     @Override
     public void remove(String viewName, boolean cascadeSessions, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
-        List<NameValuePair> parameters = new ArrayList<>();
+        Map<String, Object> parameters = new HashMap<>();
         if(cascadeSessions)
-            parameters.add( new BasicNameValuePair("cascade", "session"));
+            parameters.put("cascade", "session");
         apiConnection.delete("views/" + viewName, parameters, httpMessageTransformer);
     }
 }
