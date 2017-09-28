@@ -1,9 +1,9 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpStatusCodes;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
-import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.*;
@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 public class SessionIntegrationTests {
-    private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
+    private static final String baseURI = System.getenv("NEXOSIS_API_TESTURI");
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
     private static String savedSessionData;
     private static UUID savedSessionId;
@@ -268,7 +268,7 @@ public class SessionIntegrationTests {
             nexosisClient.getSessions().get(actual.getSessionId());
         } catch (NexosisClientException nce) {
             // SHOULD FAIL
-            Assert.assertEquals(nce.getStatusCode(), HttpStatus.SC_NOT_FOUND);
+            Assert.assertEquals(nce.getStatusCode(), HttpStatusCodes.STATUS_CODE_NOT_FOUND);
             return;
         }
 
@@ -353,7 +353,7 @@ public class SessionIntegrationTests {
             exceptionTheSecond = nce;
         }
 
-        Assert.assertEquals(exceptionTheFirst.getStatusCode(), HttpStatus.SC_NOT_FOUND);
-        Assert.assertEquals(exceptionTheSecond.getStatusCode(), HttpStatus.SC_NOT_FOUND);
+        Assert.assertEquals(exceptionTheFirst.getStatusCode(), HttpStatusCodes.STATUS_CODE_NOT_FOUND);
+        Assert.assertEquals(exceptionTheSecond.getStatusCode(), HttpStatusCodes.STATUS_CODE_NOT_FOUND);
     }
 }

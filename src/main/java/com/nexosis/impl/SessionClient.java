@@ -1,16 +1,11 @@
 package com.nexosis.impl;
 
-import com.google.api.client.http.HttpContent;
-import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.nexosis.ISessionClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import org.apache.commons.lang3.StringUtils;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpRequest;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
 import java.io.OutputStream;

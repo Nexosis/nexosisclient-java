@@ -62,5 +62,4 @@ public class RemoveTests {
 
         Assert.assertEquals(fakeEndpoint + "/views/testView", request.getUrl());
     }
-
 }

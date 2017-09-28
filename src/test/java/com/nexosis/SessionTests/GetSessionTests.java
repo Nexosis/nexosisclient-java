@@ -7,18 +7,11 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.powermock.api.mockito.PowerMockito;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.UUID;
-
-import static org.mockito.Matchers.any;
-
 
 public class GetSessionTests {
     private String fakeEndpoint = "https://nada.nexosis.com/not-here";

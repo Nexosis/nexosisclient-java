@@ -1,7 +1,6 @@
 package com.nexosis.impl;
 
 import com.nexosis.model.ErrorResponse;
-import org.apache.http.StatusLine;
 
 public class NexosisClientException extends Exception {
     private int statusCode;

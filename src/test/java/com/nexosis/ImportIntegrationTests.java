@@ -70,5 +70,4 @@ public class ImportIntegrationTests {
         Assert.assertNotNull(actual);
         Assert.assertNotNull(actual.getImportId());
     }
-
 }

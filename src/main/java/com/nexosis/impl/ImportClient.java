@@ -5,8 +5,6 @@ import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
 import java.util.*;

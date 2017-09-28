@@ -32,7 +32,7 @@ public class ApiConnection {
     ObjectMapper getObjectMapper(){
         return mapper;
     }
-
+    private HttpRequestFactory requestFactory;
     /**
      *
      *
@@ -54,6 +54,7 @@ public class ApiConnection {
         this.endpoint = endpoint;
         this.httpTransport = httpTransport;
         this.key = key;
+        this.requestFactory = httpTransport.createRequestFactory();
         mapper.registerModule(new JodaModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
@@ -71,9 +72,9 @@ public class ApiConnection {
 
             GenericUrl uri = prepareURI(path, parameters);
 
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-
             HttpRequest request = requestFactory.buildGetRequest(uri);
+            request.setSuppressUserAgentSuffix(true);
+
             request.setHeaders(new HttpHeaders().setAccept(acceptType));
             makeRequest(request, httpMessageTransformer, output);
         } catch (IOException ioe) {
@@ -90,10 +91,9 @@ public class ApiConnection {
             }
 
             GenericUrl uri = prepareURI(path, parameters);
-
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-
             HttpRequest request = requestFactory.buildGetRequest(uri);
+            request.setSuppressUserAgentSuffix(true);
+
             request.setHeaders(new HttpHeaders().setAccept(acceptType));
 
             return makeRequest(type, request, httpMessageTransformer, output);
@@ -118,9 +118,8 @@ public class ApiConnection {
 
             GenericUrl uri = prepareURI(path, parameters);
 
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-
             HttpRequest request = requestFactory.buildGetRequest(uri);
+            request.setSuppressUserAgentSuffix(true);
             request.setHeaders(new HttpHeaders().setAccept(acceptType));
 
             return makeRequest(type, request, httpMessageTransformer);
@@ -135,9 +134,8 @@ public class ApiConnection {
         try {
             GenericUrl uri = prepareURI(path, parameters);
 
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-
             HttpRequest request = requestFactory.buildHeadRequest(uri);
+            request.setSuppressUserAgentSuffix(true);
             request.setHeaders(new HttpHeaders().setAccept(acceptType));
 
             return makeRequest(type, request, httpMessageTransformer);
@@ -169,23 +167,19 @@ public class ApiConnection {
         try {
 
             GenericUrl uri = prepareURI(path, parameters);
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
 
             HttpRequest request = null;
             HttpContent contentSend = new JsonHttpContent(new JacksonFactory(), body);
 
             switch (method) {
                 case PUT:
-                    //mapper.writeValueAsString(body)
-                    // TODO Transform InputStream body into Content
                     request = requestFactory.buildPutRequest(uri, contentSend);
                     break;
                 case POST:
-                    // TODO Transform InputStream body into Content
                     request = requestFactory.buildPostRequest(uri, contentSend);
                     break;
             }
-
+            request.setSuppressUserAgentSuffix(true);
             request.setHeaders(new HttpHeaders().setAccept(acceptType).setContentType(acceptType));
 
             return makeRequest(type, request, httpMessageTransformer);
@@ -199,22 +193,17 @@ public class ApiConnection {
         String acceptType = "application/json";
         try {
             GenericUrl uri = prepareURI(path, parameters);
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-
             HttpRequest request = null;
             InputStreamContent inputStream = new InputStreamContent( "application/json", body);
             switch (method) {
                 case PUT:
-                    // TODO Transform InputStream body into Content
-
                     request = requestFactory.buildPutRequest(uri, inputStream);
                     break;
                 case POST:
-                    // TODO Transform InputStream body into Content
                     request = requestFactory.buildPostRequest(uri, inputStream);
                     break;
             }
-
+            request.setSuppressUserAgentSuffix(true);
             request.setHeaders(new HttpHeaders().setAccept(acceptType).setContentType(acceptType));
             return makeRequest(type, request, httpMessageTransformer);
         } catch (IOException ioe) {
@@ -227,32 +216,33 @@ public class ApiConnection {
         String acceptType = "application/json";
         try {
             GenericUrl uri = prepareURI(path, parameters);
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
 
             HttpRequest request = requestFactory.buildDeleteRequest(uri);
+            request.setSuppressUserAgentSuffix(true);
             request.setHeaders(new HttpHeaders().setAccept(acceptType));
-            makeRequest(request, httpMessageTransformer);
+            HttpResponse response = makeRequest(request, httpMessageTransformer);
+            response.disconnect();
         } catch (IOException ioe) {
             throw new NexosisClientException("Internal Error.", ioe);
         }
     }
 
     public <T> T makeRequest(Class<T> type, HttpRequest request, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        //HttpEntity entity = null;
         HttpResponse response;
-
 
         try {
             response = makeRequest(request, httpMessageTransformer);
+            try {
+                InputStream s = response.getContent();
 
-            InputStream s = response.getContent();
-
-            T object = mapper.readValue(s, type);
-            if (ReturnsCost.class.isAssignableFrom(object.getClass())) {
-                ((ReturnsCost) object).AssignCost(response.getHeaders());
+                T object = mapper.readValue(s, type);
+                if (ReturnsCost.class.isAssignableFrom(object.getClass())) {
+                    ((ReturnsCost) object).AssignCost(response.getHeaders());
+                }
+                return object;
+            } finally {
+                response.disconnect();
             }
-
-            return object;
         } catch (HttpResponseException hre) {
             throw GenerateNexosisException(hre);
         } catch (IOException ioe) {
@@ -269,13 +259,12 @@ public class ApiConnection {
 
         try {
             response = makeRequest(request, httpMessageTransformer);
-            //if (response.isSuccessStatusCode()) {
+            try {
                 // Write content to stream if status is complete
                 response.download(output);
-            //} else {
-                //ProcessFailureResponse(response);
-               // throw new NotImplementedException("FIX ME!");
-            //}
+            } finally {
+                response.disconnect();
+            }
         } catch (HttpResponseException hre) {
             throw GenerateNexosisException(hre);
         } catch (IOException ioe) {
@@ -290,24 +279,20 @@ public class ApiConnection {
         try {
 
             response = makeRequest(request, httpMessageTransformer);
-
-            if (response.isSuccessStatusCode()) {
-
+            try {
                 T object = (T) new ReturnsStatus();
 
                 if (ReturnsStatus.class.isAssignableFrom(object.getClass())) {
                     ((ReturnsStatus) object).AssignStatus(response.getHeaders());
                     if (((ReturnsStatus) object).getSessionStatus().equals(SessionStatus.COMPLETED)) {
                         // Write content to stream if status is complete
-                       response.download(output);
+                        response.download(output);
                     }
                 }
 
                 return object;
-            } else {
-                //ProcessFailureResponse(response);
-                throw new NotImplementedException("Fix me!");
-                //return null;
+            } finally {
+                response.disconnect();
             }
         } catch (HttpResponseException hre) {
             throw GenerateNexosisException(hre);
@@ -353,7 +338,7 @@ public class ApiConnection {
         if (path.startsWith("/")) {
             path = path.substring(1);
         }
-        //URIBuilder builder = null;
+
         GenericUrl url;
 
         if (parameters == null || parameters.size() == 0) {

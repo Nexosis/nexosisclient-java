@@ -1,63 +1,40 @@
 package com.nexosis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nexosis.impl.ApiConnection;
-//import com.nexosis.impl.HttpClientFactory;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.google.api.client.http.HttpStatusCodes;
+import com.google.api.client.http.LowLevelHttpRequest;
+import com.google.api.client.http.LowLevelHttpResponse;
+import com.google.api.client.json.Json;
+import com.google.api.client.testing.http.MockHttpTransport;
+import com.google.api.client.testing.http.MockLowLevelHttpRequest;
+import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.AccountBalance;
 import com.nexosis.model.ErrorResponse;
-import org.apache.http.*;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicHeader;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-
-//import org.apache.http.client.methods.CloseableHttpResponse;
-//import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ApiConnection.class})
 public class NexosisClientTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    //@Mock
-    //private HttpClientFactory httpClientFactory;
-    //@Mock
-    //private CloseableHttpClient httpClient;
-    //@Mock
-    //private CloseableHttpResponse httpResponse;
-    @Mock
-    private HttpEntity httpEntity;
-    @Mock
-    //private StatusLine statusLine;
+    private ObjectMapper mapper = new ObjectMapper();
     private String fakeEndpoint = "https://nada.nexosis.com/not-here";
-    private URI apiFakeEndpointUri;
+    private String fakeApiKey = "abcdefg";
 
     @Before
     public void setUp() throws Exception {
-        //MockitoAnnotations.initMocks(this);
-        apiFakeEndpointUri = new URI(fakeEndpoint);
+        mapper.registerModule(new JodaModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
 
@@ -86,8 +63,8 @@ public class NexosisClientTest {
 
     @Test
     public void canGiveKeyWhenConstructing() {
-        NexosisClient target = new NexosisClient("asdfasdfasdf");
-        Assert.assertEquals("asdfasdfasdf", target.getApiKey());
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
+        Assert.assertEquals(fakeApiKey, target.getApiKey());
     }
 
     @Test
@@ -98,57 +75,94 @@ public class NexosisClientTest {
 
     @Test
     public void addsApiKeyHeaderToRequest() throws Exception {
-        HttpGet get = new HttpGet(apiFakeEndpointUri);
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                return response;
+            }
+        };
 
-        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
-        PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        PowerMockito.whenNew(HttpGet.class).withAnyArguments().thenReturn(get);
-        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         AccountBalance balance = target.getAccountBalance();
 
-        Assert.assertTrue(get.getHeaders("api-key") != null);
-        Assert.assertTrue(get.getHeaders("api-key").length == 1);
-        Assert.assertEquals("abcdefg", get.getHeaders("api-key")[0].getValue());
+        Assert.assertTrue(request.getHeaderValues("api-key") != null);
+        Assert.assertTrue(request.getHeaderValues("api-key").size() == 1);
+        Assert.assertEquals(fakeApiKey, request.getHeaderValues("api-key").get(0));
     }
 
     @Test
     public void addsUserAgentToRequest() throws Exception {
-        HttpGet get = new HttpGet(apiFakeEndpointUri);
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                return response;
+            }
+        };
 
-       //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
-        PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        //PowerMockito.when(httpClient.execute(any(HttpRequestBase.class))).thenReturn(httpResponse);
-        PowerMockito.whenNew(HttpGet.class).withAnyArguments().thenReturn(get);
-        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         AccountBalance balance = target.getAccountBalance();
 
-        Assert.assertTrue(get.getHeaders("User-Agent") != null);
-        Assert.assertTrue(get.getHeaders("User-Agent").length == 1);
-        Assert.assertEquals(NexosisClient.CLIENT_VERSION, get.getHeaders("User-Agent")[0].getValue());
+        Assert.assertTrue(request.getHeaderValues("User-Agent") != null);
+        Assert.assertTrue(request.getHeaderValues("User-Agent").size() == 1);
+        Assert.assertEquals(NexosisClient.CLIENT_VERSION, request.getFirstHeaderValue("User-Agent"));
     }
 
     @Test
     public void processesCostAndBalance() throws Exception {
-        Header[] fakeHeaders = {
-                new BasicHeader("nexosis-request-cost", "123.12 USD"),
-                new BasicHeader("nexosis-account-balance", "999.99 USD")
+        final ArrayList<String> fakeHeaders = new ArrayList<>();
+        fakeHeaders.add("nexosis-request-cost");
+        fakeHeaders.add("nexosis-account-balance");
+
+        final ArrayList<String> fakeHeaderValues = new ArrayList<>();
+        fakeHeaderValues.add("123.12 USD");
+        fakeHeaderValues.add("999.99 USD");
+
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                response.setHeaderNames(fakeHeaders);
+                response.setHeaderValues(fakeHeaderValues);
+                return response;
+            }
         };
 
-        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
-        PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        //PowerMockito.when(httpResponse.getAllHeaders()).thenReturn(fakeHeaders);
-        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(200);
-        NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         AccountBalance result = target.getAccountBalance();
 
         // Test Cost
@@ -161,9 +175,8 @@ public class NexosisClientTest {
 
     @Test
     public void canHandleErrorResponse() throws Exception {
-
         final UUID activityId = UUID.randomUUID();
-        ErrorResponse errorData = new ErrorResponse() {{
+        final ErrorResponse errorData = new ErrorResponse() {{
             setStatusCode(500);
             setErrorType("SomethingWentWrong");
             setMessage("An error occurred.");
@@ -173,22 +186,30 @@ public class NexosisClientTest {
             setActivityId(activityId);
         }};
 
-        ObjectMapper om = mock(ObjectMapper.class);
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(500);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent(mapper.writeValueAsString(errorData));
+                return response;
+            }
+        };
 
-        //PowerMockito.when(httpClientFactory.createClient()).thenReturn(httpClient);
-        //PowerMockito.when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        //PowerMockito.when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        //PowerMockito.when(httpResponse.getEntity()).thenReturn(httpEntity);
-        PowerMockito.when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("{}".getBytes()));
-        //PowerMockito.when(statusLine.getStatusCode()).thenReturn(500);
-        PowerMockito.whenNew(ObjectMapper.class).withNoArguments().thenReturn(om);
-        PowerMockito.when(om.readValue("{}", ErrorResponse.class)).thenReturn(errorData);
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
 
         try {
-            NexosisClient target = new NexosisClient("abcdefg", fakeEndpoint);
+            NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
             target.getAccountBalance();
         } catch (NexosisClientException exception) {
-            Assert.assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, exception.getStatusCode());
+            Assert.assertEquals(HttpStatusCodes.STATUS_CODE_SERVER_ERROR, exception.getStatusCode());
             Assert.assertNotNull(exception.getErrorResponse());
             Assert.assertEquals(errorData.getErrorType(), exception.getErrorResponse().getErrorType());
             Assert.assertEquals(errorData.getMessage(), exception.getErrorResponse().getMessage());

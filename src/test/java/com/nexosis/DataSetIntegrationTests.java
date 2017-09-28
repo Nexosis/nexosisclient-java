@@ -1,24 +1,16 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpStatusCodes;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
-import com.nexosis.util.JodaTimeHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.junit.*;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
-
-import static java.util.Collections.sort;
 
 public class DataSetIntegrationTests {
     private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
@@ -130,7 +122,7 @@ public class DataSetIntegrationTests {
         try {
             nexosisClient.getDataSets().get(id);
         } catch (NexosisClientException exception) {
-            Assert.assertEquals(HttpStatus.SC_NOT_FOUND, exception.getStatusCode());
+            Assert.assertEquals(HttpStatusCodes.STATUS_CODE_NOT_FOUND, exception.getStatusCode());
             return;
         }
 

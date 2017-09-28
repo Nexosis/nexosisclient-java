@@ -22,10 +22,10 @@ public abstract class ReturnsCost {
     {
         if (headers != null) {
             if (headers.containsKey("nexosis-request-cost")) {
-                cost = ParseValue((String)headers.get("nexosis-request-cost"));
+                cost = ParseValue(headers.getFirstHeaderStringValue("nexosis-request-cost"));
             }
             if (headers.containsKey("nexosis-account-balance")) {
-                balance = ParseValue((String)headers.get("nexosis-account-balance"));
+                balance = ParseValue(headers.getFirstHeaderStringValue("nexosis-account-balance"));
             }
         }
     }
