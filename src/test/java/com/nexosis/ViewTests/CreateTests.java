@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
@@ -61,7 +60,7 @@ public class CreateTests {
 
         Assert.assertNotNull(request.getStreamingContent());
         Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"name\":\"Nexosis.Holidays-US\"}}]}",
-                mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+                request.getContentAsString());
     }
 
     @Test
@@ -90,7 +89,7 @@ public class CreateTests {
 
         Assert.assertNotNull(request.getStreamingContent());
         Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"url\":\"http://nothere.com/somecal/holidays.ical\"}}]}",
-                mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+                request.getContentAsString());
     }
 
     @Test
@@ -121,7 +120,7 @@ public class CreateTests {
 
         Assert.assertNotNull(request.getStreamingContent());
         Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"url\":\"http://nothere.com/somecal/holidays.ical\",\"timeZone\":\"America/Los_Angeles\"}}]}",
-                mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+                request.getContentAsString());
     }
 
     @Test
@@ -150,6 +149,6 @@ public class CreateTests {
 
         Assert.assertNotNull(request.getStreamingContent());
         Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"dataSet\":{\"name\":\"RightDataSet\"}}]}",
-                mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+                request.getContentAsString());
     }
 }

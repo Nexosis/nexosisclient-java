@@ -24,6 +24,10 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_ACCOUNT_BALANCE;
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_API_KEY;
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_REQUEST_COST;
+
 public class NexosisClientTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -36,7 +40,6 @@ public class NexosisClientTest {
         mapper.registerModule(new JodaModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
-
 
     /* Disabling as it breaks full suite runs
      * Not clear how incorrect env var gets used
@@ -95,11 +98,10 @@ public class NexosisClientTest {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        AccountBalance balance = target.getAccountBalance();
+        target.getAccountBalance();
 
-        Assert.assertTrue(request.getHeaderValues("api-key") != null);
-        Assert.assertTrue(request.getHeaderValues("api-key").size() == 1);
-        Assert.assertEquals(fakeApiKey, request.getHeaderValues("api-key").get(0));
+        Assert.assertTrue(request.getHeaders().containsKey(NEXOSIS_API_KEY));
+        Assert.assertEquals(fakeApiKey, request.getFirstHeaderValue(NEXOSIS_API_KEY));
     }
 
     @Test
@@ -124,18 +126,17 @@ public class NexosisClientTest {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        AccountBalance balance = target.getAccountBalance();
+        target.getAccountBalance();
 
-        Assert.assertTrue(request.getHeaderValues("User-Agent") != null);
-        Assert.assertTrue(request.getHeaderValues("User-Agent").size() == 1);
-        Assert.assertEquals(NexosisClient.CLIENT_VERSION, request.getFirstHeaderValue("User-Agent"));
+        Assert.assertTrue(request.getHeaders().containsKey("user-agent"));
+        Assert.assertEquals(NexosisClient.CLIENT_VERSION, request.getFirstHeaderValue("user-agent"));
     }
 
     @Test
     public void processesCostAndBalance() throws Exception {
         final ArrayList<String> fakeHeaders = new ArrayList<>();
-        fakeHeaders.add("nexosis-request-cost");
-        fakeHeaders.add("nexosis-account-balance");
+        fakeHeaders.add(NEXOSIS_REQUEST_COST);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_BALANCE);
 
         final ArrayList<String> fakeHeaderValues = new ArrayList<>();
         fakeHeaderValues.add("123.12 USD");

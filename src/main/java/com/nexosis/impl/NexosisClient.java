@@ -4,12 +4,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.nexosis.*;
 import com.nexosis.model.AccountBalance;
-import com.nexosis.model.DataSetList;
 import com.nexosis.util.Action;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 public class NexosisClient implements INexosisClient {
     private String key;
@@ -23,7 +20,7 @@ public class NexosisClient implements INexosisClient {
     /**
      * The client id and version sent as the User-Agent header
      */
-    public final static String CLIENT_VERSION = "Nexosis-Java-API-Client/1.0";
+    public final static String CLIENT_VERSION = "Nexosis-Java-API-Client/1.1";
 
     /**
      * The default URL of the api endpoint.

@@ -5,6 +5,9 @@ import com.google.api.client.http.HttpHeaders;
 import java.math.BigDecimal;
 import java.util.Currency;
 
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_ACCOUNT_BALANCE;
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_REQUEST_COST;
+
 /**
  *
  */
@@ -21,11 +24,11 @@ public abstract class ReturnsCost {
     public void AssignCost(HttpHeaders headers)
     {
         if (headers != null) {
-            if (headers.containsKey("nexosis-request-cost")) {
-                cost = ParseValue(headers.getFirstHeaderStringValue("nexosis-request-cost"));
+            if (headers.containsKey(NEXOSIS_REQUEST_COST)) {
+                cost = ParseValue(headers.getFirstHeaderStringValue(NEXOSIS_REQUEST_COST));
             }
-            if (headers.containsKey("nexosis-account-balance")) {
-                balance = ParseValue(headers.getFirstHeaderStringValue("nexosis-account-balance"));
+            if (headers.containsKey(NEXOSIS_ACCOUNT_BALANCE)) {
+                balance = ParseValue(headers.getFirstHeaderStringValue(NEXOSIS_ACCOUNT_BALANCE));
             }
         }
     }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
@@ -129,7 +128,7 @@ public class SaveTests {
         target.getDataSets().create("yankee", data);
 
         Assert.assertEquals(fakeEndpoint + "/data/yankee", request.getUrl());
-        Assert.assertEquals(mapper.writeValueAsString(data),  mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+        Assert.assertEquals(mapper.writeValueAsString(data),  request.getContentAsString());
     }
 
     @Test
@@ -166,7 +165,7 @@ public class SaveTests {
         target.getDataSets().create("yankee", data);
 
         Assert.assertEquals(fakeEndpoint + "/data/yankee", request.getUrl());
-        Assert.assertEquals(mapper.writeValueAsString(data), mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+        Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());
     }
 }
 

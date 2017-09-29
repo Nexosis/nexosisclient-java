@@ -1,9 +1,10 @@
 package com.nexosis.SessionTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
@@ -30,7 +31,8 @@ public class CreateImpactTests {
 
     @Before
     public void setUp() throws Exception {
-
+        mapper.registerModule(new JodaModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Test
@@ -66,7 +68,8 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&isEstimate=false&eventName=event-name&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&isEstimate=false&eventName=event-name&" +
+                "callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
     }
 
     @Test
@@ -110,7 +113,7 @@ public class CreateImpactTests {
         );
 
         Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&isEstimate=false&eventName=event-name&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
-        Assert.assertEquals(mapper.writeValueAsString(data),  mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+        Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());
     }
 
     @Test

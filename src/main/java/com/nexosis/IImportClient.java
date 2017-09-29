@@ -4,9 +4,6 @@ import java.util.UUID;
 
 import com.nexosis.model.ImportDetails;
 import org.joda.time.DateTime;
-
-import java.util.List;
-
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.ImportDetail;
 import com.nexosis.model.Columns;

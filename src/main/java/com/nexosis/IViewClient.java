@@ -6,13 +6,8 @@ import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-
-import javax.swing.text.View;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.EnumSet;
-import java.util.List;
 
 public interface IViewClient {
     /**

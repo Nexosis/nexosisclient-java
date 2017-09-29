@@ -12,11 +12,12 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.*;
 
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_SESSION_STATUS;
+
 /**
  *
  */
 public class SessionClient implements ISessionClient {
-
     private ApiConnection apiConnection;
     public SessionClient(ApiConnection apiConnection) {
         this.apiConnection = apiConnection;
@@ -441,8 +442,11 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResultStatus getStatus(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        AddSessionResultStatus localTransform = new AddSessionResultStatus(id, httpMessageTransformer);
-        return apiConnection.head(SessionResultStatus.class, "sessions/" + id, null, localTransform);
+        SessionResultStatus s = new SessionResultStatus();
+        s.setSessionId(id);
+        String headStatus = apiConnection.head("sessions/" + id, null, httpMessageTransformer).getFirstHeaderStringValue(NEXOSIS_SESSION_STATUS);
+        s.setStatus(SessionStatus.fromValue(headStatus));
+        return s;
     }
 
     /**
@@ -511,38 +515,4 @@ public class SessionClient implements ISessionClient {
     public void writeResults(UUID id, Writer output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
 
     }
-
-    public class AddSessionResultStatus implements Action<HttpRequest, HttpResponse> {
-        private UUID sessionId;
-        private Action<HttpRequest, HttpResponse> httpMessageTransformer;
-
-        public AddSessionResultStatus(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) {
-            this.sessionId = id;
-            this.httpMessageTransformer = httpMessageTransformer;
-        }
-
-        @Override
-        public void invoke(HttpRequest request, HttpResponse response) throws Exception {
-            if (
-                    (response != null) &&
-                            (response.isSuccessStatusCode()) &&
-                            (response.getHeaders().containsKey("Nexosis-Session-Status"))
-                    ) {
-
-                SessionResultStatus sessionStatus = new SessionResultStatus();
-                sessionStatus.setSessionId(sessionId);
-                sessionStatus.setStatus(SessionStatus.fromValue((String)response.getHeaders().get("Nexosis-Session-Status")));
-                // TODO: modify response with Session Status
-                //HttpEntity entity = new StringEntity(apiConnection.getObjectMapper().writeValueAsString(sessionStatus));
-                //response.setEntity(entity);
-                //HttpContent contentSend = new JsonHttpContent(new JacksonFactory(), sessionStatus);
-                //response.
-            }
-
-            if (httpMessageTransformer != null) {
-                httpMessageTransformer.invoke(request, response);
-            }
-        }
-    }
-
 }

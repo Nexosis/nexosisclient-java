@@ -1,9 +1,10 @@
 package com.nexosis.ImportTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
@@ -27,7 +28,8 @@ public class PostTests {
 
     @Before
     public void setUp() throws Exception {
-
+        mapper.registerModule(new JodaModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Test
@@ -68,6 +70,6 @@ public class PostTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getImports().importFromS3(dataSetName, bucket, path, region, columns);
-        Assert.assertEquals(mapper.writeValueAsString(data), mapper.writeValueAsString( ((JsonHttpContent)request.getStreamingContent()).getData()));
+        Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());
     }
 }

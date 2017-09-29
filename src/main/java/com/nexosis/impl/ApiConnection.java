@@ -1,24 +1,21 @@
 package com.nexosis.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.JsonObjectParser;
+import com.google.api.client.json.Json;
 import com.nexosis.model.ErrorResponse;
 import com.nexosis.model.ReturnsCost;
 import com.nexosis.model.ReturnsStatus;
 import com.nexosis.model.SessionStatus;
 import com.nexosis.util.Action;
 import com.nexosis.util.HttpMethod;
-import org.apache.commons.lang3.NotImplementedException;
+import com.nexosis.util.JacksonMapperHttpContent;
+import com.nexosis.util.JacksonMapperParser;
 import org.apache.commons.lang3.StringUtils;
 import com.google.api.client.http.*;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import org.apache.http.util.EntityUtils;
 import java.io.*;
 import java.util.Map;
 
@@ -31,6 +28,10 @@ public class ApiConnection {
 
     ObjectMapper getObjectMapper(){
         return mapper;
+    }
+
+    String getApiKey() {
+        return key;
     }
     private HttpRequestFactory requestFactory;
     /**
@@ -54,9 +55,19 @@ public class ApiConnection {
         this.endpoint = endpoint;
         this.httpTransport = httpTransport;
         this.key = key;
-        this.requestFactory = httpTransport.createRequestFactory();
         mapper.registerModule(new JodaModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        this.requestFactory = httpTransport.createRequestFactory(new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest request) throws IOException {
+                request.setSuppressUserAgentSuffix(true);
+                request.setParser(new JacksonMapperParser(getObjectMapper()));
+                request.setHeaders(new HttpHeaders()
+                        .set("api-key", getApiKey() )
+                        .setUserAgent(NexosisClient.CLIENT_VERSION));
+            }
+        });
     }
 
     public void get(String path, Map<String,Object>parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output) throws NexosisClientException {
@@ -67,15 +78,13 @@ public class ApiConnection {
         try {
 
             if (StringUtils.isEmpty(acceptType)) {
-                acceptType = "application/json";
+                acceptType = Json.MEDIA_TYPE;
             }
 
             GenericUrl uri = prepareURI(path, parameters);
 
             HttpRequest request = requestFactory.buildGetRequest(uri);
-            request.setSuppressUserAgentSuffix(true);
-
-            request.setHeaders(new HttpHeaders().setAccept(acceptType));
+            request.getHeaders().setAccept(acceptType);
             makeRequest(request, httpMessageTransformer, output);
         } catch (IOException ioe) {
             throw new NexosisClientException("Internal Error.", ioe);
@@ -87,15 +96,12 @@ public class ApiConnection {
         try {
 
             if (StringUtils.isEmpty(acceptType)) {
-                acceptType = "application/json";
+                acceptType = Json.MEDIA_TYPE;
             }
 
             GenericUrl uri = prepareURI(path, parameters);
             HttpRequest request = requestFactory.buildGetRequest(uri);
-            request.setSuppressUserAgentSuffix(true);
-
-            request.setHeaders(new HttpHeaders().setAccept(acceptType));
-
+            request.getHeaders().setAccept(acceptType);
             return makeRequest(type, request, httpMessageTransformer, output);
         } catch (IOException ioe) {
             throw new NexosisClientException("Internal Error.", ioe);
@@ -113,14 +119,13 @@ public class ApiConnection {
     public <T> T get(Class<T> type, String path, Map<String,Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer, String acceptType) throws NexosisClientException {
         try {
             if (StringUtils.isEmpty(acceptType)) {
-                acceptType = "application/json";
+                acceptType = Json.MEDIA_TYPE;
             }
 
             GenericUrl uri = prepareURI(path, parameters);
 
             HttpRequest request = requestFactory.buildGetRequest(uri);
-            request.setSuppressUserAgentSuffix(true);
-            request.setHeaders(new HttpHeaders().setAccept(acceptType));
+            request.getHeaders().setAccept(acceptType);
 
             return makeRequest(type, request, httpMessageTransformer);
         } catch (IOException ioe) {
@@ -128,17 +133,16 @@ public class ApiConnection {
         }
     }
 
-    public <T> T head(Class<T> type, String path, Map<String,Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
+    public HttpHeaders head(String path, Map<String,Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
-        String acceptType = "application/json";
+        String acceptType = Json.MEDIA_TYPE;
         try {
             GenericUrl uri = prepareURI(path, parameters);
 
             HttpRequest request = requestFactory.buildHeadRequest(uri);
-            request.setSuppressUserAgentSuffix(true);
-            request.setHeaders(new HttpHeaders().setAccept(acceptType));
+            request.getHeaders().setAccept(acceptType);
 
-            return makeRequest(type, request, httpMessageTransformer);
+            return makeRequest(request, httpMessageTransformer).getHeaders();
         } catch (IOException ioe) {
             throw new NexosisClientException("Internal Error.", ioe);
         }
@@ -163,13 +167,13 @@ public class ApiConnection {
     }
 
     private <T> T sendObjectContent(Class<T> type, String path, Map<String, Object> parameters, HttpMethod method, Object body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        String acceptType = "application/json";
+        String acceptType = Json.MEDIA_TYPE;
         try {
 
             GenericUrl uri = prepareURI(path, parameters);
 
             HttpRequest request = null;
-            HttpContent contentSend = new JsonHttpContent(new JacksonFactory(), body);
+            HttpContent contentSend = new JacksonMapperHttpContent(getObjectMapper(), body);
 
             switch (method) {
                 case PUT:
@@ -179,8 +183,7 @@ public class ApiConnection {
                     request = requestFactory.buildPostRequest(uri, contentSend);
                     break;
             }
-            request.setSuppressUserAgentSuffix(true);
-            request.setHeaders(new HttpHeaders().setAccept(acceptType).setContentType(acceptType));
+            request.getHeaders().setAccept(acceptType).setContentType(acceptType);
 
             return makeRequest(type, request, httpMessageTransformer);
         } catch (IOException ioe) {
@@ -190,11 +193,11 @@ public class ApiConnection {
 
     private <T> T sendStreamContent(Class<T> type, String path, Map<String, Object> parameters, HttpMethod method, InputStream body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
-        String acceptType = "application/json";
+        String acceptType = Json.MEDIA_TYPE;
         try {
             GenericUrl uri = prepareURI(path, parameters);
             HttpRequest request = null;
-            InputStreamContent inputStream = new InputStreamContent( "application/json", body);
+            InputStreamContent inputStream = new InputStreamContent( Json.MEDIA_TYPE, body);
             switch (method) {
                 case PUT:
                     request = requestFactory.buildPutRequest(uri, inputStream);
@@ -203,8 +206,7 @@ public class ApiConnection {
                     request = requestFactory.buildPostRequest(uri, inputStream);
                     break;
             }
-            request.setSuppressUserAgentSuffix(true);
-            request.setHeaders(new HttpHeaders().setAccept(acceptType).setContentType(acceptType));
+            request.getHeaders().setAccept(acceptType).setContentType(acceptType);
             return makeRequest(type, request, httpMessageTransformer);
         } catch (IOException ioe) {
             throw new NexosisClientException("Internal Error.", ioe);
@@ -213,13 +215,12 @@ public class ApiConnection {
 
 
     public void delete(String path, Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        String acceptType = "application/json";
+        String acceptType = Json.MEDIA_TYPE;
         try {
             GenericUrl uri = prepareURI(path, parameters);
 
             HttpRequest request = requestFactory.buildDeleteRequest(uri);
-            request.setSuppressUserAgentSuffix(true);
-            request.setHeaders(new HttpHeaders().setAccept(acceptType));
+            request.getHeaders().setAccept(acceptType);
             HttpResponse response = makeRequest(request, httpMessageTransformer);
             response.disconnect();
         } catch (IOException ioe) {
@@ -233,9 +234,7 @@ public class ApiConnection {
         try {
             response = makeRequest(request, httpMessageTransformer);
             try {
-                InputStream s = response.getContent();
-
-                T object = mapper.readValue(s, type);
+                T object = response.parseAs(type);
                 if (ReturnsCost.class.isAssignableFrom(object.getClass())) {
                     ((ReturnsCost) object).AssignCost(response.getHeaders());
                 }
@@ -274,7 +273,6 @@ public class ApiConnection {
 
     private <T> T makeRequest(Class<T> type, HttpRequest request, Action<HttpRequest, HttpResponse> httpMessageTransformer, OutputStream output) throws NexosisClientException {
         HttpResponse response;
-        //HttpEntity entity = null;
 
         try {
 
@@ -301,19 +299,8 @@ public class ApiConnection {
         }
     }
 
-    //private void makeRequest(HttpRequest request, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-     //   HttpResponse response = makeRequest(request, httpMessageTransformer);
-//
-  //      if (!response.isSuccessStatusCode()) {
-    //        ProcessFailureResponse(response);
-    //    }
-   // }
-
     private HttpResponse makeRequest(HttpRequest request, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         HttpResponse response;
-        request.setHeaders(new HttpHeaders()
-                .set("api-key", key)
-                .setUserAgent(NexosisClient.CLIENT_VERSION));
 
         try {
             if (httpMessageTransformer != null)
@@ -328,7 +315,7 @@ public class ApiConnection {
         } catch (HttpResponseException hre) {
             throw GenerateNexosisException(hre);
         } catch (IOException ioe) {
-                throw new NexosisClientException("IO Error while making HTTP Request: " + ioe.getMessage());
+            throw new NexosisClientException("IO Error while making HTTP Request: " + ioe.getMessage());
         } catch (Exception e) {
             throw new NexosisClientException("Error while making HTTP Request: " + e.getMessage());
         }

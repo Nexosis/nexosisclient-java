@@ -10,6 +10,8 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.impl.SessionClient;
+import com.nexosis.model.SessionResult;
 import com.nexosis.model.SessionResultStatus;
 import com.nexosis.model.SessionStatus;
 import com.nexosis.util.Action;
@@ -20,7 +22,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
+import static com.nexosis.util.NexosisHeaders.NEXOSIS_SESSION_STATUS;
 
 public class GetSessionStatusTests {
     @Rule
@@ -28,7 +34,6 @@ public class GetSessionStatusTests {
 
     private String fakeEndpoint = "https://nada.nexosis.com/not-here";
     private String fakeApiKey = "abcdefg";
-    private ObjectMapper mapper;
 
     @Before
     public void setUp() throws Exception {
@@ -38,6 +43,12 @@ public class GetSessionStatusTests {
     @Test
     public void statusHeaderIsAssignedToResult() throws Exception {
         UUID sessionId = UUID.randomUUID();
+
+        final List<String> headerNames = new ArrayList<>();
+        headerNames.add(NEXOSIS_SESSION_STATUS);
+
+        final List<String> headerValues = new ArrayList<>();
+        headerValues.add(SessionStatus.STARTED.toString());
 
         SessionResultStatus sessionStatus = new SessionResultStatus();
         sessionStatus.setSessionId(sessionId);
@@ -49,7 +60,8 @@ public class GetSessionStatusTests {
                 MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
                 response.setStatusCode(200);
                 response.setContentType(Json.MEDIA_TYPE);
-                response.setContent("{}");
+                response.setHeaderNames(headerNames);
+                response.setHeaderValues(headerValues);
                 return response;
             }
         };
@@ -63,19 +75,25 @@ public class GetSessionStatusTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        SessionResultStatus result = target.getSessions().getStatus(sessionId);
+        SessionResultStatus status = target.getSessions().getStatus(sessionId);
 
         Assert.assertEquals(request.getUrl(), fakeEndpoint + "/sessions/" + sessionId);
+        Assert.assertEquals(status.getStatus(), SessionStatus.STARTED);
     }
 
     @Test
     public void httpTransformerIsWrappedAndCalled() throws Exception {
         UUID sessionId = UUID.randomUUID();
 
+        final List<String> headerNames = new ArrayList<>();
+        headerNames.add(NEXOSIS_SESSION_STATUS);
+
+        final List<String> headerValues = new ArrayList<>();
+        headerValues.add(SessionStatus.STARTED.toString());
+
         SessionResultStatus sessionStatus = new SessionResultStatus();
         sessionStatus.setSessionId(sessionId);
         sessionStatus.setStatus(SessionStatus.STARTED);
-
 
         TestIfCalled isCalled = new TestIfCalled(false);
 
@@ -85,7 +103,8 @@ public class GetSessionStatusTests {
                 MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
                 response.setStatusCode(200);
                 response.setContentType(Json.MEDIA_TYPE);
-                response.setContent("{}");
+                response.setHeaderNames(headerNames);
+                response.setHeaderValues(headerValues);
                 return response;
             }
         };

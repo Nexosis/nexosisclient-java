@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.neovisionaries.i18n.CountryCode;
 
 import java.net.URI;
-import java.security.InvalidParameterException;
 import java.util.TimeZone;
 
 /**
@@ -47,7 +46,7 @@ public class CalendarJoinSource {
 
     /**
      * The name of a well-known calendar from Nexosis. Exclusive of url
-     * @param name
+     * @param name The name of a well-known calendar from Nexosis
      */
     @JsonProperty("name")
     public void setName(String name) {
@@ -75,7 +74,7 @@ public class CalendarJoinSource {
 
     /**
      * An optional time zone (tz-db) name for this calendar's events
-     * @param timeZone
+     * @param timeZone optional time zone (tz-db) name for this calendar's events
      */
     @JsonProperty("timeZone")
     public void setTimeZone(String timeZone) {

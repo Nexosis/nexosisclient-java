@@ -227,8 +227,8 @@ public class SessionIntegrationTests {
             Assert.assertTrue(results.toLowerCase().startsWith("timestamp,".toLowerCase()));
         } finally {
             if (output != null) {
-             output.flush();
-             output.close();
+                output.flush();
+                output.close();
             }
             if (Files.exists(Paths.get(filename))) {
                 Files.delete(Paths.get(filename));

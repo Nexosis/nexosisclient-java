@@ -56,7 +56,7 @@ public class RemoveTests {
         Assert.assertEquals(fakeEndpoint + "/sessions", request.getUrl());
     }
 
-        @Test
+    @Test
     public void HandlerIncludesOptionalArgsIfTheyAreSet() throws Exception
     {
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
