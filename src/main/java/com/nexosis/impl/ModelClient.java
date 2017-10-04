@@ -24,7 +24,7 @@ public class ModelClient implements IModelClient {
     }
 
     public ModelSummary get(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return apiConnection.get(ModelSummary.class, "model/{id}",null, httpMessageTransformer);
+        return apiConnection.get(ModelSummary.class, "model/" + id.toString(),null, httpMessageTransformer);
     }
 
     public ModelList list() throws NexosisClientException {
@@ -44,7 +44,9 @@ public class ModelClient implements IModelClient {
 
     public ModelList list(String dataSourceName, int page, int pageSize) throws NexosisClientException {
         Map<String,Object> parameters = new HashMap<String,Object>();
-        parameters.put("dataSourceName", dataSourceName);
+        if (!StringUtils.isEmpty(dataSourceName)) {
+            parameters.put("dataSourceName", dataSourceName);
+        }
         parameters.put("page", Integer.toString(page));
         parameters.put("pageSize", Integer.toString(pageSize));
 
@@ -74,11 +76,10 @@ public class ModelClient implements IModelClient {
 
     public ModelPredictionResult predict(UUID modelId, List<Map<String, String>> data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
-
-        PredictRequest request = new PredictRequest();
-        request.setData(data);
-        Object requestBody ="";
-        return apiConnection.post(ModelPredictionResult.class, "models/{modelId}/predict", null, requestBody, httpMessageTransformer);
+        Argument.IsNotNull(modelId, "modelId");
+        PredictRequest requestBody = new PredictRequest();
+        requestBody.setData(data);
+        return apiConnection.post(ModelPredictionResult.class, "models/" + modelId.toString() + "/predict", null, requestBody, httpMessageTransformer);
     }
 
     public void remove(UUID modelId) throws NexosisClientException {
@@ -86,7 +87,7 @@ public class ModelClient implements IModelClient {
     }
 
     public void remove(UUID modelId, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        apiConnection.delete("models/{modelId}", null, httpMessageTransformer);
+        apiConnection.delete("models/" + modelId.toString(), null, httpMessageTransformer);
     }
 
     public void remove(String dataSourceName, org.joda.time.DateTime createdAfterDate, org.joda.time.DateTime createdBeforeDate) throws NexosisClientException {

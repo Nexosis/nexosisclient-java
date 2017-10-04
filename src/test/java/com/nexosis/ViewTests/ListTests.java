@@ -45,7 +45,7 @@ public class ListTests {
 
         MockHttpTransport transport = new MockHttpTransport() {
             @Override
-            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
                 request.setUrl(url);
                 return request;
             }
