@@ -6,23 +6,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum AggregationStrategy {
-    SUM("sum"),
-    MEAN("mean"),
-    MEDIAN("median"),
-    MODE("mode"),
-    MIN("min"),
-    MAX("max");
+public enum PredictionDomain {
+    REGRESSION("regression");
     private final String value;
-    private final static Map<String, AggregationStrategy> CONSTANTS = new HashMap<String, AggregationStrategy>();
+    private final static Map<String, PredictionDomain> CONSTANTS = new HashMap<>();
 
     static {
-        for (AggregationStrategy c: values()) {
+        for (PredictionDomain c: values()) {
             CONSTANTS.put(c.value, c);
         }
     }
 
-    private AggregationStrategy(String value) {
+    PredictionDomain(String value) {
         this.value = value;
     }
 
@@ -37,8 +32,8 @@ public enum AggregationStrategy {
     }
 
     @JsonCreator
-    public static AggregationStrategy fromValue(String value) {
-        AggregationStrategy constant = CONSTANTS.get(value);
+    public static PredictionDomain fromValue(String value) {
+        PredictionDomain constant = CONSTANTS.get(value);
         if (constant == null) {
             throw new IllegalArgumentException(value);
         } else {

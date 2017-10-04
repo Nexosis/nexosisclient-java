@@ -10,7 +10,9 @@ public enum ImputationStrategy {
     ZEROES("zeroes"),
     MEAN("mean"),
     MEDIAN("median"),
-    MODE("mode");
+    MODE("mode"),
+    MIN("min"),
+    MAX("max");
     private final String value;
     private final static Map<String, ImputationStrategy> CONSTANTS = new HashMap<String, ImputationStrategy>();
 
@@ -20,7 +22,7 @@ public enum ImputationStrategy {
         }
     }
 
-    private ImputationStrategy(String value) {
+    ImputationStrategy(String value) {
         this.value = value;
     }
 

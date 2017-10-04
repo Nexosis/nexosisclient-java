@@ -35,14 +35,8 @@ public interface INexosisClient
      * <p>
      * @return
      */
-    public ISessionClient getSessions();
+    ISessionClient getSessions();
 
-    /**
-     * Access to the Session based operations in the API. (private)
-     * <p>
-     * @param sessions
-     */
-    void setSessions(ISessionClient sessions);
 
     /**
      * Access to the DataSet based operations in the API.
@@ -51,38 +45,29 @@ public interface INexosisClient
      */
     IDataSetClient getDataSets();
 
-    /**
-     * Access to the DataSet based operations in the API. (private)
-     * <p>
-     * @param dataSets
-     */
-    void setDataSets(IDataSetClient dataSets);
 
     /**
      * Access to the Imports based operations in the API.
      * <p>
      * @return
      */
-    public IImportClient getImports();
+    IImportClient getImports();
 
-    /**
-     * Access to the Imports based operations in the API. (private)
-     * <p>
-     * @param imports
-     */
-    void setImports(IImportClient imports);
 
     /**
      * Access to the Views based operations in the API.
      * <p>
      * @return
      */
-    public IViewClient getViews();
+    IViewClient getViews();
+
 
     /**
-     * Access to the Views based operations in the API. (private)
-     * @param views
+     * Access to the Models based operations in the API.
+     * <p>
+     * @return
      */
-    void setViews(IViewClient views);
+    IModelClient getModels();
+
 
 }
