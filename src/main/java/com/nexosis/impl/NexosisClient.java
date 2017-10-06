@@ -13,10 +13,12 @@ public class NexosisClient implements INexosisClient {
     private String configuredUrl;
     private ApiConnection apiConnection;
     private final static int maxPageSize = 1000;
+    private final static int defaultPageSize = 1000;
     private ISessionClient sessions;
     private IDataSetClient dataSets;
     private IImportClient imports;
     private IViewClient views;
+    private IModelClient models;
     /**
      * The client id and version sent as the User-Agent header
      */
@@ -49,6 +51,10 @@ public class NexosisClient implements INexosisClient {
 
     public static int getMaxPageSize() {
         return maxPageSize;
+    }
+
+    public static int getDefaultPageSize() {
+        return defaultPageSize;
     }
 
     /**
@@ -104,6 +110,7 @@ public class NexosisClient implements INexosisClient {
         dataSets = new DataSetClient(apiConnection);
         imports = new ImportClient(apiConnection);
         views = new ViewClient(apiConnection);
+        models = new ModelClient(apiConnection);
     }
 
     /**
@@ -127,38 +134,30 @@ public class NexosisClient implements INexosisClient {
         return sessions;
     }
 
-    @Override
-    public void setSessions(ISessionClient sessions) {
-        this.sessions = sessions;
-    }
+
 
     @Override
     public IDataSetClient getDataSets() {
         return dataSets;
     }
 
-    @Override
-    public void setDataSets(IDataSetClient dataSets) {
-        this.dataSets = dataSets;
-    }
+
 
     @Override
     public IImportClient getImports() {
         return imports;
     }
 
-    @Override
-    public void setImports(IImportClient imports) {
-        this.imports = imports;
-    }
+
 
     @Override
     public IViewClient getViews() {
         return views;
     }
 
+
+
     @Override
-    public void setViews(IViewClient views) {
-        this.views = views;
-    }
+    public IModelClient getModels() { return models; }
+
 }

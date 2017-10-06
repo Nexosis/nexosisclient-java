@@ -22,12 +22,13 @@ public class SessionResult extends SessionResponse
 {
 
     /**
-     * For impact sessions, an object containing overall metrics about the impact
+     * For sessions, an object containing overall metrics about the algorithms that ran.
      *
      */
     @JsonProperty("metrics")
     @JsonPropertyDescription("For impact sessions, an object containing overall metrics about the impact")
-    private Metrics metrics;
+    private Map<String, String> metrics;
+
     /**
      * Continuous results from all forecast sessions executed on the dataset
      * (Required)
@@ -41,11 +42,11 @@ public class SessionResult extends SessionResponse
     private final static long serialVersionUID = -5482780237822916682L;
 
     /**
-     * For impact sessions, an object containing overall metrics about the impact
-     * @return A {@link Metrics Metrics } object
+     *  For sessions, an object containing overall metrics about the algorithms that ran.
+     * @return A Map containing metrics for this algorithm such as MAE, MAPE, MASE, RMSE. For Impact additionally pValue, absolute and relative effect.
      */
     @JsonProperty("metrics")
-    public Metrics getMetrics() {
+    public Map<String, String> getMetrics() {
         return metrics;
     }
 
@@ -53,7 +54,7 @@ public class SessionResult extends SessionResponse
      * For impact sessions, an object containing overall metrics about the impact
      */
     @JsonProperty("metrics")
-    public void setMetrics(Metrics metrics) {
+    public void setMetrics(Map<String, String> metrics) {
         this.metrics = metrics;
     }
 

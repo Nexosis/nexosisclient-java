@@ -42,7 +42,7 @@ public class GetTests {
 
         MockHttpTransport transport = new MockHttpTransport() {
             @Override
-            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
                 request.setUrl(url);
                 return request;
             }
@@ -50,7 +50,7 @@ public class GetTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getDataSets().get("test");
-        //Assert.assertEquals(fakeEndpoint + "/data/test?pageSize=" + NexosisClient.getMaxPageSize() + "&page=0", req.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/data/test?pageSize=" + NexosisClient.getMaxPageSize() + "&page=0", request.getUrl());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class GetTests {
 
         MockHttpTransport transport = new MockHttpTransport() {
             @Override
-            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
                 request.setUrl(url);
                 return request;
             }
@@ -115,7 +115,7 @@ public class GetTests {
 
         MockHttpTransport transport = new MockHttpTransport() {
             @Override
-            public LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
                 request.setUrl(url);
                 return request;
             }

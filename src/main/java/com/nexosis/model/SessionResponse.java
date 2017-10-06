@@ -42,16 +42,22 @@ public class SessionResponse extends ReturnsCost implements Serializable
     private SessionStatus status;
     @JsonProperty("statusHistory")
     private List<SessionStatusHistory> statusHistory = null;
+    @JsonProperty("messages")
+    public List<StatusMessage> messages = null;
     @JsonProperty("extraParameters")
     private ExtraParameters extraParameters;
-    @JsonProperty("columns")
-    private Columns columns;
     @JsonProperty("dataSetName")
     private String dataSetName;
     @JsonProperty("dataSourceName")
     private String dataSourceName;
     @JsonProperty("targetColumn")
     private String targetColumn;
+    @JsonProperty("eventName")
+    private String eventName;
+    @JsonProperty("predictionDomain")
+    private PredictionDomain predictionDomain;
+    @JsonProperty("modelId")
+    private UUID modelId;
     @JsonProperty("requestedDate")
     private DateTime requestedDate;
     @JsonProperty("startDate")
@@ -64,6 +70,8 @@ public class SessionResponse extends ReturnsCost implements Serializable
     private ResultInterval resultInterval;
     @JsonProperty("links")
     private List<Link> links = null;
+    @JsonProperty("columns")
+    private Columns columns;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = -8794088706239187049L;

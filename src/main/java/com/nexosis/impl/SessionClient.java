@@ -151,6 +151,26 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
+    public SessionResponse trainModel(ModelSessionDetail data) throws NexosisClientException {
+        return trainModel(data, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SessionResponse trainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Argument.IsNotNull(data, "data");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "ModelSessionDetail.getDataSourceName()");
+        Argument.IsNotNullOrEmpty(data.getTargetColumn(), "ModelSessionDetail.getTargetColumn()");
+
+        return createSessionInternal("sessions/model", data, httpMessageTransformer, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public SessionResponse estimateForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
         return estimateForecast(data, startDate, endDate, resultInterval,null);
     }
@@ -239,8 +259,22 @@ public class SessionClient implements ISessionClient {
         return estimateImpact(data, eventName, startDate, endDate, resultInterval, httpMessageTransformer);
     }
 
+    public SessionResponse estimateTrainModel(ModelSessionDetail data) throws NexosisClientException
+    {
+        return this.estimateTrainModel(data, null);
+    }
+
+    public SessionResponse estimateTrainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
+    {
+        Argument.IsNotNull(data, "data");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "data.DataSetName");
+        data.setIsEstimate(true);
+        return this.createSessionInternal("sessions/model", data, httpMessageTransformer, true);
+    }
+
     private SessionResponse createSessionInternal(String path, SessionData data, String eventName, DateTime startDate,
-                                                   DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
+                                                   DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl,
+                                                  Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
     {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("dataSourceName", data.getDataSourceName());
@@ -260,6 +294,13 @@ public class SessionClient implements ISessionClient {
         }
 
         return apiConnection.post(SessionResponse.class, path, parameters, data, httpMessageTransformer);
+    }
+
+    private SessionResponse createSessionInternal(String path, ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer,
+                                                  boolean isEstimate) throws NexosisClientException
+    {
+        data.setIsEstimate(isEstimate);
+        return apiConnection.post(SessionResponse.class, path, null, data, httpMessageTransformer);
     }
 
     /**

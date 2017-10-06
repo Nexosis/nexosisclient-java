@@ -26,8 +26,6 @@ public class ForecastModel implements Serializable
     private String dataSetName;
     @JsonProperty("targetColumn")
     private String targetColumn;
-    @JsonProperty("winningAlgorithm")
-    private ChampionInfo winningAlgorithm;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = 3223628774190626271L;
@@ -52,16 +50,6 @@ public class ForecastModel implements Serializable
         this.targetColumn = targetColumn;
     }
 
-    @JsonProperty("winningAlgorithm")
-    public ChampionInfo getWinningAlgorithm() {
-        return winningAlgorithm;
-    }
-
-    @JsonProperty("winningAlgorithm")
-    public void setWinningAlgorithm(ChampionInfo winningAlgorithm) {
-        this.winningAlgorithm = winningAlgorithm;
-    }
-
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -74,7 +62,7 @@ public class ForecastModel implements Serializable
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(dataSetName).append(targetColumn).append(winningAlgorithm).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(dataSetName).append(targetColumn).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -86,7 +74,7 @@ public class ForecastModel implements Serializable
             return false;
         }
         ForecastModel rhs = ((ForecastModel) other);
-        return new EqualsBuilder().append(dataSetName, rhs.dataSetName).append(targetColumn, rhs.targetColumn).append(winningAlgorithm, rhs.winningAlgorithm).append(additionalProperties, rhs.additionalProperties).isEquals();
+        return new EqualsBuilder().append(dataSetName, rhs.dataSetName).append(targetColumn, rhs.targetColumn).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
 }

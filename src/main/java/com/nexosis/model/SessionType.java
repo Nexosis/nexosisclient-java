@@ -9,7 +9,8 @@ import java.util.Map;
 public enum SessionType {
     IMPORT("import"),
     FORECAST("forecast"),
-    IMPACT("impact");
+    IMPACT("impact"),
+    MODEL("model");
     private final String value;
     private final static Map<String, SessionType> CONSTANTS = new HashMap<String, SessionType>();
 
@@ -19,7 +20,7 @@ public enum SessionType {
         }
     }
 
-    private SessionType(String value) {
+    SessionType(String value) {
         this.value = value;
     }
 

@@ -1,4 +1,4 @@
-package com.nexosis.ViewTests;
+package com.nexosis.ModelsTests;
 
 import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
@@ -7,37 +7,25 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import com.nexosis.impl.NexosisClientException;
+import org.joda.time.DateTime;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import java.io.IOException;
 
-public class RemoveTests {
+import java.io.IOException;
+import java.util.*;
+
+public class PostModelPredict {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     private String fakeEndpoint = "https://nada.nexosis.com/not-here";
     private String fakeApiKey = "abcdefg";
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
     @Test
-    public void removeRequiresDataSetName() throws NexosisClientException
-    {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value viewName cannot be null or empty.");
+    public void willSendValuesForPrediction() throws Exception {
+        UUID modelId = UUID.randomUUID();
 
-        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getViews().remove(null, false, null);
-    }
-
-    @Test
-    public void removeAddsViewNameToUri() throws Exception {
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
             @Override
             public LowLevelHttpResponse execute() throws IOException {
@@ -58,8 +46,23 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().remove("testView", false, null);
+        HashMap<String, String> map = new HashMap<>();
+        List<Map<String, String>> data = new ArrayList<>();
+        map.put("column","value");
+        data.add(map);
+        target.getModels().predict(modelId, data);
 
-        Assert.assertEquals(fakeEndpoint + "/views/testView", request.getUrl());
+        //Assert.assertEquals(HttpMethod.Post, handler.Request.Method);
+        Assert.assertEquals(fakeEndpoint + "/models/" + modelId.toString() + "/predict",  request.getUrl());
+        Assert.assertEquals("{\"data\":[{\"column\":\"value\"}]}", request.getContentAsString());
+    }
+
+    @Test
+    public void requiresNotNullFeatures() throws Exception {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Object data cannot be null.");
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
+        target.getModels().predict(UUID.randomUUID(), null);
     }
 }

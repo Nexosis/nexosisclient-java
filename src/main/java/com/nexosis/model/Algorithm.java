@@ -14,28 +14,31 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "code",
-        "description"
+        "name",
+        "description",
+        "key"
 })
 public class Algorithm implements Serializable
 {
 
-    @JsonProperty("code")
-    private String code;
+    @JsonProperty("name")
+    private String name;
     @JsonProperty("description")
     private String description;
+    @JsonProperty("key")
+    private String key;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = 4439281943827844935L;
 
-    @JsonProperty("code")
+    @JsonProperty("name")
     public String getCode() {
-        return code;
+        return name;
     }
 
-    @JsonProperty("code")
-    public void setCode(String code) {
-        this.code = code;
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     @JsonProperty("description")
@@ -46,6 +49,16 @@ public class Algorithm implements Serializable
     @JsonProperty("description")
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @JsonProperty("key")
+    public String getkey() {
+        return key;
+    }
+
+    @JsonProperty("key")
+    public void setkey(String key) {
+        this.key= key;
     }
 
     @JsonAnyGetter
@@ -60,7 +73,7 @@ public class Algorithm implements Serializable
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(code).append(description).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(name).append(description).append(key).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -72,7 +85,7 @@ public class Algorithm implements Serializable
             return false;
         }
         Algorithm rhs = ((Algorithm) other);
-        return new EqualsBuilder().append(code, rhs.code).append(description, rhs.description).append(additionalProperties, rhs.additionalProperties).isEquals();
+        return new EqualsBuilder().append(name, rhs.name).append(description, rhs.description).append(key, rhs.key).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
 }
