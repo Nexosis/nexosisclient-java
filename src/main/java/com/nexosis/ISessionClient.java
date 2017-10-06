@@ -205,46 +205,7 @@ public interface ISessionClient {
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-    
-    /** 
-      * Train a model from data already saved to the API.
-      *
-      * @param dataSourceName The name of the datasource that has the data to train the model with.
-      * @param targetColumn The name of the column for which you want predictions.
-      * @param predictionDomain
-      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object  providing information about the session.
-      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-      * POST to https://ml.nexosis.com/api/sessions/model
-     **/
-    SessionResponse trainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain) throws NexosisClientException;
 
-    /** 
-      * Train a model from data already saved to the API.
-      *
-      * @param dataSourceName The name of the datasource that has the data to train the model with.
-      * @param targetColumn The name of the column for which you want predictions.
-      * @param predictionDomain
-      * @param statusCallbackUrl An optional url used for callbacks when the model has been trained.
-      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object  providing information about the session.
-      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-      * POST to https://ml.nexosis.com/api/sessions/model
-     **/
-    SessionResponse trainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl) throws NexosisClientException;
-
-    /** 
-      * Train a model from data already saved to the API.
-      *
-      * @param dataSourceName The name of the datasource that has the data to train the model with.
-      * @param targetColumn The name of the column for which you want predictions.
-      * @param predictionDomain
-      * @param statusCallbackUrl An optional url used for callbacks when the model has been trained.
-      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object  providing information about the session.
-      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-      * POST to https://ml.nexosis.com/api/sessions/model
-     **/
-    SessionResponse trainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-    
     /** 
       * Train a model from data already saved to the API.
       *
@@ -392,9 +353,6 @@ public interface ISessionClient {
 
     public SessionResponse estimateTrainModel(ModelSessionDetail data) throws NexosisClientException;
     public SessionResponse estimateTrainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-    public SessionResponse estimateTrainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain) throws NexosisClientException;
-    public SessionResponse estimateTrainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl) throws NexosisClientException;
-    public SessionResponse estimateTrainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * List all sessions that have been run. This will show the information about them such as the id, status, and the analysis date range.

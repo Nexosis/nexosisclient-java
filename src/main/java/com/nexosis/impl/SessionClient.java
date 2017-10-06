@@ -151,44 +151,6 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse trainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain) throws NexosisClientException {
-        return trainModel(dataSourceName, targetColumn, predictionDomain, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SessionResponse trainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl) throws NexosisClientException {
-        return trainModel(dataSourceName, targetColumn, predictionDomain, statusCallbackUrl, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SessionResponse trainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSourceName, "dataSourceName");
-        Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
-
-        ColumnsProperty colProps = new ColumnsProperty();
-        colProps.setRole(DataRole.TARGET);
-        Columns columns = new Columns();
-        columns.setColumnMetadata(targetColumn, colProps);
-
-        ModelSessionDetail data = new ModelSessionDetail();
-        data.setDataSourceName(dataSourceName);
-        data.setColumns(columns);
-        data.setPredictionDomain(predictionDomain);
-        data.setCallbackUrl(statusCallbackUrl);
-
-        return trainModel(data, httpMessageTransformer);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public SessionResponse trainModel(ModelSessionDetail data) throws NexosisClientException {
         return trainModel(data, null);
     }
@@ -199,7 +161,8 @@ public class SessionClient implements ISessionClient {
     @Override
     public SessionResponse trainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
-        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSetName");
+        Argument.IsNotNullOrEmpty(data.getDataSourceName(), "ModelSessionDetail.getDataSourceName()");
+        Argument.IsNotNullOrEmpty(data.getTargetColumn(), "ModelSessionDetail.getTargetColumn()");
 
         return createSessionInternal("sessions/model", data, httpMessageTransformer, false);
     }
@@ -305,37 +268,8 @@ public class SessionClient implements ISessionClient {
     {
         Argument.IsNotNull(data, "data");
         Argument.IsNotNullOrEmpty(data.getDataSourceName(), "data.DataSetName");
-
+        data.setIsEstimate(true);
         return this.createSessionInternal("sessions/model", data, httpMessageTransformer, true);
-    }
-
-    public SessionResponse estimateTrainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain) throws NexosisClientException
-    {
-        return estimateTrainModel(dataSourceName, targetColumn, predictionDomain, null);
-    }
-
-    public SessionResponse estimateTrainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain,
-                                              String statusCallbackUrl) throws NexosisClientException
-    {
-        return this.estimateTrainModel(dataSourceName, targetColumn, predictionDomain, statusCallbackUrl, null);
-    }
-
-
-    public SessionResponse estimateTrainModel(String dataSourceName, String targetColumn, PredictionDomain predictionDomain, String statusCallbackUrl,
-                                   Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
-    {
-        Argument.IsNotNullOrEmpty(dataSourceName, "dataSourceName");
-        Argument.IsNotNullOrEmpty(targetColumn, "targetColumn");
-
-        ModelSessionDetail data = new ModelSessionDetail();
-        data.setDataSourceName(dataSourceName);
-        //Columns c = new Dictionary<String, ColumnMetadata>();
-        //targetColumn, new ColumnMetadata { DataRole = DataRole.TARGET;
-
-        data.setPredictionDomain(predictionDomain);
-        data.setCallbackUrl(statusCallbackUrl);
-
-        return this.estimateTrainModel(data, httpMessageTransformer);
     }
 
     private SessionResponse createSessionInternal(String path, SessionData data, String eventName, DateTime startDate,

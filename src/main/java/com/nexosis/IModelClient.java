@@ -29,65 +29,19 @@ public interface IModelClient {
      * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
      * GET of https://ml.nexosis.com/api/models
      */
-    ModelList list() throws NexosisClientException;
+    ModelList list() throws NexosisClientException, IllegalArgumentException;
 
     /**
      * Gets the list of all models that have been created.
      *
-     * @param page zero index page of the results to get
-     * @param pageSize number of items per page
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-     * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
-     * GET of https://ml.nexosis.com/api/model
-     */
-    ModelList list(int page, int pageSize) throws NexosisClientException;
-
-    /**
-     * Gets the list of all models that have been created.
-     *
-     * @param dataSourceName Limits models to those for a particular data source.
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-     * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
-     * GET of https://ml.nexosis.com/api/model
-     */
-    ModelList list(String dataSourceName) throws NexosisClientException;
-
-    /**
-     * Gets the list of all models that have been created.
-     *
-     * @param dataSourceName Limits models to those for a particular data source.
-     * @param page zero index page of the results to get
-     * @param pageSize number of items per page
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-     * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
-     * GET of https://ml.nexosis.com/api/model
-     */
-    ModelList list(String dataSourceName, int page, int pageSize) throws NexosisClientException;
-
-    /**
-     * Gets the list of all models that have been created.
-     *
-     * @param dataSourceName Limits models to those for a particular data source.
-     * @param createdAfterDate Limits sessions to those requested on or after the specified date.
-     * @param createdBeforeDate Limits sessions to those requested on or before the specified date.
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-     * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
-     * GET of https://ml.nexosis.com/api/model
-     */
-    ModelList list(String dataSourceName, org.joda.time.DateTime createdAfterDate, org.joda.time.DateTime createdBeforeDate) throws NexosisClientException;
-
-    /**
-     * Gets the list of all models that have been created.
-     *
-     * @param dataSourceName Limits models to those for a particular data source.
-     * @param createdAfterDate Limits sessions to those requested on or after the specified date.
-     * @param createdBeforeDate Limits sessions to those requested on or before the specified date.
+     * @param params An object of parameters used to retrieve models.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
      * GET of https://ml.nexosis.com/api/model
      */
-    ModelList list(String dataSourceName, org.joda.time.DateTime createdAfterDate, org.joda.time.DateTime createdBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    ModelList list(ModelClientParams params, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException, IllegalArgumentException;
+
 
     /**
      * Predicts target values for a set of features using the specified model.

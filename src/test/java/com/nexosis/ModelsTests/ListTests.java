@@ -7,6 +7,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ModelClientParams;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -44,7 +45,7 @@ public class ListTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getModels().list();
-        Assert.assertEquals(fakeEndpoint + "/models", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/models?page=0", request.getUrl());
     }
 
     @Test
@@ -69,9 +70,13 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        ModelClientParams params = new ModelClientParams();
+        params.setDataSourceName("data-source-name");
+        params.setCreatedAfterDate(DateTime.parse("2017-01-01T00:00Z"));
+        params.setCreatedBeforeDate(DateTime.parse("2017-01-11T00:00Z"));
 
-        target.getModels().list("data-source-name", DateTime.parse("2017-01-01T00:00Z"), DateTime.parse("2017-01-11T00:00Z"));
-        Assert.assertEquals(fakeEndpoint + "/models?createdBeforeDate=2017-01-11T00:00:00.000Z&createdAfterDate=2017-01-01T00:00:00.000Z&dataSourceName=data-source-name", request.getUrl());
+        target.getModels().list(params, null);
+        Assert.assertEquals(fakeEndpoint + "/models?createdBeforeDate=2017-01-11T00:00:00.000Z&createdAfterDate=2017-01-01T00:00:00.000Z&page=0&dataSourceName=data-source-name", request.getUrl());
     }
 
     @Test
@@ -95,8 +100,12 @@ public class ListTests {
             }
         };
 
+        ModelClientParams params = new ModelClientParams();
+        params.setPage(0);
+        params.setPageSize(20);
+
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getModels().list(0, 20);
+        target.getModels().list(params, null);
         Assert.assertEquals(fakeEndpoint + "/models?pageSize=20&page=0", request.getUrl());
     }
 }

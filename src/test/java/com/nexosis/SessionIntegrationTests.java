@@ -186,7 +186,6 @@ public class SessionIntegrationTests {
     @Test
     public void GetSessionResultsHasLinks() throws NexosisClientException {
         SessionResult result = nexosisClient.getSessions().getResults(savedSessionId);
-
         if (result.getStatus() != SessionStatus.COMPLETED) {
             Assert.fail("Session is not completed. Current status is " + result.getStatus() + ". Make sure to run SessionIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
         }

@@ -79,7 +79,7 @@ public class ViewClient implements IViewClient {
         definition.setColumns(columnDef);
         Join join = new Join();
         join.setCalendar(calendarJoin);
-        List<Join> joins = new ArrayList<Join>();
+        List<Join> joins = new ArrayList<>();
         joins.add(join);
         definition.setJoins(joins);
         return create(definition, null);

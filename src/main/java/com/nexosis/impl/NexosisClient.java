@@ -13,6 +13,7 @@ public class NexosisClient implements INexosisClient {
     private String configuredUrl;
     private ApiConnection apiConnection;
     private final static int maxPageSize = 1000;
+    private final static int defaultPageSize = 1000;
     private ISessionClient sessions;
     private IDataSetClient dataSets;
     private IImportClient imports;
@@ -50,6 +51,10 @@ public class NexosisClient implements INexosisClient {
 
     public static int getMaxPageSize() {
         return maxPageSize;
+    }
+
+    public static int getDefaultPageSize() {
+        return defaultPageSize;
     }
 
     /**
