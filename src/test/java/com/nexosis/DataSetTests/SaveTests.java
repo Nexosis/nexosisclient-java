@@ -94,7 +94,7 @@ public class SaveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().create("tango", stream);
+        target.getDataSets().create("tango", stream, "text/csv");
 
         Assert.assertEquals(fakeEndpoint + "/data/tango", request.getUrl());
         Assert.assertEquals(fileContent, request.getContentAsString());

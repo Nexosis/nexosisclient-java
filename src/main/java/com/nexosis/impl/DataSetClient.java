@@ -46,18 +46,31 @@ public class DataSetClient implements IDataSetClient {
     @Override
     public DataSetSummary create(String dataSetName, InputStream input) throws NexosisClientException
     {
-        return create(dataSetName, input, null);
+        return create(dataSetName, input, "text/csv", (Action<HttpRequest, HttpResponse>)null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataSetSummary create(String dataSetName, InputStream input, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException  {
+    public DataSetSummary create(String dataSetName, InputStream input, String contentType) throws NexosisClientException {
+        return create(dataSetName, input, contentType, (Action<HttpRequest, HttpResponse>)null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataSetSummary create(String dataSetName, InputStream input, String contentType, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException  {
+        Argument.IsNotNullOrEmpty(contentType, "contentType");
         Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
         Argument.IsNotNull(input, "input");
 
-        return apiConnection.put(DataSetSummary.class, "data/" + dataSetName, null, input, httpMessageTransformer);
+        if ((!StringUtils.equals(contentType, "text/csv")) && (!StringUtils.equals(contentType, "application/json"))) {
+            throw new IllegalArgumentException("Argument contentType must be set to 'text/csv' or 'application/json'");
+        }
+
+        return apiConnection.put(DataSetSummary.class, "data/" + dataSetName, null, input, contentType, httpMessageTransformer);
     }
 
     /**

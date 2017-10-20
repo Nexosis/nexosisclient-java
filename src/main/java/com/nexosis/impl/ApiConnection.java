@@ -153,9 +153,9 @@ public class ApiConnection {
         return sendObjectContent(type, path, parameters, HttpMethod.PUT, body, httpMessageTransformer);
     }
 
-    public <T> T put(Class<T> type, String path, Map<String, Object> parameters, InputStream body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
+    public <T> T put(Class<T> type, String path, Map<String, Object> parameters, InputStream body, String contentType, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
-        return sendStreamContent(type, path, parameters, HttpMethod.PUT, body, httpMessageTransformer);
+        return sendStreamContent(type, path, parameters, HttpMethod.PUT, body, contentType, httpMessageTransformer);
     }
 
     public <T> T post(Class<T> type, String path, Map<String,Object> parameters, Object body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
@@ -163,7 +163,7 @@ public class ApiConnection {
     }
 
     public <T> T post(Class<T> type, String path, Map<String, Object> parameters, InputStream body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return sendStreamContent(type, path, parameters, HttpMethod.POST, body, httpMessageTransformer);
+        return sendStreamContent(type, path, parameters, HttpMethod.POST, body, Json.MEDIA_TYPE, httpMessageTransformer);
     }
 
     private <T> T sendObjectContent(Class<T> type, String path, Map<String, Object> parameters, HttpMethod method, Object body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
@@ -191,13 +191,13 @@ public class ApiConnection {
         }
     }
 
-    private <T> T sendStreamContent(Class<T> type, String path, Map<String, Object> parameters, HttpMethod method, InputStream body, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
+    private <T> T sendStreamContent(Class<T> type, String path, Map<String, Object> parameters, HttpMethod method, InputStream body, String contentType, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
     {
         String acceptType = Json.MEDIA_TYPE;
         try {
             GenericUrl uri = prepareURI(path, parameters);
             HttpRequest request = null;
-            InputStreamContent inputStream = new InputStreamContent( Json.MEDIA_TYPE, body);
+            InputStreamContent inputStream = new InputStreamContent(contentType, body);
             switch (method) {
                 case PUT:
                     request = requestFactory.buildPutRequest(uri, inputStream);

@@ -46,7 +46,7 @@ public interface IDataSetClient {
      * PUT of https://ml.nexosis.com/api/data/{dataSetName}
      * <P>
      * @param dataSetName   Name of the dataset to which to add data.
-     * @param input         A stream containing the dataset to send to the server
+     * @param input         A stream containing the dataset to send to the server, defaults content-type of stream to "text/csv"
      * @return              A {@link DataSetSummary DataSetSummary} object
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
@@ -57,13 +57,27 @@ public interface IDataSetClient {
      * <P>
      * PUT of https://ml.nexosis.com/api/data/{dataSetName}
      * <P>
+     * @param dataSetName   Name of the dataset to which to add data.
+     * @param input         A stream containing the dataset to send to the server
+     * @param contentType   The content-type of the input stream (e.g. "text/csv", "application/json")
+     * @return              A {@link DataSetSummary DataSetSummary} object
+     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    DataSetSummary create(String dataSetName, InputStream input, String contentType) throws NexosisClientException;
+
+    /**
+     * Save data in a data set.
+     * <P>
+     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
+     * <P>
      * @param dataSetName             Name of the dataset to which to add data.
      * @param input                   A stream containing the dataset to send to the server
+     * @param contentType   The content-type of the input stream (e.g. "text/csv", "application/json")
      * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return                        A {@link DataSetSummary DataSetSummary} object
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    DataSetSummary create(String dataSetName, InputStream input, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    DataSetSummary create(String dataSetName, InputStream input, String contentType, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Gets the list of all data sets that have been saved to the system.
