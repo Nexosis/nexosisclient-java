@@ -107,6 +107,16 @@ public class DataSetIntegrationTests {
     }
 
     @Test
+    public void listsDataSetsRespectsPaging() throws NexosisClientException
+    {
+        ListQuery query = new ListQuery();
+        query.setPageNumber(1);
+        query.setPageSize(2);
+        DataSetList list = nexosisClient.getDataSets().list(null, query);
+        Assert.assertEquals(2,list.getItems().size());
+    }
+
+    @Test
     public void canRemoveDataSet() throws NexosisClientException
     {
         String id = UUID.randomUUID().toString(); //.ToString("N");
@@ -148,7 +158,7 @@ public class DataSetIntegrationTests {
                 ResultInterval.DAY
         );
 
-        DataSetList dataSets = nexosisClient.getDataSets().list(dataSetName);
+        DataSetList dataSets = nexosisClient.getDataSets().list(dataSetName,null);
         String names = "";
         for (DataSetSummary summary : dataSets.getItems()) {
             names += names + summary.getDataSetName() + ", ";

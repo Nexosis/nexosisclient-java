@@ -52,7 +52,7 @@ public class ListTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getDataSets().list();
 
-        Assert.assertEquals(fakeEndpoint + "/data", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/data?pageSize=50&page=0", request.getUrl());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().list("partialSomething");
-        Assert.assertEquals(fakeEndpoint + "/data?partialName=partialSomething", request.getUrl());
+        target.getDataSets().list("partialSomething", null);
+        Assert.assertEquals(fakeEndpoint + "/data?partialName=partialSomething&pageSize=50&page=0", request.getUrl());
     }
 }
