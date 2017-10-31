@@ -19,10 +19,11 @@ import static com.nexosis.util.NexosisHeaders.NEXOSIS_SESSION_STATUS;
  */
 public class SessionClient implements ISessionClient {
     private ApiConnection apiConnection;
+
     public SessionClient(ApiConnection apiConnection) {
         this.apiConnection = apiConnection;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +84,7 @@ public class SessionClient implements ISessionClient {
 
         return createForecast(data, startDate, endDate, resultInterval, statusCallbackUrl, httpMessageTransformer);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -97,7 +98,7 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException {
-        return analyzeImpact(data, eventName, startDate, endDate, resultInterval, statusCallbackUrl,null);
+        return analyzeImpact(data, eventName, startDate, endDate, resultInterval, statusCallbackUrl, null);
     }
 
     /**
@@ -172,7 +173,7 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponse estimateForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
-        return estimateForecast(data, startDate, endDate, resultInterval,null);
+        return estimateForecast(data, startDate, endDate, resultInterval, null);
     }
 
     /**
@@ -183,7 +184,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNull(data, "data");
         Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSourceName");
 
-        return createSessionInternal("sessions/forecast", data, null /* eventName */, startDate, endDate, resultInterval,null, httpMessageTransformer, true);
+        return createSessionInternal("sessions/forecast", data, null /* eventName */, startDate, endDate, resultInterval, null, httpMessageTransformer, true);
     }
 
     /**
@@ -216,8 +217,8 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException  {
-        return estimateImpact(data, eventName, startDate, endDate, resultInterval,null);
+    public SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException {
+        return estimateImpact(data, eventName, startDate, endDate, resultInterval, null);
     }
 
     /**
@@ -229,7 +230,7 @@ public class SessionClient implements ISessionClient {
         Argument.IsNotNullOrEmpty(data.getDataSourceName(), "dataSourceName");
         Argument.IsNotNullOrEmpty(eventName, "eventName");
 
-        return createSessionInternal("sessions/impact", data, eventName, startDate, endDate, resultInterval,null, httpMessageTransformer, true);
+        return createSessionInternal("sessions/impact", data, eventName, startDate, endDate, resultInterval, null, httpMessageTransformer, true);
     }
 
     /**
@@ -259,13 +260,11 @@ public class SessionClient implements ISessionClient {
         return estimateImpact(data, eventName, startDate, endDate, resultInterval, httpMessageTransformer);
     }
 
-    public SessionResponse estimateTrainModel(ModelSessionDetail data) throws NexosisClientException
-    {
+    public SessionResponse estimateTrainModel(ModelSessionDetail data) throws NexosisClientException {
         return this.estimateTrainModel(data, null);
     }
 
-    public SessionResponse estimateTrainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
-    {
+    public SessionResponse estimateTrainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(data, "data");
         Argument.IsNotNullOrEmpty(data.getDataSourceName(), "data.DataSetName");
         data.setIsEstimate(true);
@@ -273,23 +272,20 @@ public class SessionClient implements ISessionClient {
     }
 
     private SessionResponse createSessionInternal(String path, SessionData data, String eventName, DateTime startDate,
-                                                   DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl,
-                                                  Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException
-    {
+                                                  DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl,
+                                                  Action<HttpRequest, HttpResponse> httpMessageTransformer, boolean isEstimate) throws NexosisClientException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("dataSourceName", data.getDataSourceName());
         parameters.put("startDate", startDate.toDateTimeISO().toString());
         parameters.put("endDate", endDate.toDateTimeISO().toString());
         parameters.put("isEstimate", Boolean.toString(isEstimate));
 
-        if (!StringUtils.isEmpty(eventName))
-        {
+        if (!StringUtils.isEmpty(eventName)) {
             parameters.put("eventName", eventName);
         }
 
         parameters.put("resultInterval", resultInterval.value());
-        if (!StringUtils.isEmpty((statusCallbackUrl)))
-        {
+        if (!StringUtils.isEmpty((statusCallbackUrl))) {
             parameters.put("callbackUrl", statusCallbackUrl);
         }
 
@@ -297,8 +293,7 @@ public class SessionClient implements ISessionClient {
     }
 
     private SessionResponse createSessionInternal(String path, ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer,
-                                                  boolean isEstimate) throws NexosisClientException
-    {
+                                                  boolean isEstimate) throws NexosisClientException {
         data.setIsEstimate(isEstimate);
         return apiConnection.post(SessionResponse.class, path, null, data, httpMessageTransformer);
     }
@@ -308,57 +303,60 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResponses list() throws NexosisClientException {
-        return listSessionsInternal(new HashMap<String,Object>(), null);
+        return listSessionsInternal(CreateQueryParameters(null, null, null), null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSourceName) throws NexosisClientException {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("dataSourceName", dataSourceName);
-
-        return listSessionsInternal(parameters, null);
+    public SessionResponses list(ListQuery query) throws NexosisClientException {
+        return listSessionsInternal(CreateQueryParameters(null, null, query), null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSourceName, String eventName) throws NexosisClientException {
-        Map<String,Object> parameters = new HashMap<>();
-        parameters.put("dataSourceName", dataSourceName);
-        parameters.put("eventName", eventName);
-
-        return listSessionsInternal(parameters, null);
+    public SessionResponses list(String dataSourceName, ListQuery query) throws NexosisClientException {
+        return listSessionsInternal(CreateQueryParameters(dataSourceName, null, query), null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException {
-        return list(dataSourceName, eventName, requestedAfterDate, requestedBeforeDate, null);
+    public SessionResponses list(String dataSourceName, String eventName, ListQuery query) throws NexosisClientException {
+        return listSessionsInternal(CreateQueryParameters(dataSourceName, eventName, query), null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Map<String,Object> parameters = new HashMap<>();
-        parameters.put("dataSourceName", dataSourceName);
-        parameters.put("eventName", eventName);
-        parameters.put("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString());
-        parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
-
-        return listSessionsInternal(parameters, httpMessageTransformer);
+    public SessionResponses list(String dataSourceName, String eventName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        return listSessionsInternal(CreateQueryParameters(dataSourceName, eventName, query), httpMessageTransformer);
     }
 
-    private SessionResponses listSessionsInternal(Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
-    {
+    private SessionResponses listSessionsInternal(Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         return apiConnection.get(SessionResponses.class, "sessions", parameters, httpMessageTransformer);
+    }
+
+    private Map<String, Object> CreateQueryParameters(String dataSourceName, String eventName, ListQuery query) {
+        if (query == null)
+            query = new ListQuery();
+        Map<String, Object> parameters = new HashMap<>();
+        if (dataSourceName != null && !dataSourceName.equals(""))
+            parameters.put("dataSourceName", dataSourceName);
+        if (eventName != null && !eventName.equals(""))
+            parameters.put("eventName", eventName);
+        if (query.getStartDate() != null)
+            parameters.put("requestedAfterDate", query.getStartDate().toDateTimeISO().toString());
+        if (query.getEndDate() != null)
+            parameters.put("requestedBeforeDate", query.getEndDate().toDateTimeISO().toString());
+        parameters.put("page", query.getPageNumber());
+        parameters.put("pageSize", query.getPageSize());
+        return parameters;
     }
 
     /**
@@ -366,7 +364,7 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public void remove() throws NexosisClientException {
-        remove((String)null);
+        remove((String) null);
     }
 
     /**
@@ -374,7 +372,7 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public void remove(String dataSourceName) throws NexosisClientException {
-        remove(dataSourceName, (SessionType)null);
+        remove(dataSourceName, (SessionType) null);
     }
 
     /**
@@ -400,16 +398,13 @@ public class SessionClient implements ISessionClient {
     public void remove(String dataSourceName, String eventName, SessionType type) throws NexosisClientException {
 
         Map<String, Object> parameters = new HashMap<>();
-        if (!StringUtils.isEmpty(dataSourceName))
-        {
+        if (!StringUtils.isEmpty(dataSourceName)) {
             parameters.put("dataSourceName", dataSourceName);
         }
-        if (!StringUtils.isEmpty(eventName))
-        {
+        if (!StringUtils.isEmpty(eventName)) {
             parameters.put("eventName", eventName);
         }
-        if (type != null)
-        {
+        if (type != null) {
             parameters.put("type", type.value());
         }
 
@@ -433,24 +428,20 @@ public class SessionClient implements ISessionClient {
         parameters.put("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString());
         parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
 
-        if (!StringUtils.isEmpty(dataSourceName))
-        {
+        if (!StringUtils.isEmpty(dataSourceName)) {
             parameters.put("dataSourceName", dataSourceName);
         }
-        if (!StringUtils.isEmpty(eventName))
-        {
+        if (!StringUtils.isEmpty(eventName)) {
             parameters.put("eventName", eventName);
         }
-        if (type != null)
-        {
+        if (type != null) {
             parameters.put("type", type.value());
         }
 
         removeSessionsInternal(parameters, httpMessageTransformer);
     }
 
-    private void removeSessionsInternal(Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
-    {
+    private void removeSessionsInternal(Map<String, Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         apiConnection.delete("sessions", parameters, httpMessageTransformer);
     }
 
@@ -511,7 +502,7 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResult getResults(UUID id) throws NexosisClientException {
-        return getResults(id, (Action<HttpRequest, HttpResponse>)null);
+        return getResults(id, (Action<HttpRequest, HttpResponse>) null);
     }
 
     /**
@@ -526,8 +517,7 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public ReturnsStatus getResults(UUID id, OutputStream output) throws NexosisClientException
-    {
+    public ReturnsStatus getResults(UUID id, OutputStream output) throws NexosisClientException {
         return getResults(id, output, null);
     }
 
@@ -535,8 +525,7 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public ReturnsStatus getResults(UUID id, OutputStream output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
-    {
+    public ReturnsStatus getResults(UUID id, OutputStream output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
         Argument.IsNotNull(output, "output");
         return apiConnection.get(ReturnsStatus.class, "sessions/" + id + "/results", null, httpMessageTransformer, output, "text/csv");
     }

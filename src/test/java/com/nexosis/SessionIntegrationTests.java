@@ -195,6 +195,17 @@ public class SessionIntegrationTests {
     }
 
     @Test
+    public void GetSessionListRespectsPaging() throws NexosisClientException {
+        ListQuery query = new ListQuery();
+        query.setPageSize(1);
+        query.setPageNumber(2);
+        SessionResponses sessions = nexosisClient.getSessions().list(query);
+
+        Assert.assertNotNull(sessions);
+        Assert.assertTrue(sessions.getItems().size() == 1);
+    }
+
+    @Test
     public void GetSessionResultsHasResults() throws NexosisClientException {
         SessionResult results = nexosisClient.getSessions().getResults(savedSessionId);
 

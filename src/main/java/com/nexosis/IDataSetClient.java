@@ -98,7 +98,7 @@ public interface IDataSetClient {
      * @return The List&lt;T&gt; of {@link DataSetSummary DataSetSummary} objects.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    DataSetList list(String nameFilter) throws NexosisClientException;
+    DataSetList list(String nameFilter, ListQuery query) throws NexosisClientException;
 
     /**
      * Gets the list of data sets that have been saved to the system, filtering by partial name match.
@@ -110,7 +110,7 @@ public interface IDataSetClient {
      * @return The List&lt;T&gt; of {@link DataSetSummary DataSetSummary} objects.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    DataSetList list(String nameFilter, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    DataSetList list(String nameFilter, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Get the data in the set, optionally filtering it.
