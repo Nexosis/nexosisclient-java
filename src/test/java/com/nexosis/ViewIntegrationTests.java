@@ -4,11 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.*;
 
@@ -20,10 +16,10 @@ public class ViewIntegrationTests {
     private static final String preExistingView = "Views_TestJava";
 
     private static final String savedDataSet = "alpha.persistent";
-    private NexosisClient nexosisClient;
+    private static NexosisClient nexosisClient;
 
-    @Before
-    public void beforeClass() throws Exception{
+    @BeforeClass
+    public static void beforeClass() throws Exception{
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
         DataSetData data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00Z"),
@@ -35,11 +31,10 @@ public class ViewIntegrationTests {
         nexosisClient.getViews().create(preExistingView,dataSetName,rightDatasetName,null);
     }
 
-    @After
-    public void afterClass() throws Exception{
+    @AfterClass
+    public static void afterClass() throws Exception{
         nexosisClient.getDataSets().remove(dataSetName, DataSetDeleteOptions.CASCASE_ALL);
         nexosisClient.getDataSets().remove(rightDatasetName, DataSetDeleteOptions.CASCASE_ALL);
-        nexosisClient.getViews().remove(preExistingView,true, null);
     }
 
     @Test

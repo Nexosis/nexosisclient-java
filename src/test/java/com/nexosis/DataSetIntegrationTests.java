@@ -51,9 +51,9 @@ public class DataSetIntegrationTests {
         DataSetData result = nexosisClient.getDataSets().get("whiskey");
 
         Assert.assertEquals("whiskey",result.getDataSetName());
-        Assert.assertEquals(1, result.getLinks().size());
-        Assert.assertEquals("sessions", result.getLinks().get(0).getRel());
-        Assert.assertEquals(baseURI + "/sessions?dataSourceName=whiskey", result.getLinks().get(0).getHref());
+        Assert.assertEquals(4, result.getLinks().size());
+        Assert.assertEquals("self", result.getLinks().get(0).getRel());
+        Assert.assertEquals(baseURI + "/data/whiskey?pageSize=1000&page=0", result.getLinks().get(0).getHref());
     }
 
     @Test

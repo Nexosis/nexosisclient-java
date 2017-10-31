@@ -14,22 +14,46 @@ import java.nio.file.Files;
 
 import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class SessionIntegrationTests {
     private static final String baseURI = System.getenv("NEXOSIS_API_TESTURI");
     private static final String absolutePath = System.getProperty("user.dir") + "/src/test/java/com/nexosis";
     private static String savedSessionData;
     private static UUID savedSessionId;
-    private NexosisClient nexosisClient;
+    private static NexosisClient nexosisClient;
 
-    @Before
-    public void beforeClass() throws NexosisClientException{
+    @BeforeClass
+    public static void beforeClass() throws NexosisClientException, InterruptedException {
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
         SessionResponses responses = nexosisClient.getSessions().list();
         for (SessionResponse session : responses.getItems()) {
-            if (session.getStatus().equals(SessionStatus.COMPLETED)) {
+            if (session.getStatus().equals(SessionStatus.COMPLETED)
+                    && session.getType().equals(SessionType.FORECAST)) {
                 savedSessionId = session.getSessionId();
                 savedSessionData = session.getDataSourceName();
+            }
+        }
+        if(savedSessionId == null)
+        {
+            savedSessionData = "testJavaSessionData";
+            DataSetData dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
+            nexosisClient.getDataSets().create(savedSessionData, dataSet);
+            SessionResponse response = nexosisClient.getSessions().createForecast(savedSessionData
+                    , "instances"
+                    , DateTime.now().plusDays(-30)
+                    , DateTime.now().plusDays(-20)
+                    , ResultInterval.DAY
+                );
+            while(true){
+                SessionResultStatus sessionStatus = nexosisClient.getSessions().getStatus(response.getSessionId());
+                if(sessionStatus.getStatus().equals(SessionStatus.COMPLETED)
+                        || sessionStatus.getStatus().equals(SessionStatus.COMPLETED))
+                {
+                    savedSessionId = response.getSessionId();
+                    break;
+                }
+                TimeUnit.SECONDS.sleep(10);
             }
         }
 
@@ -50,7 +74,7 @@ public class SessionIntegrationTests {
     @Test
     public void CreateForecastWithDataStartsNewSession() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
-        DataSetData dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "instances");
+        DataSetData dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
 
         nexosisClient.getDataSets().create(dataSetName, dataSet);
 
@@ -65,10 +89,10 @@ public class SessionIntegrationTests {
 
         // 2016-08-01 to 2017-03-26
         SessionResponse actual = nexosisClient.getSessions().createForecast(
-            session,
-            DateTime.parse("2017-03-26T00:00:00Z"),
-            DateTime.parse("2017-04-25T00:00:00Z"),
-            ResultInterval.DAY
+                session,
+                DateTime.now().plusDays(-30),
+                DateTime.now().plusDays(-10),
+                ResultInterval.DAY
         );
 
         Assert.assertNotNull(actual.getSessionId());
@@ -191,11 +215,10 @@ public class SessionIntegrationTests {
         }
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.getLinks().size());
-        Assert.assertEquals("results", result.getLinks().get(0).getRel());
-        Assert.assertEquals("data", result.getLinks().get(1).getRel());
+        //NOTE: former tests covering counts are invalid. Results includes links for prediction intervals; which are not deterministic
+        //across different sessions.
+        Assert.assertEquals("self", result.getLinks().get(0).getRel());
         Assert.assertEquals(baseURI + "/sessions/" + savedSessionId + "/results", result.getLinks().get(0).getHref());
-        Assert.assertEquals(baseURI + "/data/" + savedSessionData, result.getLinks().get(1).getHref());
     }
 
     @Test
