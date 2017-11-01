@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
         "sessionId",
         "type",
         "status",
+        "availablePredictionIntervals",
         "requestedDate",
         "statusHistory",
         "extraParameters",
@@ -72,6 +73,9 @@ public class SessionResponse extends ReturnsCost implements Serializable
     private List<Link> links = null;
     @JsonProperty("columns")
     private Columns columns;
+    @JsonProperty("availablePredictionIntervals")
+    private String[] availablePredictionIntervals = null;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = -8794088706239187049L;
@@ -228,6 +232,16 @@ public class SessionResponse extends ReturnsCost implements Serializable
     @JsonProperty("links")
     public void setLinks(List<Link> links) {
         this.links = links;
+    }
+
+    @JsonProperty("availablePredictionIntervals")
+    public String[] getAvailablePredictionIntervals(){
+        return this.availablePredictionIntervals;
+    }
+
+    @JsonProperty("availablePredictionIntervals")
+    public void setAvailablePredictionIntervals(String[] values){
+        this.availablePredictionIntervals = values;
     }
 
     @JsonAnyGetter
