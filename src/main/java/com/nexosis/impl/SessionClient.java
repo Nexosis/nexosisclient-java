@@ -502,7 +502,15 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResult getResults(UUID id) throws NexosisClientException {
-        return getResults(id, (Action<HttpRequest, HttpResponse>) null);
+        return getResultsInternal(id, null, (Action<HttpRequest, HttpResponse>) null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SessionResult getResults(UUID id, String predictionInterval) throws NexosisClientException {
+        return getResultsInternal(id, predictionInterval, (Action<HttpRequest, HttpResponse>) null);
     }
 
     /**
@@ -510,7 +518,14 @@ public class SessionClient implements ISessionClient {
      */
     @Override
     public SessionResult getResults(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return apiConnection.get(SessionResult.class, "sessions/" + id + "/results", null, httpMessageTransformer);
+        return getResultsInternal(id, null, httpMessageTransformer);
+    }
+
+    private SessionResult getResultsInternal(UUID id, String predictionInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        Map<String, Object> parameters = new HashMap<>();
+        if(predictionInterval != null && predictionInterval != "")
+            parameters.put("predictionInterval", predictionInterval);
+        return apiConnection.get(SessionResult.class, "sessions/" + id + "/results", parameters, httpMessageTransformer);
     }
 
     /**

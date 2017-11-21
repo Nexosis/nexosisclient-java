@@ -13,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +37,7 @@ public class SessionIntegrationTests {
                 savedSessionData = session.getDataSourceName();
             }
         }
-        if(savedSessionId == null)
-        {
+        if (savedSessionId == null) {
             savedSessionData = "testJavaSessionData";
             DataSetData dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
             nexosisClient.getDataSets().create(savedSessionData, dataSet);
@@ -44,12 +46,11 @@ public class SessionIntegrationTests {
                     , DateTime.now().plusDays(-30)
                     , DateTime.now().plusDays(-20)
                     , ResultInterval.DAY
-                );
-            while(true){
+            );
+            while (true) {
                 SessionResultStatus sessionStatus = nexosisClient.getSessions().getStatus(response.getSessionId());
-                if(sessionStatus.getStatus().equals(SessionStatus.COMPLETED)
-                        || sessionStatus.getStatus().equals(SessionStatus.COMPLETED))
-                {
+                if (sessionStatus.getStatus().equals(SessionStatus.COMPLETED)
+                        || sessionStatus.getStatus().equals(SessionStatus.COMPLETED)) {
                     savedSessionId = response.getSessionId();
                     break;
                 }
@@ -233,7 +234,7 @@ public class SessionIntegrationTests {
     }
 
     @Test
-    public void GetSessionResultsWillWriteFile() throws NexosisClientException,IOException {
+    public void GetSessionResultsWillWriteFile() throws NexosisClientException, IOException {
         String filename = absolutePath
                 + "\\CsvFiles\\test-ouput-"
                 + DateTimeFormat.forPattern("yyyyMMddhhmmss").withZoneUTC().print(DateTime.now())
@@ -382,11 +383,41 @@ public class SessionIntegrationTests {
 
         try {
             nexosisClient.getSessions().get(second.getSessionId());
-        } catch (NexosisClientException nce){
+        } catch (NexosisClientException nce) {
             exceptionTheSecond = nce;
         }
 
         Assert.assertEquals(exceptionTheFirst.getStatusCode(), HttpStatusCodes.STATUS_CODE_NOT_FOUND);
         Assert.assertEquals(exceptionTheSecond.getStatusCode(), HttpStatusCodes.STATUS_CODE_NOT_FOUND);
+    }
+
+    @Test
+    public void SessionsHavePredictionIntervals() throws NexosisClientException {
+        SessionResponse session = nexosisClient.getSessions().get(savedSessionId);
+        Assert.assertNotNull(session.getAvailablePredictionIntervals());
+    }
+
+    @Test
+    public void CanRequestDifferentPredictionIntervals() throws NexosisClientException {
+        SessionResponses sessions = nexosisClient.getSessions().list();
+        SessionResponse targetSession = null;
+        for (SessionResponse r : sessions.getItems()) {
+            if (r.getType().equals(SessionType.FORECAST) &&
+                    r.getAvailablePredictionIntervals().length > 1) {
+                targetSession = r;
+                break;
+            }
+        }
+        if (targetSession == null) {
+            Assert.fail("No session exists with more than default prediction interval. Test target should to be setup.");
+            return;
+        }
+        SessionResult pi1 = nexosisClient.getSessions().getResults(targetSession.getSessionId(), targetSession.getAvailablePredictionIntervals()[0]);
+        SessionResult pi2 = nexosisClient.getSessions().getResults(targetSession.getSessionId(), targetSession.getAvailablePredictionIntervals()[1]);
+        String key = pi1.getTargetColumn();
+        for (Integer index = 0; index < pi1.getData().size(); index++) {
+            Assert.assertNotEquals(pi1.getData().get(index).get(key),
+                                    pi2.getData().get(index).get(key));
+        }
     }
 }

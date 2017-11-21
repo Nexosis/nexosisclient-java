@@ -583,6 +583,18 @@ public interface ISessionClient {
      * <P>
      * GET of https://ml.nexosis.com/api/sessions/{id}/results
      * <P>
+     * @param id The identifier of the session.
+     * @param predictionInterval One of the availablePredictionIntervals indicated on the {@link SessionResponse SessionResponse} returned by the API.
+     * @return A {@link SessionResult SessionResult} which contains the results of the run.
+     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    SessionResult getResults(UUID id, String predictionInterval) throws NexosisClientException;
+
+    /**
+     * Get the results of the session.
+     * <P>
+     * GET of https://ml.nexosis.com/api/sessions/{id}/results
+     * <P>
      * @param id                     The identifier of the session.
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return A SessionResult which contains the results of the run.

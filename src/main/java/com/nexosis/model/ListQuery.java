@@ -14,6 +14,10 @@ public class ListQuery {
 
     }
 
+    public ListQuery(int pageNumber, int pageSize){
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
     /**
      *
      * @param pageNumber - The page of results to return. Defaults to 0
