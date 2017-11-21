@@ -78,24 +78,27 @@ public class DataSetClient implements IDataSetClient {
      */
     @Override
     public DataSetList list() throws NexosisClientException {
-        return this.list(null);
+        return this.list(null,null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataSetList list(String nameFilter) throws NexosisClientException {
-        return this.list(nameFilter, null);
+    public DataSetList list(String nameFilter, ListQuery query) throws NexosisClientException {
+        return this.list(nameFilter, query, null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataSetList list(String nameFilter, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public DataSetList list(String nameFilter, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        if(query == null)
+            query = new ListQuery();
         Map<String,Object> queryParams = new HashMap<>();
-
+        queryParams.put("page", query.getPageNumber());
+        queryParams.put("pageSize", query.getPageSize());
         if (!StringUtils.isEmpty(nameFilter)) {
             queryParams.put("partialName", nameFilter);
         }

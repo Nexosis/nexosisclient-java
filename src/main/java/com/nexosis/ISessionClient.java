@@ -8,6 +8,7 @@ import com.google.api.client.http.HttpResponse;
 import org.joda.time.DateTime;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -366,16 +367,29 @@ public interface ISessionClient {
     SessionResponses list() throws NexosisClientException;
 
     /**
+     * List all sessions that have been run. This will show the information about them such as the id, status, and the analysis date range.
+     * All parameters are optional and will be used to limit the list returned.
+     * <P>
+     * GET of https://ml.nexosis.com/api/sessions
+     * <P>
+     * @param query Additional request parmeters to filter and limit the response
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
+     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    SessionResponses list(ListQuery query) throws NexosisClientException;
+
+    /**
      * List sessions that have been run and limit results by data source name. This will show the information about them such as the id, status, and the analysis date range.
      * All parameters are optional and will be used to limit the list returned.
      * <P>
      * GET of https://ml.nexosis.com/api/sessions
      * <P>
      * @param dataSourceName Limits sessions to those with the specified name.
+     * @param query Additional request parmeters to filter and limit the response
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponses list(String dataSourceName) throws NexosisClientException;
+    SessionResponses list(String dataSourceName, ListQuery query) throws NexosisClientException;
 
     /**
      * List sessions that have been run and limit results by both data source name and event name. This will show the information about them such as the id, status, and the analysis date range.
@@ -385,25 +399,11 @@ public interface ISessionClient {
      * <P>
      * @param dataSourceName   Limits sessions to those with the specified name.
      * @param eventName     Limits impact sessions to those for a particular event.
+     * @param query Additional request parmeters to filter and limit the response
      * @return The List&lt;T&gt; of {@link com.nexosis.model.SessionResponse SessionResponse}  objects.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponses list(String dataSourceName, String eventName) throws NexosisClientException;
-
-    /**
-     * List sessions that have been run and limit results by data source name, event name, as well as start and end dates. This will show the information about them such as the id, status, and the analysis date range.
-     * All parameters are optional and will be used to limit the list returned.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName        Limits sessions to those with the specified name.
-     * @param eventName             Limits impact sessions to those for a particular event.
-     * @param requestedAfterDate    Limits sessions to those created on or after the specified date.
-     * @param requestedBeforeDate   Limits sessions to those created on or before the specified date.
-     * @return The List&lt;T&gt; of {@link SessionResponse SessionResponse} objects
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException;
+    SessionResponses list(String dataSourceName, String eventName, ListQuery query) throws NexosisClientException;
 
     /**
      * List sessions that have been run and limit results by dataset name, event name, as well as start and end dates. This will show the information about them such as the id, status, and the analysis date range.
@@ -413,13 +413,12 @@ public interface ISessionClient {
      * <P>
      * @param dataSourceName         Limits sessions to those with the specified name.
      * @param eventName             Limits impact sessions to those for a particular event.
-     * @param requestedAfterDate    Limits sessions to those created on or after the specified date.
-     * @param requestedBeforeDate   Limits sessions to those created on or before the specified date.
+     * @param query Additional request parmeters to filter and limit the response
      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return The List&lt;T&gt; of {@link SessionResponse SessionResponse} objects
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponses list(String dataSourceName, String eventName, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponses list(String dataSourceName, String eventName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Remove all sessions that have been run.

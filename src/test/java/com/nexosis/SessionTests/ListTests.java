@@ -7,6 +7,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ListQuery;
 import com.nexosis.model.SessionResponses;
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -53,12 +54,13 @@ public class ListTests {
         SessionResponses result = target.getSessions().list(
                 "alpha",
                 "zulu",
+                new ListQuery(0,50,
                 DateTime.parse("2017-01-01T00:00:00Z"),
-                DateTime.parse("2017-01-11T00:00:00Z")
+                DateTime.parse("2017-01-11T00:00:00Z"))
         );
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/sessions?requestedBeforeDate=2017-01-11T00:00:00.000Z&eventName=zulu&requestedAfterDate=2017-01-01T00:00:00.000Z&dataSourceName=alpha", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions?requestedBeforeDate=2017-01-11T00:00:00.000Z&eventName=zulu&pageSize=50&requestedAfterDate=2017-01-01T00:00:00.000Z&page=0&dataSourceName=alpha", request.getUrl());
     }
 
     @Test
@@ -87,6 +89,6 @@ public class ListTests {
         SessionResponses result = target.getSessions().list();
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/sessions", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions?pageSize=50&page=0", request.getUrl());
     }
 }
