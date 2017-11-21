@@ -7,6 +7,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ConfusionMatrixResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -65,5 +66,63 @@ public class GetResultsTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
         target.getSessions().getResults(sessionId, (OutputStream)null);
+    }
+
+    @Test
+    public void getConfusionMatrixBuildsClass() throws Exception{
+        final UUID sessionId = UUID.randomUUID();
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{\"sessionId\":\"629f4d80-ac9d-416d-9b4a-61db74ed504a\", \"confusionMatrix\": [[0,1],[1,0]], \"classes\": [0,1]}");
+                return response;
+            }
+        };
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        ConfusionMatrixResponse response = target.getSessions().getConfusionMatrix(sessionId);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getClasses()[0], "0");
+        Assert.assertEquals(response.getConfusionMatrix()[0][1], 1);
+    }
+
+    @Test
+    public void getConfusionMatrixUrlIsCorrect() throws Exception
+    {
+        UUID sessionId = UUID.randomUUID();
+
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                return response;
+            }
+        };
+
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        target.getSessions().getConfusionMatrix(sessionId);
+
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/confusionmatrix", request.getUrl());
     }
 }

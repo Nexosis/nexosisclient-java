@@ -560,4 +560,14 @@ public class SessionClient implements ISessionClient {
     public void writeResults(UUID id, Writer output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
 
     }
+
+    /**
+     * @param id the identifier of a classification model building session
+     * @return an array of the classes in the classification model and a matrix of each classes results
+     * @throws NexosisClientException
+     */
+    @Override
+    public ConfusionMatrixResponse getConfusionMatrix(UUID id) throws NexosisClientException {
+        return apiConnection.get(ConfusionMatrixResponse.class, "sessions/" + id + "/results/confusionmatrix", null, null);
+    }
 }
