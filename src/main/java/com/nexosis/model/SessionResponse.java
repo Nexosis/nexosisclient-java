@@ -47,8 +47,6 @@ public class SessionResponse extends ReturnsCost implements Serializable
     public List<StatusMessage> messages = null;
     @JsonProperty("extraParameters")
     private ExtraParameters extraParameters;
-    @JsonProperty("dataSetName")
-    private String dataSetName;
     @JsonProperty("dataSourceName")
     private String dataSourceName;
     @JsonProperty("targetColumn")
@@ -138,21 +136,6 @@ public class SessionResponse extends ReturnsCost implements Serializable
     @JsonProperty("columns")
     public void setColumns(Columns columns) {
         this.columns = columns;
-    }
-
-
-    @JsonProperty("dataSetName")
-    @Deprecated
-    /**
-     * @deprecated prefer {@link getDataSourceName()}
-     */
-    public String getDataSetName() {
-        return dataSetName;
-    }
-
-    @JsonProperty("dataSetName")
-    public void setDataSetName(String dataSetName) {
-        this.dataSetName = dataSetName;
     }
 
     @JsonProperty("dataSourceName")

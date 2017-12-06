@@ -646,4 +646,12 @@ public interface ISessionClient {
      */
     void writeResults(UUID id, Writer output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
+    /**
+     *
+     * @param id the identifier of a classification model building session
+     * @return an array of the classes in the classification model and a matrix of each classes results
+     * @throws NexosisClientException
+     */
+    ConfusionMatrixResponse getConfusionMatrix(UUID id) throws NexosisClientException;
+
 }

@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PredictionDomain {
-    REGRESSION("regression");
+    REGRESSION("regression"),
+    CLASSIFICATION("classification");
     private final String value;
     private final static Map<String, PredictionDomain> CONSTANTS = new HashMap<>();
 
