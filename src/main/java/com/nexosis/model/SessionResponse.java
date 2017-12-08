@@ -118,6 +118,16 @@ public class SessionResponse extends ReturnsCost implements Serializable
         this.statusHistory = statusHistory;
     }
 
+    @JsonProperty("messages")
+    public List<StatusMessage> getMessages() {
+        return messages;
+    }
+
+    @JsonProperty("messages")
+    public void setMessages(List<StatusMessage> messages) {
+        this.messages = messages;
+    }
+
     @JsonProperty("extraParameters")
     public ExtraParameters getExtraParameters() {
         return extraParameters;
@@ -126,16 +136,6 @@ public class SessionResponse extends ReturnsCost implements Serializable
     @JsonProperty("extraParameters")
     public void setExtraParameters(ExtraParameters extraParameters) {
         this.extraParameters = extraParameters;
-    }
-
-    @JsonProperty("columns")
-    public Columns getColumns() {
-        return columns;
-    }
-
-    @JsonProperty("columns")
-    public void setColumns(Columns columns) {
-        this.columns = columns;
     }
 
     @JsonProperty("dataSourceName")
@@ -155,6 +155,36 @@ public class SessionResponse extends ReturnsCost implements Serializable
     @JsonProperty("targetColumn")
     public void setTargetColumn(String targetColumn) {
         this.targetColumn = targetColumn;
+    }
+
+    @JsonProperty("eventName")
+    public String getEventName() {
+        return eventName;
+    }
+
+    @JsonProperty("eventName")
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    @JsonProperty("predictionDomain")
+    public PredictionDomain getPredictionDomain() {
+        return predictionDomain;
+    }
+
+    @JsonProperty("predictionDomain")
+    public void setPredictionDomain(PredictionDomain predictionDomain) {
+        this.predictionDomain = predictionDomain;
+    }
+
+    @JsonProperty("modelId")
+    public UUID getModelId() {
+        return modelId;
+    }
+
+    @JsonProperty("modelId")
+    public void setModelId(UUID modelId) {
+        this.modelId = modelId;
     }
 
     @JsonProperty("requestedDate")
@@ -215,6 +245,16 @@ public class SessionResponse extends ReturnsCost implements Serializable
     @JsonProperty("links")
     public void setLinks(List<Link> links) {
         this.links = links;
+    }
+
+    @JsonProperty("columns")
+    public Columns getColumns() {
+        return columns;
+    }
+
+    @JsonProperty("columns")
+    public void setColumns(Columns columns) {
+        this.columns = columns;
     }
 
     @JsonProperty("availablePredictionIntervals")
