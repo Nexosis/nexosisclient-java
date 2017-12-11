@@ -33,8 +33,8 @@ public class ViewIntegrationTests {
 
     @AfterClass
     public static void afterClass() throws Exception{
-        nexosisClient.getDataSets().remove(dataSetName, DataSetDeleteOptions.CASCASE_ALL);
-        nexosisClient.getDataSets().remove(rightDatasetName, DataSetDeleteOptions.CASCASE_ALL);
+        nexosisClient.getDataSets().remove(dataSetName, DataSetDeleteOptions.CASCADE_ALL);
+        nexosisClient.getDataSets().remove(rightDatasetName, DataSetDeleteOptions.CASCADE_ALL);
     }
 
     @Test

@@ -62,7 +62,7 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().remove("sierra", DataSetDeleteOptions.CASCASE_BOTH);
+        target.getDataSets().remove("sierra", DataSetDeleteOptions.CASCADE_BOTH);
 
         Assert.assertEquals(fakeEndpoint + "/data/sierra?cascade=forecast&cascade=session", request.getUrl());
     }
