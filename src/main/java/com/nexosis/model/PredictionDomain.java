@@ -8,7 +8,9 @@ import java.util.Map;
 
 public enum PredictionDomain {
     REGRESSION("regression"),
-    CLASSIFICATION("classification");
+    CLASSIFICATION("classification"),
+    IMPACT("impact"),
+    FORECAST("forecast");
     private final String value;
     private final static Map<String, PredictionDomain> CONSTANTS = new HashMap<>();
 
