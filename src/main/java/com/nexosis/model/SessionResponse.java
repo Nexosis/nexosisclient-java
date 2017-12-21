@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SessionResult.class)
 })
-public class SessionResponse extends ReturnsCost implements Serializable
+public class SessionResponse extends ReturnsQuotas implements Serializable
 {
     @JsonProperty("sessionId")
     private UUID sessionId;

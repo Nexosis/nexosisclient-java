@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"dataSetName"})
-public class DataSetSummary extends ReturnsCost implements Serializable {
+public class DataSetSummary extends ReturnsQuotas implements Serializable {
     @JsonProperty("dataSetName")
     private String dataSetName;
     @JsonProperty("columns")

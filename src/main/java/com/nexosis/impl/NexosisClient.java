@@ -3,7 +3,7 @@ package com.nexosis.impl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.nexosis.*;
-import com.nexosis.model.AccountBalance;
+import com.nexosis.model.AccountQuotas;
 import com.nexosis.util.Action;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
@@ -117,16 +117,16 @@ public class NexosisClient implements INexosisClient {
      * {@inheritDoc}
      */
     @Override
-    public AccountBalance getAccountBalance() throws NexosisClientException {
-        return getAccountBalance(null);
+    public AccountQuotas getAccountQuotas() throws NexosisClientException {
+        return getAccountQuotas(null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AccountBalance getAccountBalance(Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return apiConnection.get(AccountBalance.class, "/data", null, httpMessageTransformer);
+    public AccountQuotas getAccountQuotas(Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+        return apiConnection.get(AccountQuotas.class, "/data", null, httpMessageTransformer);
     }
 
     @Override

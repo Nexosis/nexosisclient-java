@@ -14,7 +14,6 @@ import java.util.Map;
         "targetColumn",
         "predictionDomain",
         "callbackUrl",
-        "isEstimate",
         "columns"
 })
 public class ModelSessionDetail implements Serializable {
@@ -45,12 +44,6 @@ public class ModelSessionDetail implements Serializable {
     @JsonProperty("callbackUrl")
     @JsonPropertyDescription("The Webhook url that will receive updates when the Session status changes\r\nIf you provide a callback url, your response will contain a header named Nexosis-Webhook-Token. You will receive this \r\nsame header in the request message to your Webhook, which you can use to validate that the message came from Nexosis.")
     private String callbackUrl;
-    /**
-     * If specified, the session will not be processed. The returned `Nexosis-Request-Cost` header will be populated with the estimated cost that the request would have incurred.
-     */
-    @JsonProperty("isEstimate")
-    @JsonPropertyDescription("If specified, the session will not be processed. The returned `Nexosis-Request-Cost` header will be populated with the estimated cost that the request would have incurred.")
-    private boolean isEstimate;
     /**
      * Metadata about each column in the data source
      */
@@ -130,22 +123,6 @@ public class ModelSessionDetail implements Serializable {
     }
 
     /**
-     * If specified, the session will not be processed. The returned `Nexosis-Request-Cost` header will be populated with the estimated cost that the request would have incurred.
-     */
-    @JsonProperty("isEstimate")
-    public boolean isIsEstimate() {
-        return isEstimate;
-    }
-
-    /**
-     * If specified, the session will not be processed. The returned `Nexosis-Request-Cost` header will be populated with the estimated cost that the request would have incurred.
-     */
-    @JsonProperty("isEstimate")
-    public void setIsEstimate(boolean isEstimate) {
-        this.isEstimate = isEstimate;
-    }
-
-    /**
      * Metadata about each column in the data source
      */
     @JsonProperty("columns")
@@ -173,12 +150,12 @@ public class ModelSessionDetail implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("dataSourceName", dataSourceName).append("targetColumn", targetColumn).append("predictionDomain", predictionDomain).append("callbackUrl", callbackUrl).append("isEstimate", isEstimate).append("columns", columns).append("additionalProperties", additionalProperties).toString();
+        return new ToStringBuilder(this).append("dataSourceName", dataSourceName).append("targetColumn", targetColumn).append("predictionDomain", predictionDomain).append("callbackUrl", callbackUrl).append("columns", columns).append("additionalProperties", additionalProperties).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(predictionDomain).append(callbackUrl).append(isEstimate).append(additionalProperties).append(columns).append(targetColumn).append(dataSourceName).toHashCode();
+        return new HashCodeBuilder().append(predictionDomain).append(callbackUrl).append(additionalProperties).append(columns).append(targetColumn).append(dataSourceName).toHashCode();
     }
 
     @Override
@@ -190,6 +167,6 @@ public class ModelSessionDetail implements Serializable {
             return false;
         }
         ModelSessionDetail rhs = ((ModelSessionDetail) other);
-        return new EqualsBuilder().append(predictionDomain, rhs.predictionDomain).append(callbackUrl, rhs.callbackUrl).append(isEstimate, rhs.isEstimate).append(additionalProperties, rhs.additionalProperties).append(columns, rhs.columns).append(targetColumn, rhs.targetColumn).append(dataSourceName, rhs.dataSourceName).isEquals();
+        return new EqualsBuilder().append(predictionDomain, rhs.predictionDomain).append(callbackUrl, rhs.callbackUrl).append(additionalProperties, rhs.additionalProperties).append(columns, rhs.columns).append(targetColumn, rhs.targetColumn).append(dataSourceName, rhs.dataSourceName).isEquals();
     }
 }

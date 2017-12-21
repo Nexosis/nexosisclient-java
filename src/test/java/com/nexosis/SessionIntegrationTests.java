@@ -63,13 +63,16 @@ public class SessionIntegrationTests {
     }
 
     @Test
-    public void GetBalanceWillGiveItBack() throws NexosisClientException {
-        AccountBalance actual = nexosisClient.getAccountBalance();
+    public void GetQuotaWillGiveItBack() throws NexosisClientException {
+        AccountQuotas actual = nexosisClient.getAccountQuotas();
 
         Assert.assertNotNull(actual);
-        Assert.assertNotNull(actual.getBalance());
-        Assert.assertTrue(actual.getCost().getAmount().signum() == 0);
-        Assert.assertEquals("USD", actual.getBalance().getCurrency().getCurrencyCode());
+        Assert.assertNotNull(actual.getDataSetCountAllotted());
+        Assert.assertNotNull(actual.getDataSetCountCurrent());
+        Assert.assertNotNull(actual.getPredictionCountAllotted());
+        Assert.assertNotNull(actual.getPredictionCountCurrent());
+        Assert.assertNotNull(actual.getSessionCountAllotted());
+        Assert.assertNotNull(actual.getSessionCountCurrent());
     }
 
     @Test
@@ -326,7 +329,7 @@ public class SessionIntegrationTests {
 
         nexosisClient.getDataSets().create(dataSetName, dataSet);
 
-        SessionResponse actual = nexosisClient.getSessions().estimateImpact(
+        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
                 dataSetName,
                 "charlie-delta-{DateTime.UtcNow:s}",
                 "instances",

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.Json;
 import com.nexosis.model.ErrorResponse;
-import com.nexosis.model.ReturnsCost;
+import com.nexosis.model.ReturnsQuotas;
 import com.nexosis.model.ReturnsStatus;
 import com.nexosis.model.SessionStatus;
 import com.nexosis.util.Action;
@@ -235,8 +235,8 @@ public class ApiConnection {
             response = makeRequest(request, httpMessageTransformer);
             try {
                 T object = response.parseAs(type);
-                if (ReturnsCost.class.isAssignableFrom(object.getClass())) {
-                    ((ReturnsCost) object).AssignCost(response.getHeaders());
+                if (ReturnsQuotas.class.isAssignableFrom(object.getClass())) {
+                    ((ReturnsQuotas) object).AssignQuotas(response.getHeaders());
                 }
                 return object;
             } finally {

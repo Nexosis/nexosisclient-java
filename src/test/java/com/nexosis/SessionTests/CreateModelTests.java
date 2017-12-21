@@ -56,7 +56,7 @@ public class CreateModelTests {
         target.getSessions().trainModel(modelSession);
 
         Assert.assertEquals(fakeEndpoint + "/sessions/model", request.getUrl());
-        String expected = "{\"dataSourceName\":\"data-source-name\",\"targetColumn\":\"target-column\",\"predictionDomain\":\"regression\",\"callbackUrl\":\"http://this.is.a.callback.url\",\"isEstimate\":false}";
+        String expected = "{\"dataSourceName\":\"data-source-name\",\"targetColumn\":\"target-column\",\"predictionDomain\":\"regression\",\"callbackUrl\":\"http://this.is.a.callback.url\"}";
         Assert.assertEquals(expected, request.getContentAsString());
     }
 

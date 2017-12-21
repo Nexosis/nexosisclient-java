@@ -68,7 +68,7 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&isEstimate=false&eventName=event-name&" +
+        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&eventName=event-name&" +
                 "callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
     }
 
@@ -112,7 +112,7 @@ public class CreateImpactTests {
                 "http://this.is.a.callback.url"
         );
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&isEstimate=false&eventName=event-name&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&eventName=event-name&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
         Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());
     }
 

@@ -13,7 +13,6 @@ public enum SessionStatus {
     STARTED("started"),
     COMPLETED("completed"),
     CANCELLED("cancelled"),
-    ESTIMATED("estimated"),
     FAILED("failed");
     private final String value;
     private final static Map<String, SessionStatus> CONSTANTS = new HashMap<String, SessionStatus>();

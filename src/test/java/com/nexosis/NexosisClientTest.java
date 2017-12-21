@@ -12,7 +12,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
-import com.nexosis.model.AccountBalance;
+import com.nexosis.model.AccountQuotas;
 import com.nexosis.model.ErrorResponse;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -24,9 +24,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.nexosis.util.NexosisHeaders.NEXOSIS_ACCOUNT_BALANCE;
-import static com.nexosis.util.NexosisHeaders.NEXOSIS_API_KEY;
-import static com.nexosis.util.NexosisHeaders.NEXOSIS_REQUEST_COST;
+import static com.nexosis.util.NexosisHeaders.*;
 
 public class NexosisClientTest {
     @Rule
@@ -98,7 +96,7 @@ public class NexosisClientTest {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getAccountBalance();
+        target.getAccountQuotas();
 
         Assert.assertTrue(request.getHeaders().containsKey(NEXOSIS_API_KEY));
         Assert.assertEquals(fakeApiKey, request.getFirstHeaderValue(NEXOSIS_API_KEY));
@@ -126,7 +124,7 @@ public class NexosisClientTest {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getAccountBalance();
+        target.getAccountQuotas();
 
         Assert.assertTrue(request.getHeaders().containsKey("user-agent"));
         Assert.assertEquals(NexosisClient.CLIENT_VERSION, request.getFirstHeaderValue("user-agent"));
@@ -135,12 +133,20 @@ public class NexosisClientTest {
     @Test
     public void processesCostAndBalance() throws Exception {
         final ArrayList<String> fakeHeaders = new ArrayList<>();
-        fakeHeaders.add(NEXOSIS_REQUEST_COST);
-        fakeHeaders.add(NEXOSIS_ACCOUNT_BALANCE);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_DATASET_COUNT_ALLOTTED);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_DATASET_COUNT_CURRENT);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_PREDICTION_COUNT_ALLOTTED);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_PREDICTION_COUNT_CURRENT);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_SESSION_COUNT_ALLOTTED);
+        fakeHeaders.add(NEXOSIS_ACCOUNT_SESSION_COUNT_CURRENT);
 
         final ArrayList<String> fakeHeaderValues = new ArrayList<>();
-        fakeHeaderValues.add("123.12 USD");
-        fakeHeaderValues.add("999.99 USD");
+        fakeHeaderValues.add("0");
+        fakeHeaderValues.add("1");
+        fakeHeaderValues.add("2");
+        fakeHeaderValues.add("3");
+        fakeHeaderValues.add("4");
+        fakeHeaderValues.add("5");
 
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
             @Override
@@ -164,14 +170,15 @@ public class NexosisClientTest {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        AccountBalance result = target.getAccountBalance();
+        AccountQuotas result = target.getAccountQuotas();
 
         // Test Cost
-        Assert.assertEquals(new BigDecimal("123.12"), result.getCost().getAmount());
-        Assert.assertEquals(Currency.getInstance("USD"), result.getCost().getCurrency());
-        // Test Balance
-        Assert.assertEquals(new BigDecimal("999.99"), result.getBalance().getAmount());
-        Assert.assertEquals(Currency.getInstance("USD"), result.getBalance().getCurrency());
+        Assert.assertEquals(0, result.getDataSetCountAllotted());
+        Assert.assertEquals(1, result.getDataSetCountCurrent());
+        Assert.assertEquals(2, result.getPredictionCountAllotted());
+        Assert.assertEquals(3, result.getPredictionCountCurrent());
+        Assert.assertEquals(4, result.getSessionCountAllotted());
+        Assert.assertEquals(5, result.getSessionCountCurrent());
     }
 
     @Test
@@ -208,7 +215,7 @@ public class NexosisClientTest {
 
         try {
             NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-            target.getAccountBalance();
+            target.getAccountQuotas();
         } catch (NexosisClientException exception) {
             Assert.assertEquals(HttpStatusCodes.STATUS_CODE_SERVER_ERROR, exception.getStatusCode());
             Assert.assertNotNull(exception.getErrorResponse());
