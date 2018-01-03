@@ -3,13 +3,14 @@ package com.nexosis.model;
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"items"})
-public class ImportDetails {
+public class ImportDetails extends Paged implements Serializable {
     @JsonProperty("items")
     private List<ImportDetail> items = null;
 

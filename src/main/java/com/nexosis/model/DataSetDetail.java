@@ -60,6 +60,10 @@ public class DataSetDetail {
         this.data = data;
     }
 
+    public List<Map<String, String>> getData() {
+        return this.data;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(columns).append(data).toHashCode();

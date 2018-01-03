@@ -2,6 +2,7 @@ package com.nexosis.model;
 
 import org.joda.time.DateTime;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 

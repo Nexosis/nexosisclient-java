@@ -58,9 +58,9 @@ public class DataSetIntegrationTests {
         DataSetData result = nexosisClient.getDataSets().get(query);
 
         Assert.assertEquals("whiskey",result.getDataSetName());
-        Assert.assertEquals(4, result.getLinks().size());
+        Assert.assertEquals(5, result.getLinks().size());
         Assert.assertEquals("self", result.getLinks().get(0).getRel());
-        Assert.assertEquals(baseURI + "/data/whiskey?pageSize=1000&page=0", result.getLinks().get(0).getHref());
+        Assert.assertEquals(baseURI + "/data/whiskey", result.getLinks().get(0).getHref());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class DataSetIntegrationTests {
         DataSetSummaryQuery query = new DataSetSummaryQuery();
         query.setPage(new PagingInfo(1,2));
 
-        DataSetList list = nexosisClient.getDataSets().list();
+        DataSetList list = nexosisClient.getDataSets().list(query);
         Assert.assertEquals(2,list.getItems().size());
     }
 

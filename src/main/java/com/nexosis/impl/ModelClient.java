@@ -36,7 +36,7 @@ public class ModelClient implements IModelClient {
      * {@inheritDoc}
      */
     public ModelSummary get(UUID id) throws NexosisClientException {
-        return apiConnection.get(ModelSummary.class, "model/" + id.toString(),null, httpMessageTransformer);
+        return apiConnection.get(ModelSummary.class, "models/" + id.toString(),null, httpMessageTransformer);
     }
 
     /**

@@ -13,12 +13,23 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"dataSetName"})
+@JsonPropertyOrder(
+        {
+                "dataSetName",
+                "columns",
+                "isTimeSeries",
+                "dataSetSize"
+        })
 public class DataSetSummary extends ReturnsQuotas implements Serializable {
     @JsonProperty("dataSetName")
     private String dataSetName;
     @JsonProperty("columns")
     private Columns columns;
+    @JsonProperty("isTimeSeries")
+    private boolean isTimeSeries;
+    @JsonProperty("dataSetSize")
+    private boolean dataSetSize;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = -873191780902806162L;
@@ -70,4 +81,19 @@ public class DataSetSummary extends ReturnsQuotas implements Serializable {
         return new EqualsBuilder().append(dataSetName, rhs.dataSetName).append(columns, rhs.columns).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 
+    public boolean isTimeSeries() {
+        return isTimeSeries;
+    }
+
+    public void setTimeSeries(boolean timeSeries) {
+        isTimeSeries = timeSeries;
+    }
+
+    public boolean isDataSetSize() {
+        return dataSetSize;
+    }
+
+    public void setDataSetSize(boolean dataSetSize) {
+        this.dataSetSize = dataSetSize;
+    }
 }

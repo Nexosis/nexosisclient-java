@@ -8,7 +8,7 @@ import static com.nexosis.util.NexosisHeaders.*;
 /**
  *
  */
-public abstract class ReturnsQuotas {
+public abstract class ReturnsQuotas extends Resource {
     @JsonIgnore
     private int dataSetCountAllotted;
     @JsonIgnore
