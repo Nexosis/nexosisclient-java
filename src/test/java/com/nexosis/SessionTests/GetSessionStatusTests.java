@@ -118,7 +118,8 @@ public class GetSessionStatusTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().getStatus(sessionId, isCalled);
+        target.getSessions().setHttpMessageTransformer(isCalled);
+        target.getSessions().getStatus(sessionId);
 
         Assert.assertTrue("Http transform function not called", isCalled.called);
     }

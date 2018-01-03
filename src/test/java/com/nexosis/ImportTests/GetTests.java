@@ -35,7 +35,7 @@ public class GetTests {
         thrown.expectMessage("Object id cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getImports().get(null, null);
+        target.getImports().get(null);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class GetTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         UUID id = UUID.randomUUID();
-        target.getImports().get(id, null);
+        target.getImports().get(id);
         Assert.assertEquals(fakeEndpoint + String.format("/imports/%s", id.toString()), request.getUrl());
     }
 }

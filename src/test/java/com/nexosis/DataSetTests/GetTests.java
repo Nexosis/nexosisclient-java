@@ -7,6 +7,8 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
+import com.nexosis.model.DataSetDataQuery;
+import com.nexosis.model.PagingInfo;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,8 +51,9 @@ public class GetTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().get("test");
-        Assert.assertEquals(fakeEndpoint + "/data/test?pageSize=" + NexosisClient.getMaxPageSize() + "&page=0", request.getUrl());
+        DataSetDataQuery query = new DataSetDataQuery("test");
+        target.getDataSets().get(query);
+        Assert.assertEquals(fakeEndpoint + "/data/test", request.getUrl());
     }
 
     @Test
@@ -75,25 +78,25 @@ public class GetTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().get(
-                "test",
-                10,
-                10,
-                DateTime.parse("2017-01-01T00:00:00Z"),
-                DateTime.parse("2017-01-31T00:00:00Z"),
-                new ArrayList<String>() {{ add("test1"); add("test2");}});
 
-        Assert.assertEquals(fakeEndpoint + "/data/test?include=test1&include=test2&endDate=2017-01-31T00:00:00.000Z"+
-                "&pageSize=10&page=10&startDate=2017-01-01T00:00:00.000Z", request.getUrl());
+        DataSetDataQuery query = new DataSetDataQuery("test");
+        query.setPage(new PagingInfo(10,10));
+        query.setStartDate(DateTime.parse("2017-01-01T00:00:00Z"));
+        query.setEndDate(DateTime.parse("2017-01-31T00:00:00Z"));
+        query.setIncludedColumns(new ArrayList<String>() {{ add("test1"); add("test2");}});
+        target.getDataSets().get(query);
+
+        Assert.assertEquals(fakeEndpoint + "/data/test?pageSize=10&include=test1&include=test2&page=10&endDate=2017-01-31T00:00:00.000Z"+
+                "&startDate=2017-01-01T00:00:00.000Z", request.getUrl());
     }
 
     @Test //(expected = IllegalArgumentException.class)
     public void requiresDataSetNameIsNotNullOrEmpty() throws NexosisClientException {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value dataSetName cannot be null or empty.");
+        thrown.expectMessage("Value DataSetDataQuery.Name cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getDataSets().get("");
+        target.getDataSets().get(new DataSetDataQuery());
     }
 
     @Test
@@ -122,7 +125,8 @@ public class GetTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().get("kilo", baos);
+        DataSetDataQuery query = new DataSetDataQuery("kilo");
+        target.getDataSets().get(query, baos);
 
         Assert.assertEquals(fakeEndpoint + "/data/kilo", request.getUrl());
         Assert.assertEquals(fileContent, new String(baos.toByteArray(), "UTF-8"));

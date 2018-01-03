@@ -133,7 +133,7 @@ public class CreateForecastTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
         target.getSessions().createForecast(
-                (String) null,
+                null,
                 "",
                 JodaTimeHelper.START_OF_TIME,
                 JodaTimeHelper.END_OF_TIME,

@@ -16,7 +16,15 @@ import java.util.Map;
 
 public class ViewClient implements IViewClient {
     private ApiConnection apiConnection;
+    private Action<HttpRequest, HttpResponse> httpMessageTransformer = null;
 
+    public Action<HttpRequest, HttpResponse> getHttpMessageTransformer() {
+        return httpMessageTransformer;
+    }
+
+    public void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer) {
+        this.httpMessageTransformer = httpMessageTransformer;
+    }
     public ViewClient(ApiConnection apiConnection) {
         this.apiConnection = apiConnection;
     }
@@ -49,7 +57,7 @@ public class ViewClient implements IViewClient {
         List<Join> joins = new ArrayList<Join>();
         joins.add(join);
         definition.setJoins(joins);
-        return create(definition, null);
+        return create(definition);
     }
 
     /**
@@ -82,7 +90,7 @@ public class ViewClient implements IViewClient {
         List<Join> joins = new ArrayList<>();
         joins.add(join);
         definition.setJoins(joins);
-        return create(definition, null);
+        return create(definition);
     }
 
     /**
@@ -92,13 +100,12 @@ public class ViewClient implements IViewClient {
      * <p>
      *
      * @param definition             The definition of the view to create
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return A {@link ViewDefinition ViewDefinition} The created definition returned from the server
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     @Override
-    public ViewDefinition create(ViewDefinition definition, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return apiConnection.put(ViewDefinition.class,"views/" + definition.getViewName(),null,definition,httpMessageTransformer);
+    public ViewDefinition create(ViewDefinition definition) throws NexosisClientException {
+        return apiConnection.put(ViewDefinition.class,"views/" + definition.getViewName(),null, definition, httpMessageTransformer);
     }
 
     /**
@@ -112,7 +119,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewDefinitionList list() throws NexosisClientException {
-        return list(null,null,0,50,null);
+        return list(null,null,0,50);
     }
 
     /**
@@ -128,7 +135,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public ViewDefinitionList list(String nameFilter, String dataSetNameFilter) throws NexosisClientException {
-        return list(nameFilter, dataSetNameFilter,0, 50, null);
+        return list(nameFilter, dataSetNameFilter,0, 50);
     }
 
     /**
@@ -141,12 +148,11 @@ public class ViewClient implements IViewClient {
      * @param dataSetNameFilter Limits results to only those views based on datasets with the name
      * @param page The page of results to return. Defaults to 0.
      * @param pageSize The number of results per page. Defaults to 50. Max 1000.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return The List&lt;T&gt; of {@link ViewDefinitionList ViewDefinitionList} objects.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     @Override
-    public ViewDefinitionList list(String nameFilter, String dataSetNameFilter, int page, int pageSize, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public ViewDefinitionList list(String nameFilter, String dataSetNameFilter, int page, int pageSize) throws NexosisClientException {
         Map<String, Object> queryParams = new HashMap<>();
 
         queryParams.put("page", String.valueOf(page));
@@ -176,24 +182,7 @@ public class ViewClient implements IViewClient {
     @Override
     public ViewData get(String viewName) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
-        return get(viewName,new ListQuery(0,50,null,null),null);
-    }
-
-    /**
-     * Get the data in the view, optionally filtering it.
-     * <p>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
-     * <p>
-     *
-     * @param viewName Name of the view for which to retrieve data.
-     * @param query    Additional parameters to limit the data returned
-     * @return A {@link ViewData ViewData} object containing filtered data
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    @Override
-    public ViewData get(String viewName, ListQuery query) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(viewName,"viewName");
-        return get(viewName, query, null);
+        return get(viewName, new ListQuery(0,50,null,null));
     }
 
     /**
@@ -204,12 +193,11 @@ public class ViewClient implements IViewClient {
      *
      * @param viewName               Name of the dataset for which to retrieve data.
      * @param query                  Additional parameters to limit the data returned
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return A {@link ViewData ViewData} object containing filtered data
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     @Override
-    public ViewData get(String viewName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public ViewData get(String viewName, ListQuery query) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
         Map<String,Object> parameters = ProcessDataSetGetParameters(query);
         return apiConnection.get(ViewData.class, "views/" + viewName, parameters, httpMessageTransformer);
@@ -233,23 +221,6 @@ public class ViewClient implements IViewClient {
     }
 
     /**
-     * Get the data in the set, optionally filtering it.
-     * <p>
-     * GET of https://ml.nexosis.com/api/data/{viewName}
-     * <p>
-     *
-     * @param viewName Name of the dataset for which to retrieve data.
-     * @param output   An output stream to write the data set to
-     * @param query    Additional parameters to limit the data returned
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    @Override
-    public void get(String viewName, OutputStream output, ListQuery query) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(viewName,"viewName");
-        get(viewName,output,query,null);
-    }
-
-    /**
      * Get the data in the set and write it to the output stream, optionally filtering it.
      * <p>
      * GET of https://ml.nexosis.com/api/data/{viewName}
@@ -258,14 +229,13 @@ public class ViewClient implements IViewClient {
      * @param viewName               Name of the dataset for which to retrieve data.
      * @param output                 An output stream to write the data set to
      * @param query                  Additional parameters to limit the data returned
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException
      */
     @Override
-    public void get(String viewName, OutputStream output, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public void get(String viewName, OutputStream output, ListQuery query) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
         Map<String,Object> parameters = ProcessDataSetGetParameters(query);
-        apiConnection.get(ViewData.class,"views" + viewName, parameters,httpMessageTransformer, output);
+        apiConnection.get(ViewData.class,"views" + viewName, parameters, httpMessageTransformer, output);
     }
 
     /**
@@ -279,7 +249,7 @@ public class ViewClient implements IViewClient {
      */
     @Override
     public void remove(String viewName) throws NexosisClientException {
-        remove(viewName,false,null);
+        remove(viewName,false);
     }
 
     /**
@@ -290,11 +260,10 @@ public class ViewClient implements IViewClient {
      *
      * @param viewName               Name of the dataset from which to remove data.
      * @param cascadeSessions  Determine whether all sessions created from the named view are also removed.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     @Override
-    public void remove(String viewName, boolean cascadeSessions, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public void remove(String viewName, boolean cascadeSessions) throws NexosisClientException {
         Argument.IsNotNullOrEmpty(viewName,"viewName");
         Map<String, Object> parameters = new HashMap<>();
         if(cascadeSessions)

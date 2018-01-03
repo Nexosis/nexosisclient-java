@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.net.URI;
 
 public interface IViewClient {
+    Action<HttpRequest, HttpResponse> getHttpMessageTransformer();
+    void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer);
+
     /**
      * Create a new view.
      * <P>
@@ -60,11 +63,10 @@ public interface IViewClient {
      * PUT of https://ml.nexosis.com/api/views/{viewName}
      * <P>
      * @param definition  The definition of the view to create
-     * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return A {@link ViewDefinition ViewDefinition} The created definition returned from the server
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    ViewDefinition create(ViewDefinition definition, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    ViewDefinition create(ViewDefinition definition) throws NexosisClientException;
 
 
     /**
@@ -96,11 +98,10 @@ public interface IViewClient {
      * <P>
      * @param nameFilter Limits results to only those views with names containing the specified value
      * @param dataSetNameFilter Limits results to only those views based on datasets with the name
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @return The List&lt;T&gt; of {@link ViewDefinitionList ViewDefinitionList} objects.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    ViewDefinitionList list(String nameFilter, String dataSetNameFilter, int page, int pageSize, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    ViewDefinitionList list(String nameFilter, String dataSetNameFilter, int page, int pageSize) throws NexosisClientException;
 
     /**
      * Get the data in the view, optionally filtering it.
@@ -125,18 +126,6 @@ public interface IViewClient {
      */
     ViewData get(String viewName, ListQuery query) throws NexosisClientException;
 
-    /**
-     * Get the data in the view, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/views/{viewName}
-     * <P>
-     * @param viewName            Name of the dataset for which to retrieve data.
-     * @param query Additional parameters to limit the data returned
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link ViewData ViewData} object containing filtered data
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    ViewData get(String viewName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Get the data in the view, optionally filtering it.
@@ -149,19 +138,6 @@ public interface IViewClient {
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     void get(String viewName, OutputStream output, ListQuery query) throws NexosisClientException;
-
-    /**
-     * Get the data in the set and write it to the output stream, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/views/{viewName}
-     * <P>
-     * @param viewName            Name of the view for which to retrieve data.
-     * @param output                 An output stream to write the data to
-     * @param query Additional parameters to limit the data returned
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException
-     */
-    void get(String viewName, OutputStream output, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Remove the view.
@@ -182,8 +158,7 @@ public interface IViewClient {
      *
      * @param viewName   Name of the view to remove.
      * @param cascadeSessions  Determine whether all sessions created from the named view are also removed.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    public void remove(String viewName, boolean cascadeSessions, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    public void remove(String viewName, boolean cascadeSessions) throws NexosisClientException;
 }

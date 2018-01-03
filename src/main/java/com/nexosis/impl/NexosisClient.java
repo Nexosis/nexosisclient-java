@@ -19,6 +19,8 @@ public class NexosisClient implements INexosisClient {
     private IImportClient imports;
     private IViewClient views;
     private IModelClient models;
+    private Action<HttpRequest, HttpResponse> httpMessageTransformer;
+
     /**
      * The client id and version sent as the User-Agent header
      */
@@ -116,16 +118,47 @@ public class NexosisClient implements INexosisClient {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public AccountQuotas getAccountQuotas() throws NexosisClientException {
-        return getAccountQuotas(null);
+    public Action<HttpRequest, HttpResponse> getHttpMessageTransformer() {
+        return httpMessageTransformer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer) {
+        this.httpMessageTransformer = httpMessageTransformer;
+        UpdateChildClientTransformers();
+    }
+
+    private void UpdateChildClientTransformers()
+    {
+        //update them if not explicitly set on the child client
+        if (getSessions().getHttpMessageTransformer() == null) {
+            getSessions().setHttpMessageTransformer(httpMessageTransformer);
+        }
+
+        if (getDataSets().getHttpMessageTransformer() == null) {
+            getDataSets().setHttpMessageTransformer( httpMessageTransformer);
+        }
+
+        if (getImports().getHttpMessageTransformer() == null) {
+            getImports().setHttpMessageTransformer(httpMessageTransformer);
+        }
+
+        if (getViews().getHttpMessageTransformer() == null) {
+            getViews().setHttpMessageTransformer(httpMessageTransformer);
+        }
+
+        if (getModels().getHttpMessageTransformer() == null) {
+            getModels().setHttpMessageTransformer(httpMessageTransformer);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AccountQuotas getAccountQuotas(Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
+    public AccountQuotas getAccountQuotas() throws NexosisClientException {
         return apiConnection.get(AccountQuotas.class, "/data", null, httpMessageTransformer);
     }
 

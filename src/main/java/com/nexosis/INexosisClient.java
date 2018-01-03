@@ -11,6 +11,9 @@ import com.google.api.client.http.HttpResponse;
  */
 public interface INexosisClient
 {
+    Action<HttpRequest, HttpResponse> getHttpMessageTransformer();
+    void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer);
+
     /**
      * Gets the current account balance.
      * <P>
@@ -20,15 +23,6 @@ public interface INexosisClient
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     AccountQuotas getAccountQuotas() throws NexosisClientException;
-
-    /**
-     * Gets the current account balance.
-     * <P>
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.AccountQuotas AccountBalance} object.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    AccountQuotas getAccountQuotas(Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
 
     /**
      * Access to the Session based operations in the API.

@@ -75,7 +75,7 @@ public class ListTests {
         params.setCreatedAfterDate(DateTime.parse("2017-01-01T00:00Z"));
         params.setCreatedBeforeDate(DateTime.parse("2017-01-11T00:00Z"));
 
-        target.getModels().list(params, null);
+        target.getModels().list(params);
         Assert.assertEquals(fakeEndpoint + "/models?createdBeforeDate=2017-01-11T00:00:00.000Z&createdAfterDate=2017-01-01T00:00:00.000Z&page=0&dataSourceName=data-source-name", request.getUrl());
     }
 
@@ -105,7 +105,7 @@ public class ListTests {
         params.setPageSize(20);
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getModels().list(params, null);
+        target.getModels().list(params);
         Assert.assertEquals(fakeEndpoint + "/models?pageSize=20&page=0", request.getUrl());
     }
 }

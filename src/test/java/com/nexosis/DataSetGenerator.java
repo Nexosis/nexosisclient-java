@@ -1,14 +1,14 @@
 package com.nexosis;
 
-import com.nexosis.model.DataSetData;
+import com.nexosis.model.DataSetDetail;
 import org.joda.time.DateTime;
 
 import java.util.*;
 
 public class DataSetGenerator {
-    public static DataSetData Run(DateTime startDate, DateTime endDate, String targetKey) {
+    public static DataSetDetail Run(DateTime startDate, DateTime endDate, String targetKey) {
         Random rand = new Random();
-        DataSetData data = new DataSetData();
+        DataSetDetail data = new DataSetDetail();
 
         List<Map<String, String>> rows = new ArrayList<>();
         for (DateTime timeStamp = startDate; timeStamp.isBefore(endDate); timeStamp = timeStamp.plusDays(1)) {

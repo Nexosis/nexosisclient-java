@@ -56,8 +56,7 @@ public class ListTests {
                 "alpha",
                 "zulu",
                 0,
-                50,
-                null
+                50
         );
 
         Assert.assertNotNull(result);

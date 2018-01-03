@@ -39,8 +39,8 @@ public class SessionIntegrationTests {
         }
         if (savedSessionId == null) {
             savedSessionData = "testJavaSessionData";
-            DataSetData dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
-            nexosisClient.getDataSets().create(savedSessionData, dataSet);
+            DataSetDetail dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
+            nexosisClient.getDataSets().create(new DataSetDetailSource(savedSessionData, dataSet));
             SessionResponse response = nexosisClient.getSessions().createForecast(savedSessionData
                     , "instances"
                     , DateTime.now().plusDays(-30)
@@ -78,9 +78,9 @@ public class SessionIntegrationTests {
     @Test
     public void CreateForecastWithDataStartsNewSession() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
-        DataSetData dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
+        DataSetDetail dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
 
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
         // setup some column metadata
         Columns cols = new Columns();
@@ -105,7 +105,7 @@ public class SessionIntegrationTests {
     @Test
     public void ForcastFromSavedDataSetStartsNewSession() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
-        DataSetData dataSet = DataSetGenerator.Run(
+        DataSetDetail dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
                 DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances");
@@ -117,7 +117,7 @@ public class SessionIntegrationTests {
         dataSet.setColumns(cols);
 
         // create dataset
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
         // create Forecast
         SessionResponse actual = nexosisClient.getSessions().createForecast(
@@ -134,13 +134,13 @@ public class SessionIntegrationTests {
     @Test
     public void StartImpactWithDataStartsNewSession() throws NexosisClientException {
         String dataSourceName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
-        DataSetData dataSet = DataSetGenerator.Run(
+        DataSetDetail dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
                 DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances"
         );
 
-        nexosisClient.getDataSets().create(dataSourceName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSourceName, dataSet));
 
         // setup some column metadata
         Columns cols = new Columns();
@@ -165,7 +165,7 @@ public class SessionIntegrationTests {
     public void StartImpactFromSavedDataSetStartsNewSession() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
 
-        DataSetData dataSet = DataSetGenerator.Run(
+        DataSetDetail dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
                 DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances");
@@ -176,7 +176,7 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
         SessionResponse actual = nexosisClient.getSessions().createForecast(
                 dataSetName,
@@ -276,7 +276,7 @@ public class SessionIntegrationTests {
     @Test
     public void DeletingSessionThenQueryingReturns404() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
-        DataSetData dataSet = DataSetGenerator.Run(
+        DataSetDetail dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01", DateTimeFormat.forPattern("yyyy-MM-dd")),
                 DateTime.parse("2017-03-26", DateTimeFormat.forPattern("yyyy-MM-dd")),
                 "instances"
@@ -288,7 +288,7 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
         SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
                 dataSetName,
@@ -315,7 +315,7 @@ public class SessionIntegrationTests {
     @Test
     public void CheckingSessionStatusReturnsExpectedValue() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
-        DataSetData dataSet = DataSetGenerator.Run(
+        DataSetDetail dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
                 DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances"
@@ -327,7 +327,7 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         dataSet.setColumns(cols);
 
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
         SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
                 dataSetName,
@@ -347,13 +347,13 @@ public class SessionIntegrationTests {
     public void CanRemoveMultipleSessions() throws NexosisClientException {
         String dataSetName = "testDataSet-" + DateTime.now().toDateTimeISO().toString();
 
-        DataSetData dataSet = DataSetGenerator.Run(
+        DataSetDetail dataSet = DataSetGenerator.Run(
                 DateTime.parse("2016-08-01T00:00:00Z"),
                 DateTime.parse("2017-03-26T00:00:00Z"),
                 "instances"
         );
 
-        nexosisClient.getDataSets().create(dataSetName, dataSet);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
         SessionResponse first = nexosisClient.getSessions().analyzeImpact(
                 dataSetName,

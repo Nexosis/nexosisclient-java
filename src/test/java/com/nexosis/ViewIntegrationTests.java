@@ -21,20 +21,25 @@ public class ViewIntegrationTests {
     @BeforeClass
     public static void beforeClass() throws Exception{
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
-        DataSetData data = DataSetGenerator.Run(
+        DataSetDetail data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00Z"),
                 DateTime.parse("2017-03-31T00:00Z"),
                 "foxtrot"
         );
-        nexosisClient.getDataSets().create(dataSetName, data);
-        nexosisClient.getDataSets().create(rightDatasetName,data);
+        nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, data));
+        nexosisClient.getDataSets().create(new DataSetDetailSource(rightDatasetName,data));
         nexosisClient.getViews().create(preExistingView,dataSetName,rightDatasetName,null);
     }
 
     @AfterClass
     public static void afterClass() throws Exception{
-        nexosisClient.getDataSets().remove(dataSetName, DataSetDeleteOptions.CASCADE_ALL);
-        nexosisClient.getDataSets().remove(rightDatasetName, DataSetDeleteOptions.CASCADE_ALL);
+        DataSetRemoveCriteria criteria = new DataSetRemoveCriteria(dataSetName);
+        criteria.setOption(DataSetDeleteOptions.CASCADE_ALL);
+        nexosisClient.getDataSets().remove(criteria);
+
+        DataSetRemoveCriteria criteria2 = new DataSetRemoveCriteria(rightDatasetName);
+        criteria2.setOption(DataSetDeleteOptions.CASCADE_ALL);
+        nexosisClient.getDataSets().remove(criteria2);
     }
 
     @Test

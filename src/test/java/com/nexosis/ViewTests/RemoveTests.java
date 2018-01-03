@@ -33,7 +33,7 @@ public class RemoveTests {
         thrown.expectMessage("Value viewName cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getViews().remove(null, false, null);
+        target.getViews().remove(null, false);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().remove("testView", false, null);
+        target.getViews().remove("testView", false);
 
         Assert.assertEquals(fakeEndpoint + "/views/testView", request.getUrl());
     }
