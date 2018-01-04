@@ -46,6 +46,6 @@ public class GetTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getModels().get(id);
-        Assert.assertEquals(fakeEndpoint + "/model/" + id.toString(), request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/models/" + id.toString(), request.getUrl());
     }
 }
