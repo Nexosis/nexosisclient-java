@@ -35,37 +35,9 @@ public class ImportClient implements IImportClient {
      * {@inheritDoc}
      */
     @Override
-    public ImportDetails list(int page, int pageSize) throws NexosisClientException {
-        return this.list(null, null, null, page, pageSize);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ImportDetails list(String dataSetName, int page, int pageSize) throws NexosisClientException {
-        return this.list(dataSetName, null, null, page, pageSize);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ImportDetails list(String dataSetName, DateTime requestedAfterDate, DateTime requestedBeforeDate, int page, int pageSize) throws NexosisClientException {
-        String path = "/imports";
-        Map<String, Object> parameters = new HashMap<>();
-        if (dataSetName != null && !dataSetName.isEmpty()) {
-            parameters.put("dataSetName", dataSetName);
-        }
-        if (requestedAfterDate != null) {
-            parameters.put("requestedAfterDate", requestedAfterDate.toDateTimeISO().toString());
-        }
-        if (requestedBeforeDate != null) {
-            parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
-        }
-        parameters.put("page", Integer.toString(page));
-        parameters.put("pageSize", Integer.toString(pageSize));
-        return apiConnection.get(ImportDetails.class, path, parameters, httpMessageTransformer);
+    public ImportDetails list(ImportDetailQuery query) throws NexosisClientException {
+        Map<String,Object> parameters = query.toParameters();
+        return apiConnection.get(ImportDetails.class,"/imports", parameters, this.httpMessageTransformer);
     }
 
     /**
@@ -78,25 +50,19 @@ public class ImportClient implements IImportClient {
         return apiConnection.get(ImportDetail.class, path, null, httpMessageTransformer);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ImportDetail importFromS3(String dataSetName, String bucket, String path, String region) throws NexosisClientException {
-        return this.importFromS3(dataSetName, bucket, path, region, null);
+    public ImportDetail importFromS3(ImportFromS3Request detail) throws NexosisClientException {
+       return apiConnection.post(ImportDetail.class, "imports/s3", null, detail, httpMessageTransformer);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ImportDetail importFromS3(String dataSetName, String bucket, String path, String region, Columns columns) throws NexosisClientException {
-        ImportData body = new ImportData();
-        body.setDataSetName(dataSetName);
-        body.setBucket(bucket);
-        body.setPath(path);
-        body.setRegion(region);
-        body.setColumns(columns);
-        return apiConnection.post(ImportDetail.class, "imports/s3", null, body, httpMessageTransformer);
+    public ImportDetail ImportFromUrl(ImportFromUrlRequest detail) throws NexosisClientException {
+        return apiConnection.post(ImportDetail.class, "imports/s3", null, detail, httpMessageTransformer);
     }
+
+    @Override
+    public ImportDetail ImportFromAzure(ImportFromAzureRequest detail) throws NexosisClientException {
+        return apiConnection.post(ImportDetail.class, "imports/s3", null, detail, httpMessageTransformer);
+    }
+
 }

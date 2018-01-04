@@ -40,11 +40,10 @@ public class NexosisClient implements INexosisClient {
         return key;
     }
 
-    /// <summary>
-    /// The URL endpoint the client will connect to.
-    /// </summary>
 
     /**
+     * The URL endpoint the client will connect to.
+     *
      * @return
      */
     public String getConfiguredUrl() {

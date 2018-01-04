@@ -6,21 +6,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ImportType {
-    S3("s3"),
-    S3("azure"),
-    S3("url");
+public enum ImportContentType {
+    Csv("text/csv"),
+    Json("application/JSON");
 
     private final String value;
-    private final static Map<String, ImportType> CONSTANTS = new HashMap<String, ImportType>();
+    private final static Map<String, ImportContentType> CONSTANTS = new HashMap<>();
 
     static {
-        for (ImportType c: values()) {
+        for (ImportContentType c: values()) {
             CONSTANTS.put(c.value, c);
         }
     }
 
-    private ImportType(String value) {
+    ImportContentType(String value) {
         this.value = value;
     }
 
@@ -35,8 +34,8 @@ public enum ImportType {
     }
 
     @JsonCreator
-    public static ImportType fromValue(String value) {
-        ImportType constant = CONSTANTS.get(value);
+    public static ImportContentType fromValue(String value) {
+        ImportContentType constant = CONSTANTS.get(value);
         if (constant == null) {
             throw new IllegalArgumentException(value);
         } else {
