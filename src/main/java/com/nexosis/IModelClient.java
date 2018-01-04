@@ -28,52 +28,30 @@ public interface IModelClient {
     /**
      * Gets the list of all models that have been created.
      *
+     * @param query The query criteria for retrieving the models
      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
      * GET of https://ml.nexosis.com/api/models
      */
-    ModelList list() throws NexosisClientException, IllegalArgumentException;
-
-    /**
-     * Gets the list of all models that have been created.
-     *
-     * @param params An object of parameters used to retrieve models.
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-     * @return A list of {@link com.nexosis.model.ModelSummary ModelSummary}.
-     * GET of https://ml.nexosis.com/api/model
-     */
-    ModelList list(ModelClientParams params) throws NexosisClientException, IllegalArgumentException;
-
+    ModelList list(ModelSummaryQuery query) throws NexosisClientException;
 
     /**
      * Predicts target values for a set of features using the specified model.
      *
-     * @param modelId The identifier of the model to use for prediction.
-     * @param data Column and value pairs of the features which will be used in this prediction.
+     * @param request Parameters to be used when predicting from a model
      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      * @return {@link com.nexosis.model.ModelPredictionResult ModelSummary} containing the predicted results and features that were sent.
      * POST of https://ml.nexosis.com/api/model/{modelId}/predict
      */
-    ModelPredictionResult predict(UUID modelId, List<Map<String, String>> data) throws NexosisClientException;
-
-    /**
-     * Removes a single Model from your account
-     *
-     * @param modelId The identifier of the model which should be deleted.
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-     * DELETE of https://ml.nexosis.com/api/model/{modelId}
-     **/
-    void remove(UUID modelId) throws NexosisClientException;
+    ModelPredictionResult predict(ModelPredictionRequest request) throws NexosisClientException;
 
     /**
      * Removes a Models from your account which match the specified parameters
      *
-     * @param dataSourceName Limits models removed to those with the given data source name.
-     * @param createdAfterDate Limits sessions to those requested on or after the specified date.
-     * @param createdBeforeDate Limits sessions to those requested on or before the specified date.
-     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      * DELETE of https://ml.nexosis.com/api/model
+     *
+     * @param criteria Limits models removed to those with the given data source name.
+     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    void remove(String dataSourceName, org.joda.time.DateTime createdAfterDate, org.joda.time.DateTime createdBeforeDate) throws NexosisClientException;
-
+    void remove(ModelRemoveCriteria criteria) throws NexosisClientException;
 }

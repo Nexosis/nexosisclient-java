@@ -16,11 +16,10 @@ public class ModelIntegrationTests {
     public void beforeEach() throws Exception {
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
 
-        ModelClientParams params = new ModelClientParams();
-        params.setPage(0);
-        params.setPageSize(20);
-        params.setDataSourceName(modelDataSetName);
-        ModelList model = nexosisClient.getModels().list(params);
+        ModelSummaryQuery query = new ModelSummaryQuery();
+        query.setPage(new PagingInfo(0,20));
+        query.setDataSourceName(modelDataSetName);
+        ModelList model = nexosisClient.getModels().list(query);
 
         if(model.getItems().size() == 0)
         {
@@ -84,10 +83,10 @@ public class ModelIntegrationTests {
 
     @Test
     public void getModelListHasItems() throws NexosisClientException {
-        ModelClientParams params = new ModelClientParams();
-        params.setPage(0);
-        params.setPageSize(1);
-        ModelList actual = nexosisClient.getModels().list(params);
+        ModelSummaryQuery query = new ModelSummaryQuery();
+        query.setPage(new PagingInfo(0,1));
+
+        ModelList actual = nexosisClient.getModels().list(query);
 
         Assert.assertNotNull(actual);
         Assert.assertFalse(actual.getItems().isEmpty());
@@ -97,11 +96,9 @@ public class ModelIntegrationTests {
     @Test
     public void listRespectsPagingInfo() throws Exception
     {
-        //new ModelSummaryQuery {Page = new PagingInfo(1, 2)}
-        ModelClientParams params = new ModelClientParams();
-        params.setPage(1);
-        params.setPageSize(2);
-        ModelList actual = nexosisClient.getModels().list(params);
+        ModelSummaryQuery query = new ModelSummaryQuery();
+        query.setPage(new PagingInfo(1,2));
+        ModelList actual = nexosisClient.getModels().list(query);
 
         Assert.assertNotNull(actual);
         Assert.assertEquals(1, actual.getPageNumber());
@@ -122,8 +119,8 @@ public class ModelIntegrationTests {
     {
         DataSetDetail record = DataSetGenerator.Run(1, 10, null);
 
-        ModelPredictionResult result = nexosisClient.getModels().predict(
-                savedModel.getModelId(), record.getData());
+        ModelPredictionRequest request = new ModelPredictionRequest(savedModel.getModelId(), record.getData());
+        ModelPredictionResult result = nexosisClient.getModels().predict(request);
 
         Assert.assertFalse(result.getData().isEmpty());
     }

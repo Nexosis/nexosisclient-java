@@ -7,6 +7,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ModelPredictionRequest;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -50,9 +51,9 @@ public class PostModelPredict {
         List<Map<String, String>> data = new ArrayList<>();
         map.put("column","value");
         data.add(map);
-        target.getModels().predict(modelId, data);
 
-        //Assert.assertEquals(HttpMethod.Post, handler.Request.Method);
+        target.getModels().predict(new ModelPredictionRequest(modelId, data));
+
         Assert.assertEquals(fakeEndpoint + "/models/" + modelId.toString() + "/predict",  request.getUrl());
         Assert.assertEquals("{\"data\":[{\"column\":\"value\"}]}", request.getContentAsString());
     }
@@ -63,6 +64,9 @@ public class PostModelPredict {
         thrown.expectMessage("Object data cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getModels().predict(UUID.randomUUID(), null);
+
+        ModelPredictionRequest request = new ModelPredictionRequest(UUID.randomUUID(), null);
+
+        target.getModels().predict( request);
     }
 }
