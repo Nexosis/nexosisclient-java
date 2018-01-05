@@ -5,7 +5,11 @@ import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -100,9 +104,10 @@ public class DataSetIntegrationTests {
         nexosisClient.getDataSets().create(source2);
 
         DataSetDataQuery query = new DataSetDataQuery("charley");
+        query.setPage(new PagingInfo(0,100));
         DataSetData result = nexosisClient.getDataSets().get(query);
 
-        // TODO - these should probably be sorted??
+        // Might need sorted, currently tests pass as data seems to come back in the same order as submitted.
         //Collections.sort(result.getData());
 
         DateTime firstDate = DateTime.parse(result.getData().get(0).get("timestamp"));
@@ -167,13 +172,15 @@ public class DataSetIntegrationTests {
 
         IDataSetSource source = new DataSetStreamSource(dataSetName, inputStream);
         nexosisClient.getDataSets().create(source);
-        nexosisClient.getSessions().createForecast(
-                dataSetName,
-                "sales",
-                DateTime.parse("2017-03-25T0:00:00Z"),
-                DateTime.parse("2017-04-24T0:00:00Z"),
-                ResultInterval.DAY
-        );
+
+        ForecastSessionRequest request = new ForecastSessionRequest();
+        request.setDataSourceName(dataSetName);
+        request.setTargetColumn("sales");
+        request.setStartDate(DateTime.parse("2017-03-25T0:00:00Z"));
+        request.setStartDate(DateTime.parse("2017-04-24T0:00:00Z"));
+        request.setResultInterval(ResultInterval.DAY);
+
+        nexosisClient.getSessions().createForecast(request);
 
         DataSetSummaryQuery query = new DataSetSummaryQuery();
         query.setPartialName(dataSetName);

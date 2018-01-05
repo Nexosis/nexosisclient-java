@@ -1,13 +1,11 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 

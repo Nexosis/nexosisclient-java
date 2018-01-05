@@ -1,18 +1,14 @@
 package com.nexosis.impl;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.json.Json;
 import com.nexosis.IDataSetClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import java.io.InputStream;
+
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.HashMap;
 
 public class DataSetClient implements IDataSetClient {
     private ApiConnection apiConnection;
@@ -102,9 +98,10 @@ public class DataSetClient implements IDataSetClient {
         Argument.IsNotNull(query, "DataSetDataQuery");
         Argument.IsNotNullOrEmpty(query.getName(), "DataSetDataQuery.Name");
 
-        Map<String, Object> parameters= query.toParameters();
-
-        return apiConnection.get(DataSetData.class, "data/" + query.getName(), parameters, this.httpMessageTransformer);
+        if (query.getContentType() != Json.MEDIA_TYPE) {
+            throw new IllegalArgumentException("Content Type cannot be set to CSV unless you are writing it to a file. Use IDataSetClient.get(DataSetDataQuery query, OutputStream output).");
+        }
+        return apiConnection.get(DataSetData.class, "data/" + query.getName(), query.toParameters(), this.httpMessageTransformer);
     }
 
 

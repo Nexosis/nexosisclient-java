@@ -1,6 +1,5 @@
 package com.nexosis.model;
 
-import com.nexosis.impl.NexosisClient;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 

@@ -2,6 +2,7 @@ package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 

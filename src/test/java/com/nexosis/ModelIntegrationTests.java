@@ -5,7 +5,9 @@ import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ModelIntegrationTests {
     private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
@@ -38,17 +40,16 @@ public class ModelIntegrationTests {
         DataSetSummaryQuery query = new DataSetSummaryQuery();
         query.setPartialName(modelDataSetName);
         // If no dataset, create it.
-        //if (nexosisClient.getDataSets().list(query).getItems().size() > 1) {
+        if (nexosisClient.getDataSets().list(query).getItems().size() > 1) {
             DataSetDetail dataSet = DataSetGenerator.Run(90, 10, "instances");
             nexosisClient.getDataSets().create(DataSet.From(modelDataSetName, dataSet));
-        //}
+        }
 
-        ModelSessionDetail modelSession = new ModelSessionDetail();
-        modelSession.setDataSourceName(modelDataSetName);
-        modelSession.setPredictionDomain(PredictionDomain.REGRESSION);
-        modelSession.setTargetColumn("instances");
-
-        SessionResponse session = nexosisClient.getSessions().trainModel(modelSession);
+        ModelSessionRequest request = new ModelSessionRequest();
+        request.setDataSourceName(modelDataSetName);
+        request.setPredictionDomain(PredictionDomain.REGRESSION);
+        request.setTargetColumn("instances");
+        SessionResponse session = nexosisClient.getSessions().trainModel(request);
 
         while (true)
         {
@@ -69,11 +70,12 @@ public class ModelIntegrationTests {
         DataSetDetail dataSet = DataSetGenerator.Run(90, 10, "instances");
         nexosisClient.getDataSets().create(DataSet.From(dataSetName, dataSet));
 
-        ModelSessionDetail sessionDetail = new ModelSessionDetail();
-        sessionDetail.setDataSourceName(dataSetName);
-        sessionDetail.setPredictionDomain(PredictionDomain.REGRESSION);
-        sessionDetail.setTargetColumn("instances");
-        SessionResponse actual = nexosisClient.getSessions().trainModel(sessionDetail);
+        ModelSessionRequest request = new ModelSessionRequest();
+        request.setDataSourceName(dataSetName);
+        request.setPredictionDomain(PredictionDomain.REGRESSION);
+        request.setTargetColumn("instances");
+
+        SessionResponse actual = nexosisClient.getSessions().trainModel(request);
 
         Assert.assertNotNull(actual.getSessionId());
         DataSetRemoveCriteria criteria = new DataSetRemoveCriteria(dataSetName);

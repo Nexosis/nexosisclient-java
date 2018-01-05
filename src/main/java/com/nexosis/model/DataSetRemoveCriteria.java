@@ -111,10 +111,12 @@ public class DataSetRemoveCriteria {
 
         if (option != null) {
             ArrayList<String> set = new ArrayList<>();
-            if (option.contains(DataSetDeleteOptions.CASCADE_FORECAST))
-                set.add("forecast");
+            if (option.contains(DataSetDeleteOptions.CASCADE_MODEL))
+                set.add(DataSetDeleteOptions.CASCADE_MODEL.value());
             if (option.contains(DataSetDeleteOptions.CASCADE_SESSION))
-                set.add("session");
+                set.add(DataSetDeleteOptions.CASCADE_SESSION.value());
+            if (option.contains(DataSetDeleteOptions.CASCADE_VIEW))
+                set.add(DataSetDeleteOptions.CASCADE_VIEW.value());
 
             if (set.size() > 0) {
                 parameters.put("cascade",set);

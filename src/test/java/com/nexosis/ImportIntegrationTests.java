@@ -4,10 +4,12 @@ import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.util.UUID;
 import java.util.Iterator;
+import java.util.UUID;
 
 public class ImportIntegrationTests {
     private static String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");

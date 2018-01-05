@@ -1,8 +1,8 @@
 package com.nexosis.model;
 
+import com.google.api.client.json.Json;
 import org.joda.time.DateTime;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +17,12 @@ public class DataSetDataQuery {
 
     public DataSetDataQuery() {
         this.setName(null);
-        this.contentType = "text/csv"; //default
+        this.contentType = Json.MEDIA_TYPE; //default
     }
 
     public DataSetDataQuery(String name) {
         this.setName(name);
-        this.contentType = "text/csv"; //default
+        this.contentType = Json.MEDIA_TYPE; //default
     }
 
     /**

@@ -1,12 +1,13 @@
 package com.nexosis.impl;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.IViewClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
 import org.apache.commons.lang3.StringUtils;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
+
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;

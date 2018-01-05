@@ -6,16 +6,17 @@ import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +30,8 @@ public class SessionIntegrationTests {
     @BeforeClass
     public static void beforeClass() throws NexosisClientException, InterruptedException {
         nexosisClient = new NexosisClient(System.getenv("NEXOSIS_API_KEY"), baseURI);
-        SessionResponses responses = nexosisClient.getSessions().list();
+
+        SessionResponses responses = nexosisClient.getSessions().list(new SessionQuery());
         for (SessionResponse session : responses.getItems()) {
             if (session.getStatus().equals(SessionStatus.COMPLETED)
                     && session.getType().equals(SessionType.FORECAST)) {
@@ -41,12 +43,15 @@ public class SessionIntegrationTests {
             savedSessionData = "testJavaSessionData";
             DataSetDetail dataSet = DataSetGenerator.Run(DateTime.now().plusDays(-120), DateTime.now(), "instances");
             nexosisClient.getDataSets().create(new DataSetDetailSource(savedSessionData, dataSet));
-            SessionResponse response = nexosisClient.getSessions().createForecast(savedSessionData
-                    , "instances"
-                    , DateTime.now().plusDays(-30)
-                    , DateTime.now().plusDays(-20)
-                    , ResultInterval.DAY
-            );
+
+            ForecastSessionRequest forecastRequest = new ForecastSessionRequest();
+            forecastRequest.setDataSourceName(savedSessionData);
+            forecastRequest.setTargetColumn("instances");
+            forecastRequest.setStartDate(DateTime.now().plusDays(-30));
+            forecastRequest.setEndDate(DateTime.now().plusDays(-20));
+            forecastRequest.setResultInterval(ResultInterval.DAY);
+
+            SessionResponse response = nexosisClient.getSessions().createForecast(forecastRequest);
             while (true) {
                 SessionResultStatus sessionStatus = nexosisClient.getSessions().getStatus(response.getSessionId());
                 if (sessionStatus.getStatus().equals(SessionStatus.COMPLETED)
@@ -87,17 +92,16 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
-        SessionData session = new SessionData();
-        session.setDataSourceName(dataSetName);
-        session.setColumns(cols);
+        ForecastSessionRequest forecastRequest = new ForecastSessionRequest();
+        forecastRequest.setDataSourceName(dataSetName);
+        forecastRequest.setColumns(cols);
+        forecastRequest.setTargetColumn("instances");
+        forecastRequest.setStartDate(DateTime.now().plusDays(-30));
+        forecastRequest.setEndDate(DateTime.now().plusDays(-10));
+        forecastRequest.setResultInterval(ResultInterval.DAY);
 
         // 2016-08-01 to 2017-03-26
-        SessionResponse actual = nexosisClient.getSessions().createForecast(
-                session,
-                DateTime.now().plusDays(-30),
-                DateTime.now().plusDays(-10),
-                ResultInterval.DAY
-        );
+        SessionResponse actual = nexosisClient.getSessions().createForecast(forecastRequest);
 
         Assert.assertNotNull(actual.getSessionId());
     }
@@ -119,14 +123,15 @@ public class SessionIntegrationTests {
         // create dataset
         nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
+        ForecastSessionRequest forecastRequest = new ForecastSessionRequest();
+        forecastRequest.setDataSourceName(dataSetName);
+        forecastRequest.setTargetColumn("instances");
+        forecastRequest.setStartDate(DateTime.parse("2017-03-26T00:00:00Z"));
+        forecastRequest.setEndDate(DateTime.parse("2017-04-25T00:00:00Z"));
+        forecastRequest.setResultInterval(ResultInterval.DAY);
+
         // create Forecast
-        SessionResponse actual = nexosisClient.getSessions().createForecast(
-                dataSetName,
-                "instances",
-                DateTime.parse("2017-03-26T00:00:00Z"),
-                DateTime.parse("2017-04-25T00:00:00Z"),
-                ResultInterval.DAY
-        );
+        SessionResponse actual = nexosisClient.getSessions().createForecast(forecastRequest);
 
         Assert.assertNotNull(actual.getSessionId());
     }
@@ -147,17 +152,16 @@ public class SessionIntegrationTests {
         cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
 
-        SessionData session = new SessionData();
-        session.setDataSourceName(dataSourceName);
-        session.setColumns(cols);
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName(dataSourceName);
+        impactRequest.setTargetColumn("instances");
+        impactRequest.setEventName("charlie-delta-" + DateTime.now().toString("yMsHms"));
+        impactRequest.setColumns(cols);
+        impactRequest.setStartDate(DateTime.parse("2016-11-26T00:00:00Z"));
+        impactRequest.setEndDate(DateTime.parse("2016-12-25T00:00:00Z"));
+        impactRequest.setResultInterval(ResultInterval.DAY);
 
-        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
-                session,
-                "charlie-delta-{DateTime.UtcNow:s}",
-                DateTime.parse("2016-11-26T00:00:00Z"),
-                DateTime.parse("2016-12-25T00:00:00Z"),
-                ResultInterval.DAY
-        );
+        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(impactRequest);
         Assert.assertNotNull(actual.getSessionId());
     }
 
@@ -178,13 +182,15 @@ public class SessionIntegrationTests {
 
         nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
-        SessionResponse actual = nexosisClient.getSessions().createForecast(
-                dataSetName,
-                "instances",
-                DateTime.parse("2017-03-26T00:00:00Z"),
-                DateTime.parse("2017-04-25T00:00:00Z"),
-                ResultInterval.DAY
-        );
+        ForecastSessionRequest forecastRequest = new ForecastSessionRequest();
+        forecastRequest.setDataSourceName(dataSetName);
+        forecastRequest.setTargetColumn("instances");
+        forecastRequest.setColumns(cols);
+        forecastRequest.setStartDate(DateTime.parse("2017-03-26T00:00:00Z"));
+        forecastRequest.setEndDate(DateTime.parse("2017-04-25T00:00:00Z"));
+        forecastRequest.setResultInterval(ResultInterval.DAY);
+
+        SessionResponse actual = nexosisClient.getSessions().createForecast(forecastRequest);
 
         Assert.assertNotNull(actual);
         Assert.assertNotNull(actual.getSessionId());
@@ -192,7 +198,7 @@ public class SessionIntegrationTests {
 
     @Test
     public void GetSessionListHasItems() throws NexosisClientException {
-        SessionResponses sessions = nexosisClient.getSessions().list();
+        SessionResponses sessions = nexosisClient.getSessions().list(new SessionQuery());
 
         Assert.assertNotNull(sessions);
         Assert.assertTrue(sessions.getItems().size() > 0);
@@ -200,18 +206,22 @@ public class SessionIntegrationTests {
 
     @Test
     public void GetSessionListRespectsPaging() throws NexosisClientException {
-        ListQuery query = new ListQuery();
-        query.setPageSize(1);
-        query.setPageNumber(2);
+        //TODO delete ListQuery object
+
+        SessionQuery query = new SessionQuery();
+        query.setPage(new PagingInfo(1,2));
         SessionResponses sessions = nexosisClient.getSessions().list(query);
 
         Assert.assertNotNull(sessions);
-        Assert.assertTrue(sessions.getItems().size() == 1);
+        Assert.assertTrue(sessions.getPageNumber() == 1);
+        Assert.assertTrue(sessions.getPageSize() == 2);
     }
 
     @Test
     public void GetSessionResultsHasResults() throws NexosisClientException {
-        SessionResult results = nexosisClient.getSessions().getResults(savedSessionId);
+        SessionResultQuery query = new SessionResultQuery();
+        query.setSessionId(savedSessionId);
+        SessionResult results = nexosisClient.getSessions().getResults(query);
 
         if (results.getStatus() != SessionStatus.COMPLETED) {
             Assert.fail("Session is not completed. Current status is " + results.getStatus() + ". Make sure to run SessionIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
@@ -224,7 +234,9 @@ public class SessionIntegrationTests {
 
     @Test
     public void GetSessionResultsHasLinks() throws NexosisClientException {
-        SessionResult result = nexosisClient.getSessions().getResults(savedSessionId);
+        SessionResultQuery query = new SessionResultQuery();
+        query.setSessionId(savedSessionId);
+        SessionResult result = nexosisClient.getSessions().getResults(query);
         if (result.getStatus() != SessionStatus.COMPLETED) {
             Assert.fail("Session is not completed. Current status is " + result.getStatus() + ". Make sure to run SessionIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
         }
@@ -249,7 +261,11 @@ public class SessionIntegrationTests {
             workingFile.createNewFile();
 
             output = new FileOutputStream(filename);
-            ReturnsStatus status = nexosisClient.getSessions().getResults(savedSessionId, output);
+
+            SessionResultQuery query = new SessionResultQuery();
+            query.setSessionId(savedSessionId);
+            query.setContentType("text/csv");
+            ReturnsStatus status = nexosisClient.getSessions().getResults(query, output);
 
             if (status.getSessionStatus() != SessionStatus.COMPLETED) {
                 Assert.fail("Session is not completed. Current status is " + status.getSessionStatus() + ". Make sure to run DataSetIntegrationTests.PopulateDataForTesting() and wait for the session to complete first.");
@@ -290,14 +306,16 @@ public class SessionIntegrationTests {
 
         nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
-        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
-                dataSetName,
-                "charlie-delta-" + DateTime.now().toDateTimeISO().toString(),
-                "instances",
-                DateTime.parse("2016-11-26", DateTimeFormat.forPattern("yyyy-MM-dd")),
-                DateTime.parse("2016-12-25", DateTimeFormat.forPattern("yyyy-MM-dd")),
-                ResultInterval.DAY
-        );
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName(dataSetName);
+        impactRequest.setTargetColumn("instances");
+        impactRequest.setEventName("charlie-delta-" + DateTime.now().toString("yMsHms"));
+        impactRequest.setColumns(cols);
+        impactRequest.setStartDate(DateTime.parse("2016-11-26", DateTimeFormat.forPattern("yyyy-MM-dd")));
+        impactRequest.setEndDate(DateTime.parse("2016-12-25", DateTimeFormat.forPattern("yyyy-MM-dd")));
+        impactRequest.setResultInterval(ResultInterval.DAY);
+
+        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(impactRequest);
 
         nexosisClient.getSessions().remove(actual.getSessionId());
 
@@ -329,18 +347,19 @@ public class SessionIntegrationTests {
 
         nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
-        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(
-                dataSetName,
-                "charlie-delta-{DateTime.UtcNow:s}",
-                "instances",
-                DateTime.parse("2016-11-26", DateTimeFormat.forPattern("yyyy-MM-dd")),
-                DateTime.parse("2016-12-25", DateTimeFormat.forPattern("yyyy-MM-dd")),
-                ResultInterval.DAY
-        );
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName(dataSetName);
+        impactRequest.setTargetColumn("instances");
+        impactRequest.setEventName("charlie-delta-" + DateTime.now().toString("yMsHms"));
+        impactRequest.setColumns(cols);
+        impactRequest.setStartDate(DateTime.parse("2016-11-26", DateTimeFormat.forPattern("yyyy-MM-dd")));
+        impactRequest.setEndDate(DateTime.parse("2016-12-25", DateTimeFormat.forPattern("yyyy-MM-dd")));
+        impactRequest.setResultInterval(ResultInterval.DAY);
 
+        SessionResponse actual = nexosisClient.getSessions().analyzeImpact(impactRequest);
         SessionResultStatus status = nexosisClient.getSessions().getStatus(actual.getSessionId());
 
-        Assert.assertEquals(actual.getStatus(), status.getStatus());
+        Assert.assertTrue((status.getStatus() == SessionStatus.REQUESTED || status.getStatus() == SessionStatus.STARTED) );
     }
 
     @Test
@@ -355,25 +374,29 @@ public class SessionIntegrationTests {
 
         nexosisClient.getDataSets().create(new DataSetDetailSource(dataSetName, dataSet));
 
-        SessionResponse first = nexosisClient.getSessions().analyzeImpact(
-                dataSetName,
-                "juliet-juliet-echo-1",
-                "instances",
-                DateTime.parse("2016-11-26T00:00:00Z"),
-                DateTime.parse("2016-12-25T00:00:00Z"),
-                ResultInterval.DAY
-        );
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName(dataSetName);
+        impactRequest.setTargetColumn("instances");
+        impactRequest.setEventName("juliet-juliet-echo-1");
+        impactRequest.setStartDate(DateTime.parse("2016-11-26T00:00:00Z"));
+        impactRequest.setEndDate(DateTime.parse("2016-12-25T00:00:00Z"));
+        impactRequest.setResultInterval(ResultInterval.DAY);
 
-        SessionResponse second = nexosisClient.getSessions().analyzeImpact(
-                dataSetName,
-                "juliet-juliet-echo-2",
-                "instances",
-                DateTime.parse("2016-11-26T00:00:00Z"),
-                DateTime.parse("2016-12-25T00:00:00Z"),
-                ResultInterval.DAY
-        );
+        SessionResponse first = nexosisClient.getSessions().analyzeImpact(impactRequest);
 
-        nexosisClient.getSessions().remove(null, "juliet-juliet-echo-", SessionType.IMPACT);
+        ImpactSessionRequest impactRequest2 = new ImpactSessionRequest();
+        impactRequest2.setDataSourceName(dataSetName);
+        impactRequest2.setTargetColumn("instances");
+        impactRequest2.setEventName("juliet-juliet-echo-2");
+        impactRequest2.setStartDate(DateTime.parse("2016-11-26T00:00:00Z"));
+        impactRequest2.setEndDate(DateTime.parse("2016-12-25T00:00:00Z"));
+        impactRequest2.setResultInterval(ResultInterval.DAY);
+        SessionResponse second = nexosisClient.getSessions().analyzeImpact(impactRequest2);
+
+        SessionRemoveCriteria criteria = new SessionRemoveCriteria();
+        criteria.setType(SessionType.IMPACT);
+        criteria.setEventName("juliet-juliet-echo-");
+        nexosisClient.getSessions().remove(criteria);
 
         NexosisClientException exceptionTheFirst = null;
         NexosisClientException exceptionTheSecond = null;
@@ -402,7 +425,7 @@ public class SessionIntegrationTests {
 
     @Test
     public void CanRequestDifferentPredictionIntervals() throws NexosisClientException {
-        SessionResponses sessions = nexosisClient.getSessions().list();
+        SessionResponses sessions = nexosisClient.getSessions().list(new SessionQuery());
         SessionResponse targetSession = null;
         for (SessionResponse r : sessions.getItems()) {
             if (r.getType().equals(SessionType.FORECAST) &&
@@ -415,8 +438,18 @@ public class SessionIntegrationTests {
             Assert.fail("No session exists with more than default prediction interval. Test target should to be setup.");
             return;
         }
-        SessionResult pi1 = nexosisClient.getSessions().getResults(targetSession.getSessionId(), targetSession.getAvailablePredictionIntervals()[0]);
-        SessionResult pi2 = nexosisClient.getSessions().getResults(targetSession.getSessionId(), targetSession.getAvailablePredictionIntervals()[1]);
+
+        SessionResultQuery query1 = new SessionResultQuery();
+        query1.setSessionId(targetSession.getSessionId());
+        query1.setPredictionInterval(targetSession.getAvailablePredictionIntervals()[0]);
+
+        SessionResultQuery query2 = new SessionResultQuery();
+        query2.setSessionId(targetSession.getSessionId());
+        query2.setPredictionInterval(targetSession.getAvailablePredictionIntervals()[1]);
+
+        SessionResult pi1 = nexosisClient.getSessions().getResults(query1);
+        SessionResult pi2 = nexosisClient.getSessions().getResults(query2);
+
         String key = pi1.getTargetColumn();
         for (Integer index = 0; index < pi1.getData().size(); index++) {
             Assert.assertNotEquals(pi1.getData().get(index).get(key),

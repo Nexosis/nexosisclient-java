@@ -1,6 +1,7 @@
 package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Map;
 

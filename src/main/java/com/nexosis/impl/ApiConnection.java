@@ -4,6 +4,7 @@ package com.nexosis.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.Json;
 import com.nexosis.model.ErrorResponse;
@@ -15,8 +16,10 @@ import com.nexosis.util.HttpMethod;
 import com.nexosis.util.JacksonMapperHttpContent;
 import com.nexosis.util.JacksonMapperParser;
 import org.apache.commons.lang3.StringUtils;
-import com.google.api.client.http.*;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 public class ApiConnection {

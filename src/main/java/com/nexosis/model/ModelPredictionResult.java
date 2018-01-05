@@ -1,14 +1,15 @@
 package com.nexosis.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonPropertyOrder({

@@ -1,16 +1,13 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.nexosis.impl.DataSet;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import org.joda.time.DateTime;
 
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.EnumSet;
 
 /**
  *

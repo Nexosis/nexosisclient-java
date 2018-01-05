@@ -1,13 +1,13 @@
 package com.nexosis.SessionTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import com.nexosis.model.ListQuery;
+import com.nexosis.model.PagingInfo;
+import com.nexosis.model.SessionQuery;
 import com.nexosis.model.SessionResponses;
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import java.io.IOException;
 
 public class ListTests {
@@ -51,13 +52,15 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        SessionResponses result = target.getSessions().list(
-                "alpha",
-                "zulu",
-                new ListQuery(0,50,
-                DateTime.parse("2017-01-01T00:00:00Z"),
-                DateTime.parse("2017-01-11T00:00:00Z"))
-        );
+
+        SessionQuery query = new SessionQuery();
+        query.setDataSourceName("alpha");
+        query.setEventName("zulu");
+        query.setPage(new PagingInfo(0,50));
+        query.setRequestedAfterDate(DateTime.parse("2017-01-01T00:00:00Z"));
+        query.setRequestedBeforeDate(DateTime.parse("2017-01-11T00:00:00Z"));
+
+        SessionResponses result = target.getSessions().list(query);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(fakeEndpoint + "/sessions?requestedBeforeDate=2017-01-11T00:00:00.000Z&eventName=zulu&pageSize=50&requestedAfterDate=2017-01-01T00:00:00.000Z&page=0&dataSourceName=alpha", request.getUrl());
@@ -86,9 +89,9 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        SessionResponses result = target.getSessions().list();
+        SessionResponses result = target.getSessions().list(new SessionQuery());
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/sessions?pageSize=50&page=0", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions", request.getUrl());
     }
 }

@@ -1,6 +1,5 @@
 package com.nexosis.DataSetTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -64,10 +63,10 @@ public class RemoveTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         DataSetRemoveCriteria criteria = new DataSetRemoveCriteria("sierra");
-        criteria.setOption(DataSetDeleteOptions.CASCADE_BOTH);
+        criteria.setOption(DataSetDeleteOptions.CASCADE_ALL);
         target.getDataSets().remove(criteria);
 
-        Assert.assertEquals(fakeEndpoint + "/data/sierra?cascade=forecast&cascade=session", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/data/sierra?cascade=model&cascade=session&cascade=view", request.getUrl());
     }
 
     @Test public void doesNotSetCascadeWhenNoneOptionGiven() throws Exception

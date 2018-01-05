@@ -1,10 +1,10 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.AccountQuotas;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
 
 /**
  * The primary interface to the Nexosis API.

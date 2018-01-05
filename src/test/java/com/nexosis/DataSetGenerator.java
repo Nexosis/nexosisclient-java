@@ -1,6 +1,9 @@
 package com.nexosis;
 
-import com.nexosis.model.*;
+import com.nexosis.model.Columns;
+import com.nexosis.model.DataRole;
+import com.nexosis.model.DataSetDetail;
+import com.nexosis.model.DataType;
 import org.joda.time.DateTime;
 
 import java.util.*;

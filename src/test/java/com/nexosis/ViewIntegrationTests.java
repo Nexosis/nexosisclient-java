@@ -4,9 +4,12 @@ import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import java.util.*;
+import java.util.Iterator;
 
 public class ViewIntegrationTests {
     private static final String baseURI = System.getenv("NEXOSIS_BASE_TEST_URL");
@@ -101,7 +104,15 @@ public class ViewIntegrationTests {
     public void canCreateSessionOnView() throws Exception {
         DateTime sessionStart = DateTime.parse("2017-02-01T00:00:00.000-00:00");
         DateTime sessionEnd = DateTime.parse("2017-02-05T00:00:00.000-00:00");
-        SessionResponse session = nexosisClient.getSessions().createForecast(preExistingView,"foxtrot",sessionStart,sessionEnd,ResultInterval.DAY );
+
+        ForecastSessionRequest forecastRequest = new ForecastSessionRequest();
+        forecastRequest.setDataSourceName(preExistingView);
+        forecastRequest.setTargetColumn("foxtrot");
+        forecastRequest.setStartDate(sessionStart);
+        forecastRequest.setEndDate(sessionEnd);
+        forecastRequest.setResultInterval(ResultInterval.DAY);
+
+        SessionResponse session = nexosisClient.getSessions().createForecast(forecastRequest);
         Assert.assertNotNull(session);
     }
 

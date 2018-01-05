@@ -1,11 +1,12 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
+
 import java.io.OutputStream;
 import java.net.URI;
 

@@ -79,6 +79,7 @@ public interface IContestClient {
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     ChampionContestantList listContestants(UUID sessionId) throws NexosisClientException;
+    // WILL NOT HAVE PAGING
 
     /**
      * Gets a specific contestant algorithm, and the test data used in scoring the algorithm.

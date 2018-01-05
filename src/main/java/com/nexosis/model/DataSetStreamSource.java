@@ -1,9 +1,8 @@
 package com.nexosis.model;
 
-import com.nexosis.impl.NexosisClientException;
+import com.google.api.client.json.Json;
 
 import java.io.InputStream;
-import java.security.InvalidParameterException;
 
 public class DataSetStreamSource implements IDataSetSource {
     private InputStream streamReader;
@@ -47,9 +46,14 @@ public class DataSetStreamSource implements IDataSetSource {
      * @param contentType
      */
     public void setContentType(String contentType) throws IllegalArgumentException {
-        if (!contentType.equalsIgnoreCase("text/csv") && contentType.equalsIgnoreCase("application/json")) {
+        if (!contentType.equalsIgnoreCase("text/csv") && !contentType.startsWith("application/json")) {
             throw new IllegalArgumentException("contentType must be set to text/csv or application/json");
         }
+        // force to use application/json w/ utf-8
+        if (contentType.equalsIgnoreCase("application/json")) {
+            contentType = Json.MEDIA_TYPE;
+        }
+
         this.contentType = contentType;
     }
 }

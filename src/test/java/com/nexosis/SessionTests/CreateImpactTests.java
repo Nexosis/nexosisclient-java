@@ -3,7 +3,6 @@ package com.nexosis.SessionTests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -19,6 +18,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import java.io.IOException;
 
 public class CreateImpactTests {
@@ -58,18 +58,20 @@ public class CreateImpactTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().analyzeImpact(
-                "data-set-name",
-                "event-name",
-                "target-column",
-                DateTime.parse("2017-12-12T10:11:12Z"),
-                DateTime.parse("2017-12-22T22:23:24Z"),
-                ResultInterval.DAY,
-                "http://this.is.a.callback.url"
-        );
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&eventName=event-name&" +
-                "callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName("data-set-name");
+        impactRequest.setEventName("event-name");
+        impactRequest.setTargetColumn("target-column");
+        impactRequest.setStartDate(DateTime.parse("2017-12-12T10:11:12Z"));
+        impactRequest.setEndDate(DateTime.parse("2017-12-22T22:23:24Z"));
+        impactRequest.setResultInterval( ResultInterval.DAY);
+        impactRequest.setCallbackUrl("http://this.is.a.callback.url");
+
+        target.getSessions().analyzeImpact(impactRequest);
+
+        Assert.assertEquals(fakeEndpoint + "/sessions/impact", request.getUrl());
+        Assert.assertEquals(mapper.writeValueAsString(impactRequest), request.getContentAsString());
     }
 
     @Test
@@ -78,10 +80,6 @@ public class CreateImpactTests {
         Columns cols = new Columns();
         cols.setColumnMetadata("timestamp", DataType.DATE, DataRole.TIMESTAMP, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
         cols.setColumnMetadata("instances", DataType.NUMERIC, DataRole.TARGET, ImputationStrategy.ZEROES, AggregationStrategy.SUM);
-
-        SessionData data = new SessionData();
-        data.setDataSourceName("data-set-name");
-        data.setColumns(cols);
 
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
             @Override
@@ -103,83 +101,67 @@ public class CreateImpactTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().analyzeImpact(
-                data,
-                "event-name",
-                DateTime.parse("2017-12-12T10:11:12Z"),
-                DateTime.parse("2017-12-22T22:23:24Z"),
-                ResultInterval.DAY,
-                "http://this.is.a.callback.url"
-        );
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/impact?resultInterval=day&endDate=2017-12-22T22:23:24.000Z&eventName=event-name&callbackUrl=http://this.is.a.callback.url&dataSourceName=data-set-name&startDate=2017-12-12T10:11:12.000Z", request.getUrl());
-        Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName("data-set-name");
+        impactRequest.setEventName("event-name");
+        impactRequest.setColumns(cols);
+        impactRequest.setTargetColumn("target-column");
+        impactRequest.setStartDate(DateTime.parse("2017-12-12T10:11:12Z"));
+        impactRequest.setEndDate(DateTime.parse("2017-12-22T22:23:24Z"));
+        impactRequest.setResultInterval(ResultInterval.DAY);
+        impactRequest.setCallbackUrl("http://this.is.a.callback.url");
+
+        target.getSessions().analyzeImpact(impactRequest);
+
+        Assert.assertEquals(fakeEndpoint + "/sessions/impact", request.getUrl());
+        Assert.assertEquals(mapper.writeValueAsString(impactRequest), request.getContentAsString());
     }
 
     @Test
-    public void ReqiresNotNullDataSet() throws NexosisClientException
+    public void RequiresNotNullDataSet() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Object data cannot be null.");
+        thrown.expectMessage("Object ImpactSessionRequest cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getSessions().analyzeImpact(
-                (SessionData) null,
-                "event",
-                JodaTimeHelper.START_OF_TIME,
-                JodaTimeHelper.END_OF_TIME,
-                ResultInterval.DAY
-        );
+
+        target.getSessions().analyzeImpact(null);
     }
 
     @Test
-    public void ReqiresNotNullOrEmptyDataSourceName() throws NexosisClientException
+    public void RequiresNotNullOrEmptyDataSourceName() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value dataSourceName cannot be null or empty.");
+        thrown.expectMessage("Value ImpactSessionRequest.dataSourceName cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getSessions().analyzeImpact(
-                (String) null,
-                "event",
-                "",
-                JodaTimeHelper.START_OF_TIME,
-                JodaTimeHelper.END_OF_TIME,
-                ResultInterval.DAY
-        );
+
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setEventName("event");
+        impactRequest.setTargetColumn("target");
+        impactRequest.setStartDate(JodaTimeHelper.START_OF_TIME);
+        impactRequest.setEndDate(JodaTimeHelper.END_OF_TIME);
+        impactRequest.setResultInterval(ResultInterval.DAY);
+
+        target.getSessions().analyzeImpact(impactRequest);
     }
 
     @Test
-    public void ReqiresNotNullOrEmptyTargetColumn() throws NexosisClientException
+    public void RequiresNotNullOrEmptyEventName() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value targetColumn cannot be null or empty.");
+        thrown.expectMessage("Value ImpactSessionRequest.eventName cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getSessions().analyzeImpact(
-                "dataSet",
-                "event",
-                "",
-                JodaTimeHelper.START_OF_TIME,
-                JodaTimeHelper.END_OF_TIME,
-                ResultInterval.DAY
-        );
-    }
 
-    @Test
-    public void ReqiresNotNullOrEmptyEventName() throws NexosisClientException
-    {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value eventName cannot be null or empty.");
+        ImpactSessionRequest impactRequest = new ImpactSessionRequest();
+        impactRequest.setDataSourceName("datasource");
+        impactRequest.setTargetColumn("target");
+        impactRequest.setStartDate(JodaTimeHelper.START_OF_TIME);
+        impactRequest.setEndDate(JodaTimeHelper.END_OF_TIME);
+        impactRequest.setResultInterval(ResultInterval.DAY);
 
-        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getSessions().analyzeImpact(
-                "dataSet",
-                "",
-                "targetCol",
-                JodaTimeHelper.START_OF_TIME,
-                JodaTimeHelper.END_OF_TIME,
-                ResultInterval.DAY
-        );
+        target.getSessions().analyzeImpact(impactRequest);
     }
 }

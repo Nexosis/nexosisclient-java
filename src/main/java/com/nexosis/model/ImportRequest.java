@@ -1,7 +1,5 @@
 package com.nexosis.model;
 
-import java.util.HashMap;
-
 public abstract class ImportRequest {
     private String dataSetName;
     private Columns columns;

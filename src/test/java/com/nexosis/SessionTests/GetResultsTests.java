@@ -1,6 +1,5 @@
 package com.nexosis.SessionTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -8,13 +7,14 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.model.ConfusionMatrixResponse;
+import com.nexosis.model.SessionResultQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.UUID;
 
 public class GetResultsTests {
@@ -52,7 +52,9 @@ public class GetResultsTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().getResults(sessionId);
+        SessionResultQuery query = new SessionResultQuery();
+        query.setSessionId(sessionId);
+        target.getSessions().getResults(query);
 
         Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results", request.getUrl());
     }
@@ -65,7 +67,9 @@ public class GetResultsTests {
         thrown.expectMessage("Object output cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getSessions().getResults(sessionId, (OutputStream)null);
+        SessionResultQuery query = new SessionResultQuery();
+        query.setSessionId(sessionId);
+        target.getSessions().getResults(query, null);
     }
 
     @Test

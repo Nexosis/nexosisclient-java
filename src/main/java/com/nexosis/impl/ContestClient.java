@@ -1,12 +1,11 @@
 package com.nexosis.impl;
 
-import com.nexosis.util.Action;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.nexosis.IContestClient;
 import com.nexosis.model.*;
+import com.nexosis.util.Action;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
