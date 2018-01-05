@@ -7,6 +7,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
+import com.nexosis.model.ViewDeleteCriteria;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,10 +31,10 @@ public class RemoveTests {
     public void removeRequiresDataSetName() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value viewName cannot be null or empty.");
+        thrown.expectMessage("Value ViewDeleteCriteria.Name cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getViews().remove(null, false);
+        target.getViews().remove(new ViewDeleteCriteria(null));
     }
 
     @Test
@@ -58,8 +59,7 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().remove("testView", false);
-
+        target.getViews().remove(new ViewDeleteCriteria("testView"));
         Assert.assertEquals(fakeEndpoint + "/views/testView", request.getUrl());
     }
 }

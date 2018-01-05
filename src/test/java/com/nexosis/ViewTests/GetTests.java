@@ -6,7 +6,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import com.nexosis.model.ListQuery;
+import com.nexosis.model.ViewDataQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,7 +15,6 @@ import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GetTests {
     @Rule
@@ -51,19 +50,14 @@ public class GetTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().get("test");
 
-        Assert.assertEquals(fakeEndpoint + "/views/test?pageSize=50&page=0", request.getUrl());
+        target.getViews().get(new ViewDataQuery("test"));
+
+        Assert.assertEquals(fakeEndpoint + "/views/test", request.getUrl());
     }
 
     @Test
     public void loadsWithOptions() throws Exception {
-        ListQuery query = new ListQuery();
-        List<String> columns = new ArrayList<String>();
-        columns.add("testcolumn");
-        columns.add("testcolumn2");
-        query.setIncludeColumns(columns);
-
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
             @Override
             public LowLevelHttpResponse execute() throws IOException {
@@ -84,8 +78,11 @@ public class GetTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().get("test",query);
 
-        Assert.assertEquals(fakeEndpoint + "/views/test?include=testcolumn&include=testcolumn2&pageSize=50&page=0", request.getUrl());
+        ViewDataQuery query = new ViewDataQuery("test");
+        query.setIncludedColumns(new ArrayList<String>() {{ add("testcolumn"); add("testcolumn2");}});
+        target.getViews().get(query);
+
+        Assert.assertEquals(fakeEndpoint + "/views/test?include=testcolumn&include=testcolumn2", request.getUrl());
     }
 }

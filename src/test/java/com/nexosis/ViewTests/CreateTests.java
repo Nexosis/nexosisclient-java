@@ -10,6 +10,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.neovisionaries.i18n.CountryCode;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.impl.Views;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -56,10 +57,12 @@ public class CreateTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().create("TestCalendarView", "TestDataSet", CountryCode.US, null, null);
+
+        target.getViews().create("TestCalendarView",
+                Views.createWithHolidayCalendarForCountry("TestDataSet", CountryCode.US, null, null));
 
         Assert.assertNotNull(request.getStreamingContent());
-        Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"name\":\"Nexosis.Holidays-US\"}}]}",
+        Assert.assertEquals("{\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"name\":\"Nexosis.Holidays-US\"}}]}",
                 request.getContentAsString());
     }
 
@@ -85,10 +88,11 @@ public class CreateTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().create("TestCalendarView", "TestDataSet", URI.create("http://nothere.com/somecal/holidays.ical"), null,null);
+
+        target.getViews().create("TestCalendarView", Views.createWithICALUri("TestDataSet", URI.create("http://nothere.com/somecal/holidays.ical"), null,null));
 
         Assert.assertNotNull(request.getStreamingContent());
-        Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"url\":\"http://nothere.com/somecal/holidays.ical\"}}]}",
+        Assert.assertEquals("{\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"url\":\"http://nothere.com/somecal/holidays.ical\"}}]}",
                 request.getContentAsString());
     }
 
@@ -116,10 +120,11 @@ public class CreateTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().create("TestCalendarView", "TestDataSet", URI.create("http://nothere.com/somecal/holidays.ical"), tz,null);
+
+        target.getViews().create("TestCalendarView", Views.createWithICALUri( "TestDataSet", URI.create("http://nothere.com/somecal/holidays.ical"), tz, null));
 
         Assert.assertNotNull(request.getStreamingContent());
-        Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"url\":\"http://nothere.com/somecal/holidays.ical\",\"timeZone\":\"America/Los_Angeles\"}}]}",
+        Assert.assertEquals("{\"dataSetName\":\"TestDataSet\",\"joins\":[{\"calendar\":{\"url\":\"http://nothere.com/somecal/holidays.ical\",\"timeZone\":\"America/Los_Angeles\"}}]}",
                 request.getContentAsString());
     }
 
@@ -145,10 +150,10 @@ public class CreateTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getViews().create("TestCalendarView", "TestDataSet", "RightDataSet", null);
+        target.getViews().create("TestCalendarView", Views.createWithDataSetNames("TestDataSet", "RightDataSet"));
 
         Assert.assertNotNull(request.getStreamingContent());
-        Assert.assertEquals("{\"viewName\":\"TestCalendarView\",\"dataSetName\":\"TestDataSet\",\"joins\":[{\"dataSet\":{\"name\":\"RightDataSet\"}}]}",
+        Assert.assertEquals("{\"dataSetName\":\"TestDataSet\",\"joins\":[{\"dataSet\":{\"name\":\"RightDataSet\"}}]}",
                 request.getContentAsString());
     }
 }

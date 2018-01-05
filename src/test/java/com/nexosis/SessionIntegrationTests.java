@@ -206,8 +206,6 @@ public class SessionIntegrationTests {
 
     @Test
     public void GetSessionListRespectsPaging() throws NexosisClientException {
-        //TODO delete ListQuery object
-
         SessionQuery query = new SessionQuery();
         query.setPage(new PagingInfo(1,2));
         SessionResponses sessions = nexosisClient.getSessions().list(query);

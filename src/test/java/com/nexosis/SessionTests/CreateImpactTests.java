@@ -10,6 +10,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
+import com.nexosis.impl.Sessions;
 import com.nexosis.model.*;
 import com.nexosis.util.JodaTimeHelper;
 import org.joda.time.DateTime;
@@ -103,16 +104,19 @@ public class CreateImpactTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
 
         ImpactSessionRequest impactRequest = new ImpactSessionRequest();
-        impactRequest.setDataSourceName("data-set-name");
-        impactRequest.setEventName("event-name");
-        impactRequest.setColumns(cols);
-        impactRequest.setTargetColumn("target-column");
-        impactRequest.setStartDate(DateTime.parse("2017-12-12T10:11:12Z"));
-        impactRequest.setEndDate(DateTime.parse("2017-12-22T22:23:24Z"));
-        impactRequest.setResultInterval(ResultInterval.DAY);
         impactRequest.setCallbackUrl("http://this.is.a.callback.url");
 
-        target.getSessions().analyzeImpact(impactRequest);
+        target.getSessions().analyzeImpact(
+                Sessions.Impact(
+                        "data-set-name",
+                        DateTime.parse("2017-12-12T10:11:12Z"),
+                        DateTime.parse("2017-12-22T22:23:24Z"),
+                        ResultInterval.DAY,
+                        "event-name",
+                        "target-column",
+                        impactRequest
+                )
+        );
 
         Assert.assertEquals(fakeEndpoint + "/sessions/impact", request.getUrl());
         Assert.assertEquals(mapper.writeValueAsString(impactRequest), request.getContentAsString());

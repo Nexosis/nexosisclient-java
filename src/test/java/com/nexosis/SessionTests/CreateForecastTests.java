@@ -10,6 +10,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
+import com.nexosis.impl.Sessions;
 import com.nexosis.model.*;
 import com.nexosis.util.JodaTimeHelper;
 import org.joda.time.DateTime;
@@ -96,17 +97,18 @@ public class CreateForecastTests {
             }
         };
 
-        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-
         ForecastSessionRequest forecastRequest = new ForecastSessionRequest();
-        forecastRequest.setDataSourceName("data-set-name");
-        forecastRequest.setTargetColumn("target-column");
-        forecastRequest.setStartDate(DateTime.parse("2017-12-12T10:11:12Z"));
-        forecastRequest.setEndDate(DateTime.parse("2017-12-22T22:23:24Z"));
-        forecastRequest.setResultInterval(ResultInterval.DAY);
         forecastRequest.setCallbackUrl("http://this.is.a.callback.url");
-
-        target.getSessions().createForecast(forecastRequest);
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        target.getSessions().createForecast(
+                Sessions.Forecast(
+                    "data-set-name",
+                    DateTime.parse("2017-12-12T10:11:12Z"),
+                    DateTime.parse("2017-12-22T22:23:24Z"),
+                    ResultInterval.DAY,
+                    "target-column",
+                    forecastRequest)
+        );
 
         Assert.assertEquals(request.getUrl(), fakeEndpoint + "/sessions/forecast");
         Assert.assertEquals(mapper.writeValueAsString(forecastRequest), request.getContentAsString());
