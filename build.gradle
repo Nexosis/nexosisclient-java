@@ -5,7 +5,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group            = 'com.nexosis'
 archivesBaseName = 'nexosisclient-java'
-version          = '2.1.0'
+version          = '3.0.0'
 ext.packaging    = 'jar'
 
 def ossrhUser = hasProperty('ossrhUsername') ? project.ossrhUsername : System.getenv('ossrhUsername')
