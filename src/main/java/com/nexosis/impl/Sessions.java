@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 public class Sessions {
 
-    public static ModelSessionRequest TrainModel(String dataSourceName, PredictionDomain domain,
+    public static ModelSessionRequest trainModel(String dataSourceName, PredictionDomain domain,
                                                  String targetColumn, ModelSessionRequest options) {
         ModelSessionRequest request = options;
         if (request == null)
@@ -20,7 +20,7 @@ public class Sessions {
         return request;
     }
 
-    public static ForecastSessionRequest Forecast(String dataSourceName, DateTime startDate, DateTime endDate,
+    public static ForecastSessionRequest forecast(String dataSourceName, DateTime startDate, DateTime endDate,
                                                   ResultInterval resultInterval, String targetColumn, ForecastSessionRequest options) {
         ForecastSessionRequest request = options;
         if (request == null)
@@ -36,7 +36,7 @@ public class Sessions {
         return request;
     }
 
-    public static ImpactSessionRequest Impact(String dataSourceName, DateTime startDate,
+    public static ImpactSessionRequest impact(String dataSourceName, DateTime startDate,
                                               DateTime endDate, ResultInterval resultInterval, String eventName, String targetColumn,
                                               ImpactSessionRequest options) {
 
@@ -56,7 +56,7 @@ public class Sessions {
         return request;
     }
 
-    public static SessionQuery Where(final String dataSourceName, DateTime requestedAfterDate, DateTime requestedBeforeDate, SessionQuery query) {
+    public static SessionQuery where(final String dataSourceName, DateTime requestedAfterDate, DateTime requestedBeforeDate, SessionQuery query) {
         SessionQuery theQuery = query;
         if (theQuery == null)
             theQuery = new SessionQuery() {{

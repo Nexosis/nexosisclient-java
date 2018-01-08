@@ -129,4 +129,63 @@ public class GetResultsTests {
 
         Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/confusionmatrix", request.getUrl());
     }
+
+    @Test
+    public void GetClassScoresReturnsThen() throws Exception
+    {
+        UUID sessionId = UUID.randomUUID();
+
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                return response;
+            }
+        };
+
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        target.getSessions().getResultClassScores(sessionId);
+
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/classscores", request.getUrl());
+    }
+
+    @Test
+    public void getAnomalyScoresReturnsThen() throws Exception {
+        UUID sessionId = UUID.randomUUID();
+
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                return response;
+            }
+        };
+
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        target.getSessions().getResultAnomalyScores(sessionId);
+
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/anomalyscores", request.getUrl());
+    }
 }

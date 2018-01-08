@@ -161,13 +161,27 @@ public class SessionClient implements ISessionClient {
     }
 
     /**
-     *
-     * @param id the identifier of a classification model building session
-     * @return an array of the classes in the classification model and a matrix of each classes results
-     * @throws NexosisClientException
+     /**
+     * {@inheritDoc}
      */
     @Override
     public ConfusionMatrixResponse getConfusionMatrix(UUID id) throws NexosisClientException {
-        return apiConnection.get(ConfusionMatrixResponse.class, "sessions/" + id + "/results/confusionmatrix", null, null);
+        return apiConnection.get(ConfusionMatrixResponse.class, "sessions/" + id.toString() + "/results/confusionmatrix", null, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SessionResult getResultAnomalyScores(UUID id) throws NexosisClientException {
+        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/anomalyscores", null, this.httpMessageTransformer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SessionResult getResultClassScores(UUID id) throws NexosisClientException {
+        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/classscores", null, this.httpMessageTransformer);
     }
 }

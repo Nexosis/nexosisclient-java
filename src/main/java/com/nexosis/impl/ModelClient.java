@@ -14,7 +14,6 @@ public class ModelClient implements IModelClient {
     private ApiConnection apiConnection;
     private Action<HttpRequest, HttpResponse> httpMessageTransformer = null;
 
-
     public ModelClient(ApiConnection apiConnection) {
         this.apiConnection = apiConnection;
     }
@@ -57,6 +56,7 @@ public class ModelClient implements IModelClient {
 
         PredictRequest requestBody = new PredictRequest();
         requestBody.setData(request.getData());
+        requestBody.setExtraParameters(request.getExtraParameters());
 
         return apiConnection.post(ModelPredictionResult.class, "models/" + request.getModelId().toString() + "/predict", null, requestBody, this.httpMessageTransformer);
     }

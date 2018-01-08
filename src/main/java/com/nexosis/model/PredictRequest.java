@@ -32,6 +32,19 @@ public class PredictRequest implements Serializable
         this.data = data;
     }
 
+    @JsonProperty("extraParameters")
+    private HashMap<String, String> extraParameters;
+
+    @JsonProperty("extraParameters")
+    public HashMap<String, String> getExtraParameters() {
+        return extraParameters;
+    }
+
+    @JsonProperty("extraParameters")
+    public void setExtraParameters(HashMap<String, String> extraParameters) {
+        this.extraParameters = extraParameters;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -63,4 +76,6 @@ public class PredictRequest implements Serializable
         PredictRequest rhs = ((PredictRequest) other);
         return new EqualsBuilder().append(additionalProperties, rhs.additionalProperties).append(data, rhs.data).isEquals();
     }
+
+
 }

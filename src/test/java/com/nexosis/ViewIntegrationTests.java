@@ -116,7 +116,7 @@ public class ViewIntegrationTests {
         DateTime sessionEnd = DateTime.parse("2017-02-05T00:00:00.000-00:00");
 
         SessionResponse session = nexosisClient.getSessions().createForecast(
-                Sessions.Forecast(
+                Sessions.forecast(
                         preExistingView,
                         sessionStart,
                         sessionEnd,

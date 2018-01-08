@@ -6,6 +6,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ClassificationModelPredictionRequest;
 import com.nexosis.model.ModelPredictionRequest;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -53,7 +54,7 @@ public class PostModelPredict {
         target.getModels().predict(new ModelPredictionRequest(modelId, data));
 
         Assert.assertEquals(fakeEndpoint + "/models/" + modelId.toString() + "/predict",  request.getUrl());
-        Assert.assertEquals("{\"data\":[{\"column\":\"value\"}]}", request.getContentAsString());
+        Assert.assertEquals("{\"data\":[{\"column\":\"value\"}],\"extraParameters\":{}}", request.getContentAsString());
     }
 
     @Test
@@ -66,5 +67,44 @@ public class PostModelPredict {
         ModelPredictionRequest request = new ModelPredictionRequest(UUID.randomUUID(), null);
 
         target.getModels().predict( request);
+    }
+
+    @Test
+    public void includesIncludeClassScoresOptionWhenSpecified() throws Exception
+    {
+        UUID modelId = UUID.randomUUID();
+
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent("{}");
+                return response;
+            }
+        };
+
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        List<Map<String, String>> data = new ArrayList<>();
+        data.add(new HashMap<String,String>() {{put("column","value");}});
+
+        ClassificationModelPredictionRequest req = new ClassificationModelPredictionRequest();
+        req.setModelId(modelId);
+        req.setData(data);
+        req.setIncludeClassScores(true);
+
+        target.getModels().predict(req);
+
+        Assert.assertEquals(fakeEndpoint + "/models/" + modelId + "/predict", request.getUrl());
+        Assert.assertEquals("{\"data\":[{\"column\":\"value\"}],\"extraParameters\":{\"includeClassScores\":\"true\"}}",  request.getContentAsString());
     }
 }

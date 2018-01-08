@@ -107,7 +107,7 @@ public class CreateImpactTests {
         impactRequest.setCallbackUrl("http://this.is.a.callback.url");
 
         target.getSessions().analyzeImpact(
-                Sessions.Impact(
+                Sessions.impact(
                         "data-set-name",
                         DateTime.parse("2017-12-12T10:11:12Z"),
                         DateTime.parse("2017-12-22T22:23:24Z"),

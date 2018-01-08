@@ -1,5 +1,6 @@
 package com.nexosis.model;
 
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -7,13 +8,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "dataSourceName",
         "targetColumn",
+        "predictionDomain",
         "columns",
         "callbackUrl",
-        "startDate",
-        "endDate",
-        "resultInterval"
-
+        "extraParameters"
 })
-public class ForecastSessionRequest extends TimeSeriesSessionRequest {
-
+public class RegressionModelSessionRequest extends ModelSessionRequest {
+    public RegressionModelSessionRequest()
+    {
+        this.setPredictionDomain(PredictionDomain.REGRESSION);
+    }
 }
