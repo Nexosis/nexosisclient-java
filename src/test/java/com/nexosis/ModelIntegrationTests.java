@@ -40,7 +40,7 @@ public class ModelIntegrationTests {
         DataSetSummaryQuery query = new DataSetSummaryQuery();
         query.setPartialName(modelDataSetName);
         // If no dataset, create it.
-        if (nexosisClient.getDataSets().list(query).getItems().size() > 1) {
+        if (nexosisClient.getDataSets().list(query).getItems().size() < 1) {
             DataSetDetail dataSet = DataSetGenerator.Run(90, 10, "instances");
             nexosisClient.getDataSets().create(DataSet.From(modelDataSetName, dataSet));
         }

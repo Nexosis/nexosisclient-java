@@ -421,7 +421,6 @@ public class SessionIntegrationTests {
         Assert.assertNotNull(session.getAvailablePredictionIntervals());
     }
 
-    @Test
     public void CanRequestDifferentPredictionIntervals() throws NexosisClientException {
         SessionResponses sessions = nexosisClient.getSessions().list(new SessionQuery());
         SessionResponse targetSession = null;
@@ -443,7 +442,7 @@ public class SessionIntegrationTests {
 
         SessionResultQuery query2 = new SessionResultQuery();
         query2.setSessionId(targetSession.getSessionId());
-        query2.setPredictionInterval(targetSession.getAvailablePredictionIntervals()[1]);
+        query2.setPredictionInterval(targetSession.getAvailablePredictionIntervals()[2]);
 
         SessionResult pi1 = nexosisClient.getSessions().getResults(query1);
         SessionResult pi2 = nexosisClient.getSessions().getResults(query2);
