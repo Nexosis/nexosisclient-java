@@ -1,18 +1,14 @@
 package com.nexosis.model;
 
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -34,6 +30,19 @@ public class PredictRequest implements Serializable
     @JsonProperty("data")
     public void setData(List<Map<String, String>> data) {
         this.data = data;
+    }
+
+    @JsonProperty("extraParameters")
+    private HashMap<String, String> extraParameters;
+
+    @JsonProperty("extraParameters")
+    public HashMap<String, String> getExtraParameters() {
+        return extraParameters;
+    }
+
+    @JsonProperty("extraParameters")
+    public void setExtraParameters(HashMap<String, String> extraParameters) {
+        this.extraParameters = extraParameters;
     }
 
     @JsonAnyGetter
@@ -67,4 +76,6 @@ public class PredictRequest implements Serializable
         PredictRequest rhs = ((PredictRequest) other);
         return new EqualsBuilder().append(additionalProperties, rhs.additionalProperties).append(data, rhs.data).isEquals();
     }
+
+
 }

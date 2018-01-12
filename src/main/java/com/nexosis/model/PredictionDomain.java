@@ -10,7 +10,8 @@ public enum PredictionDomain {
     REGRESSION("regression"),
     CLASSIFICATION("classification"),
     IMPACT("impact"),
-    FORECAST("forecast");
+    FORECAST("forecast"),
+    ANOMAlIES("anomalies");
     private final String value;
     private final static Map<String, PredictionDomain> CONSTANTS = new HashMap<>();
 

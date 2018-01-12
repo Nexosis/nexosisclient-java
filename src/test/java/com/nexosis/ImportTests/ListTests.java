@@ -1,13 +1,14 @@
 package com.nexosis.ImportTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ImportDetailQuery;
 import com.nexosis.model.ImportDetails;
+import com.nexosis.model.PagingInfo;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,17 +47,17 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        ImportDetails result = target.getImports().list(
-                "alpha",
-                DateTime.parse("2017-01-01T00:00:00Z"),
-                DateTime.parse("2017-01-11T00:00:00Z"),
-                0,
-                1
-        );
+
+        ImportDetailQuery query = new ImportDetailQuery();
+        query.setDataSetName("alpha");
+        query.setRequestedAfterDate(DateTime.parse("2017-01-01T00:00:00Z"));
+        query.setRequestedBeforeDate(DateTime.parse("2017-01-11T00:00:00Z"));
+        query.setPage(new PagingInfo(0,1));
+
+        ImportDetails result = target.getImports().list(query);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/imports?dataSetName=alpha&requestedBeforeDate=2017-01-11T00:00:00.000Z&" + "" +
-                "pageSize=1&requestedAfterDate=2017-01-01T00:00:00.000Z&page=0", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/imports?requestedBeforeDate=2017-01-11T00:00:00.000Z&pageSize=1&page=0&requestedAfterDate=2017-01-01T00:00:00.000Z&dataSetName=alpha", request.getUrl());
     }
 
     @Test
@@ -81,7 +82,11 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        ImportDetails result = target.getImports().list(0, 1);
+
+        ImportDetailQuery query = new ImportDetailQuery();
+        query.setPage(new PagingInfo(0,1));
+
+        ImportDetails result = target.getImports().list(query);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(fakeEndpoint + "/imports?pageSize=1&page=0", request.getUrl());
@@ -109,12 +114,16 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        ImportDetails result = target.getImports().list(
-                "alpha", null, DateTime.parse("2017-01-01T00:00:00Z"), 0, 1
-        );
+
+        ImportDetailQuery query = new ImportDetailQuery();
+        query.setDataSetName("alpha");
+        query.setRequestedBeforeDate(DateTime.parse("2017-01-01T00:00:00Z"));
+        query.setPage(new PagingInfo(0,1));
+
+        ImportDetails result = target.getImports().list(query);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/imports?dataSetName=alpha&requestedBeforeDate=2017-01-01T00:00:00.000Z&pageSize=1&page=0", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/imports?requestedBeforeDate=2017-01-01T00:00:00.000Z&pageSize=1&page=0&dataSetName=alpha", request.getUrl());
     }
 
 }

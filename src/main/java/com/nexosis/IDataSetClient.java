@@ -1,90 +1,38 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+import com.nexosis.impl.DataSet;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import org.joda.time.DateTime;
 
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.EnumSet;
 
 /**
  *
  */
 public interface IDataSetClient {
+    Action<HttpRequest, HttpResponse> getHttpMessageTransformer();
+    void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer);
+
     /**
-     * Save data in a data set.
+     * Save data in a dataset.
      * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
+     * PUT to https://ml.nexosis.com/v1/v1/{dataSetName}
      * <P>
-     * @param dataSetName Name of the dataset to which to add data.
-     * @param data        A DataSetSummary containing the data.
+     * @param source A {@link IDataSetSource IDataSetSource} containing the data.  Create one of these with {@link DataSet DataSet.From}.
      * @return A {@link DataSetSummary DataSetSummary} object
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     * @throws NexosisClientException
      */
-    DataSetSummary create(String dataSetName, DataSetData data) throws NexosisClientException;
-
-    /**
-     * Save data in a data set.
-     * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName             Name of the dataset to which to add data.
-     * @param data                    A DataSetSummary containing the data.
-     * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link DataSetSummary DataSetSummary} object
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetSummary create(String dataSetName, DataSetData data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Save data in a data set.
-     * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName   Name of the dataset to which to add data.
-     * @param input         A stream containing the dataset to send to the server, defaults content-type of stream to "text/csv"
-     * @return              A {@link DataSetSummary DataSetSummary} object
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetSummary create(String dataSetName, InputStream input) throws NexosisClientException;
-
-    /**
-     * Save data in a data set.
-     * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName   Name of the dataset to which to add data.
-     * @param input         A stream containing the dataset to send to the server
-     * @param contentType   The content-type of the input stream (e.g. "text/csv", "application/json")
-     * @return              A {@link DataSetSummary DataSetSummary} object
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetSummary create(String dataSetName, InputStream input, String contentType) throws NexosisClientException;
-
-    /**
-     * Save data in a data set.
-     * <P>
-     * PUT of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName             Name of the dataset to which to add data.
-     * @param input                   A stream containing the dataset to send to the server
-     * @param contentType   The content-type of the input stream (e.g. "text/csv", "application/json")
-     * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return                        A {@link DataSetSummary DataSetSummary} object
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetSummary create(String dataSetName, InputStream input, String contentType, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    DataSetSummary create(IDataSetSource source) throws NexosisClientException;
 
     /**
      * Gets the list of all data sets that have been saved to the system.
      * <P>
-     * GET of https://ml.nexosis.com/api/data
+     * GET of https://ml.nexosis.com/v1/data
      * <P>
-     * @return A {@link DataSetList DataSetList} object c
+     * @return A {@link DataSetList DataSetList} object
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     DataSetList list() throws NexosisClientException;
@@ -92,177 +40,43 @@ public interface IDataSetClient {
     /**
      * Gets the list of data sets that have been saved to the system, filtering by partial name match.
      * <P>
-     * GET of https://ml.nexosis.com/api/data
+     * GET of https://ml.nexosis.com/v1/data
      * <P>
-     * @param nameFilter Limits results to only those datasets with names containing the specified value
+     * @param query A {@link DataSetSummaryQuery DataSetSummaryQuery} with the filter criteria for the DataSets to retrieve.
      * @return The List&lt;T&gt; of {@link DataSetSummary DataSetSummary} objects.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    DataSetList list(String nameFilter, ListQuery query) throws NexosisClientException;
-
-    /**
-     * Gets the list of data sets that have been saved to the system, filtering by partial name match.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data
-     * <P>
-     * @param nameFilter             Limits results to only those datasets with names containing the specified value
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return The List&lt;T&gt; of {@link DataSetSummary DataSetSummary} objects.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetList list(String nameFilter, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    DataSetList list(DataSetSummaryQuery query) throws NexosisClientException;
 
     /**
      * Get the data in the set, optionally filtering it.
      * <P>
      * GET of https://ml.nexosis.com/api/data/{dataSetName}
      * <P>
-     * @param dataSetName Name of the dataset for which to retrieve data.
+     * @param query A DataSetDataQuery with the filter criteria for retrieving data from the DataSet.  Create one of these with DataSet.Where
      * @return A {@link DataSetData DataSetData} object containing the data by name filter.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    DataSetData get(String dataSetName) throws NexosisClientException;
+    DataSetData get(DataSetDataQuery query) throws NexosisClientException;
 
     /**
-     * Get the data in the set, filtering it.
+     *  Get the data in the set, optionally filtering it.
      * <P>
      * GET of https://ml.nexosis.com/api/data/{dataSetName}
      * <P>
-     * @param dataSetName    Name of the dataset for which to retrieve data.
-     * @param pageNumber     Zero-based page number of results to retrieve.
-     * @param pageSize       Count of results to retrieve in each page (max 1000).
-     * @param includeColumns Limits results to the specified columns of the data set.
-     * @return A {@link DataSetData DataSetData} object containing the data by name filter.
+     * @param query A DataSetDataQuery with the filter criteria for retrieving data from the DataSet.  Create one of these with DataSet.Where
+     * @param output Output stream to write output to.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    DataSetData get(String dataSetName, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException;
-
-    /**
-     * Get the data in the set, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName    Name of the dataset for which to retrieve data.
-     * @param pageNumber     Zero-based page number of results to retrieve.
-     * @param pageSize       Count of results to retrieve in each page (max 1000).
-     * @param startDate      Limits results to those on or after the specified date.
-     * @param endDate        Limits results to those on or before the specified date.
-     * @param includeColumns Limits results to the specified columns of the data set.
-     * @return A {@link DataSetData DataSetData} object containing filtered data
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetData get(String dataSetName, int pageNumber, int pageSize, org.joda.time.DateTime startDate, org.joda.time.DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException;
-
-    /**
-     * Get the data in the set, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName            Name of the dataset for which to retrieve data.
-     * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 1000).
-     * @param startDate              Limits results to those on or after the specified date.
-     * @param endDate                Limits results to those on or before the specified date.
-     * @param includeColumns         Limits results to the specified columns of the data set.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link DataSetData DataSetData} object containing filtered data
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    DataSetData get(String dataSetName, int pageNumber, int pageSize, org.joda.time.DateTime startDate, org.joda.time.DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Get the data in the set, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName            Name of the dataset for which to retrieve data.
-     * @param output                 An output stream to write the data set to
-     * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 1000).
-     * @param includeColumns         Limits results to the specified columns of the data set.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException;
-
-    /**
-     * Get the data in the set and write it to the output stream.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName            Name of the dataset for which to retrieve data.
-     * @param output                 An output stream to write the data set to
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void get(String dataSetName, OutputStream output) throws NexosisClientException;
-
-    /**
-     * Get the data in the set and write it to the output stream, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName            Name of the dataset for which to retrieve data.
-     * @param output                 An output stream to write the data set to
-     * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 1000).
-     * @param startDate              Limits results to those on or after the specified date.
-     * @param endDate                Limits results to those on or before the specified date.
-     * @param includeColumns         Limits results to the specified columns of the data set.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException;
-
-    /**
-     * Get the data in the set and write it to the output stream, optionally filtering it.
-     * <P>
-     * GET of https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName            Name of the dataset for which to retrieve data.
-     * @param output                 An output stream to write the data set to
-     * @param pageNumber             Zero-based page number of results to retrieve.
-     * @param pageSize               Count of results to retrieve in each page (max 1000).
-     * @param startDate              Limits results to those on or after the specified date.
-     * @param endDate                Limits results to those on or before the specified date.
-     * @param includeColumns         Limits results to the specified columns of the data set.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException
-     */
-    void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    void get(DataSetDataQuery query, OutputStream output) throws NexosisClientException;
 
     /**
      * Remove data from a data set or the entire set.
      * <P>
-     * DELETE to https://ml.nexosis.com/api/data/{dataSetName}
+     * DELETE to https://ml.nexosis.com/v1/data/{dataSetName}
      * <P>
-     * @param dataSetName Name of the dataset from which to remove data.
-     * @param options     Controls the options associated with the removal.
+     * @param criteria   A {@link DataSetRemoveCriteria DataSetRemoveCriteria} with the criteria for which data to remove
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    void remove(String dataSetName, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException;
-
-    /**
-     * Remove data from a data set or the entire set.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName   Name of the dataset from which to remove data.
-     * @param startDate     Limits data removed to those on or after the specified date.
-     * @param endDate       Limits data removed to those on or before the specified date.
-     * @param options       Controls the options associated with the removal.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String dataSetName, org.joda.time.DateTime startDate, org.joda.time.DateTime endDate, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException;
-
-    /**
-     * Remove data from a data set or the entire set.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/data/{dataSetName}
-     * <P>
-     * @param dataSetName            Name of the dataset from which to remove data.
-     * @param startDate              Limits data removed to those on or after the specified date.
-     * @param endDate                Limits data removed to those on or before the specified date.
-     * @param options                Controls the options associated with the removal.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String dataSetName, org.joda.time.DateTime startDate, org.joda.time.DateTime endDate, EnumSet<DataSetDeleteOptions> options,  Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    void remove(DataSetRemoveCriteria criteria) throws NexosisClientException;
 }

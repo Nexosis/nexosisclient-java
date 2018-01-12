@@ -1,17 +1,13 @@
 package com.nexosis.SessionTests;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import com.nexosis.impl.SessionClient;
-import com.nexosis.model.SessionResult;
 import com.nexosis.model.SessionResultStatus;
 import com.nexosis.model.SessionStatus;
 import com.nexosis.util.Action;
@@ -118,7 +114,8 @@ public class GetSessionStatusTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().getStatus(sessionId, isCalled);
+        target.getSessions().setHttpMessageTransformer(isCalled);
+        target.getSessions().getStatus(sessionId);
 
         Assert.assertTrue("Http transform function not called", isCalled.called);
     }

@@ -5,71 +5,80 @@ import com.google.api.client.http.HttpResponse;
 import com.nexosis.IModelClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ModelClient implements IModelClient {
     private ApiConnection apiConnection;
+    private Action<HttpRequest, HttpResponse> httpMessageTransformer = null;
 
     public ModelClient(ApiConnection apiConnection) {
         this.apiConnection = apiConnection;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Action<HttpRequest, HttpResponse> getHttpMessageTransformer() {
+        return httpMessageTransformer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer) {
+        this.httpMessageTransformer = httpMessageTransformer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public ModelSummary get(UUID id) throws NexosisClientException {
-        return get(id, null);
+        return apiConnection.get(ModelSummary.class, "models/" + id.toString(),null, httpMessageTransformer);
     }
 
-    public ModelSummary get(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return apiConnection.get(ModelSummary.class, "model/" + id.toString(),null, httpMessageTransformer);
+    /**
+     * {@inheritDoc}
+     */
+    public ModelList list(ModelSummaryQuery params) throws NexosisClientException, IllegalArgumentException {
+        return apiConnection.get(ModelList.class, "models", params.toParameters(), httpMessageTransformer);
     }
 
-    public ModelList list() throws NexosisClientException, IllegalArgumentException {
-        return this.list(new ModelClientParams(), null);
-    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ModelPredictionResult predict(ModelPredictionRequest request) throws NexosisClientException {
+        Argument.IsNotNull(request.getData(), "data");
+        Argument.IsNotNull(request.getModelId(), "modelId");
 
-    public ModelList list(ModelClientParams params, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException, IllegalArgumentException {
-        return apiConnection.get(ModelList.class, "models", params.buildParameter(), httpMessageTransformer);
-    }
-
-    public ModelPredictionResult predict(UUID modelId, List<Map<String, String>> data) throws NexosisClientException {
-        return this.predict(modelId, data, null);
-    }
-
-    public ModelPredictionResult predict(UUID modelId, List<Map<String, String>> data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNull(data, "data");
-        Argument.IsNotNull(modelId, "modelId");
         PredictRequest requestBody = new PredictRequest();
-        requestBody.setData(data);
-        return apiConnection.post(ModelPredictionResult.class, "models/" + modelId.toString() + "/predict", null, requestBody, httpMessageTransformer);
+        requestBody.setData(request.getData());
+        requestBody.setExtraParameters(request.getExtraParameters());
+
+        return apiConnection.post(ModelPredictionResult.class, "models/" + request.getModelId().toString() + "/predict", null, requestBody, this.httpMessageTransformer);
     }
 
-    public void remove(UUID modelId) throws NexosisClientException {
-        this.remove(modelId, null);
-    }
 
-    public void remove(UUID modelId, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        apiConnection.delete("models/" + modelId.toString(), null, httpMessageTransformer);
-    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void remove(ModelRemoveCriteria criteria) throws NexosisClientException {
+        Argument.IsNotNull(criteria, "ModelRemoveCriteria");
 
-    public void remove(String dataSourceName, org.joda.time.DateTime createdAfterDate, org.joda.time.DateTime createdBeforeDate) throws NexosisClientException {
-        this.remove(dataSourceName, createdAfterDate, createdBeforeDate, null);
-    }
+        Argument.OneOfIsNotNullOrEmpty(
+                new AbstractMap.SimpleEntry<Object, String>(criteria.getDataSourceName(), "ModelRemoveCriteria.DataSourceName"),
+                new AbstractMap.SimpleEntry<Object, String>(criteria.getModelId(), "ModelRemoveCriteria.ModelId")
+        );
 
-    public void remove(String dataSourceName, org.joda.time.DateTime createdAfterDate, org.joda.time.DateTime createdBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Map<String,Object> parameters = new HashMap<String,Object>();
-        parameters.put("createdAfterDate", createdAfterDate.toDateTimeISO().toString());
-        parameters.put("createdBeforeDate", createdBeforeDate.toDateTimeISO().toString());
-
-        if (!StringUtils.isEmpty(dataSourceName)) {
-            parameters.put("dataSourceName", dataSourceName);
+        if (criteria.getModelId() != null) {
+            apiConnection.delete("models/" + criteria.getModelId().toString(), null, httpMessageTransformer);
+        } else {
+            Map<String,Object> params = criteria.toParameters();
+            apiConnection.delete("models", params, httpMessageTransformer);
         }
-
-        this.removeModelsInternal(parameters, httpMessageTransformer);
-    }
-
-    private void removeModelsInternal(Map<String,Object> parameters, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        apiConnection.delete("models", parameters, httpMessageTransformer);
     }
 }
-

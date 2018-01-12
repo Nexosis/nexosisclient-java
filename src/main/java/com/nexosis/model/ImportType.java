@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ImportType {
-    S3("s3");
+    S3("s3"),
+    Azure("azure"),
+    Url("url");
+
     private final String value;
     private final static Map<String, ImportType> CONSTANTS = new HashMap<String, ImportType>();
 

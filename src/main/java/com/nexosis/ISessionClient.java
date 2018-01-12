@@ -1,359 +1,59 @@
 package com.nexosis;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import org.joda.time.DateTime;
+
 import java.io.OutputStream;
-import java.io.Writer;
-import java.util.List;
 import java.util.UUID;
 
 /**
  *
  */
 public interface ISessionClient {
-    /**
-     * Forecast from data posted in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param data          A list of data set rows containing the data used for the forecast.
-     * @param startDate     The starting date of the forecast period.
-     * @param endDate       The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
+
+    Action<HttpRequest, HttpResponse> getHttpMessageTransformer();
+    void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer);
 
     /**
-     * Forecast from data posted in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param data              A list of data set rows containing the data used for the forecast.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
-
-    /**
-     * Forecast from data posted in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param data                   A list of data set rows containing the data used for the forecast.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Forecast from data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param dataSourceName The name of the saved data set or view that has the data to forecast on.
-     * @param targetColumn   The name of the column that should be used as the source data.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Forecast from data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param dataSourceName    The name of the saved data set or view that has the data to forecast on.
-     * @param targetColumn      The name of the column that should be used as the source data.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
-
-    /**
-     * Forecast from data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param dataSourceName         The name of the saved data set or view that has the data to forecast on.
-     * @param targetColumn           The name of the column that should be used as the source data.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse createForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param data           The name of the saved data set that has the data to run the impact analysis on.
-     * @param eventName      The name of the event.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param data              The data to run the impact analysis on.
-     * @param eventName         The name of the event.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval    The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param data                   The data to run the impact analysis on.
-     * @param eventName              The name of the event.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSourceName The name of the saved data set or view that has the data to run the impact analysis on.
-     * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSourceName    The name of the saved data set or view that has the data to run the impact analysis on.
-     * @param eventName         The name of the event.
-     * @param targetColumn      The name of the column that should be used as the source data.
-     * @param startDate         The starting date of the forecast period.
-     * @param endDate           The ending date of the forecast period.
-     * @param resultInterval    The interval at which predictions should be generated.
-     * @param statusCallbackUrl An optional url used for callbacks when the forecast session status changes.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl) throws NexosisClientException;
-
-    /**
-     * Analyze impact for an event with data or view already saved to the API.
+     * A client for getting information about how Nexosis determined the algorithm to use for a session.
      *
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     *
-     * @param dataSourceName         The name of the saved data set that has the data to run the impact analysis on.
-     * @param eventName              The name of the event.
-     * @param targetColumn           The name of the column that should be used as the source data.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param statusCallbackUrl      An optional url used for callbacks when the forecast session status changes.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
+     * Only available to customers on our paid tiers
+     */
+    IContestClient getContest ();
+    /**
+     * Forecast from data posted in the request.
+     * <P>
+     * POST to https://ml.nexosis.com/api/sessions/forecast
+     * <P>
+     * @param request       The parameters for the Forecast session.  Create with Sessions.Forecast.
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponse analyzeImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, String statusCallbackUrl, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponse createForecast(ForecastSessionRequest request) throws NexosisClientException;
+
+    /**
+     * Analyze impact for an event with data in the request.
+     * <P>
+     * POST to https://ml.nexosis.com/api/sessions/impact
+     * <P>
+     * @param request  The {@link ImpactSessionRequest ImpactSessionRequest} describing the parameters of the Impact session. Create with Sessions.Impact
+     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
+     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    SessionResponse analyzeImpact(ImpactSessionRequest request) throws NexosisClientException;
 
     /** 
       * Train a model from data already saved to the API.
       *
-      * @param data Information about the datasource to be used to train the model.
+      * @param request Information about the datasource to be used to train the model.
       * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object  providing information about the session.
       * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
       * POST to https://ml.nexosis.com/api/sessions/model
      **/
-    SessionResponse trainModel(ModelSessionDetail data) throws NexosisClientException;
-
-    /** 
-      * Train a model from data already saved to the API.
-      *
-      * @param data Information about the datasource to be used to train the model.
-      * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object  providing information about the session.
-      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
-      * POST to https://ml.nexosis.com/api/sessions/model
-     **/
-    SessionResponse trainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-    
-    /**
-     * Estimate the cost of a forecast from data posted in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param data           A list of data set rows containing the data used for the forecast.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateForecast(SessionData data, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of a forecast from data posted in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param data                   A list of data set rows containing the data used for the forecast.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateForecast(SessionData data, org.joda.time.DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of a forecast from data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param dataSourceName The name of the saved data set or view that has the data to forecast on.
-     * @param targetColumn   The name of the column that should be used as the source data.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of a forecast from data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/forecast
-     * <P>
-     * @param dataSourceName         The name of the saved data set or view that has the data to forecast on.
-     * @param targetColumn           The name of the column that should be used as the source data.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateForecast(String dataSourceName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of impact analysis for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param data           The name of the saved data set that has the data to run the impact analysis on.
-     * @param eventName      The name of the event.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of impact analysis for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param data           The name of the saved data set that has the data to run the impact analysis on.
-     * @param eventName      The name of the event.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateImpact(SessionData data, String eventName, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of impact analysis for an event with data in the request.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSourceName         The name of the saved data set or view that has the data to run the impact analysis on.
-     * @param eventName              The name of the event.
-     * @param targetColumn           The name of the column that should be used as the source data.
-     * @param startDate              The starting date of the forecast period.
-     * @param endDate                The ending date of the forecast period.
-     * @param resultInterval         The interval at which predictions should be generated.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Estimate the cost of impact analysis for an event with data already saved to the API.
-     * <P>
-     * POST to https://ml.nexosis.com/api/sessions/impact
-     * <P>
-     * @param dataSourceName The name of the saved data set or view that has the data to run the impact analysis on.
-     * @param eventName      The name of the event.
-     * @param targetColumn   The name of the column that should be used as the source data.
-     * @param startDate      The starting date of the forecast period.
-     * @param endDate        The ending date of the forecast period.
-     * @param resultInterval The interval at which predictions should be generated.
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse estimateImpact(String dataSourceName, String eventName, String targetColumn, DateTime startDate, DateTime endDate, ResultInterval resultInterval) throws NexosisClientException;
-
-    public SessionResponse estimateTrainModel(ModelSessionDetail data) throws NexosisClientException;
-    public SessionResponse estimateTrainModel(ModelSessionDetail data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    SessionResponse trainModel(ModelSessionRequest request) throws NexosisClientException;
 
     /**
      * List all sessions that have been run. This will show the information about them such as the id, status, and the analysis date range.
@@ -361,144 +61,31 @@ public interface ISessionClient {
      * <P>
      * GET of https://ml.nexosis.com/api/sessions
      * <P>
+     * @param query The {@link SessionQuery SessionQuery} with the criteria for which sessions to return
      * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResponses list() throws NexosisClientException;
-
-    /**
-     * List all sessions that have been run. This will show the information about them such as the id, status, and the analysis date range.
-     * All parameters are optional and will be used to limit the list returned.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param query Additional request parmeters to filter and limit the response
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponses list(ListQuery query) throws NexosisClientException;
-
-    /**
-     * List sessions that have been run and limit results by data source name. This will show the information about them such as the id, status, and the analysis date range.
-     * All parameters are optional and will be used to limit the list returned.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName Limits sessions to those with the specified name.
-     * @param query Additional request parmeters to filter and limit the response
-     * @return A {@link com.nexosis.model.SessionResponse SessionResponse} object providing information about the session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponses list(String dataSourceName, ListQuery query) throws NexosisClientException;
-
-    /**
-     * List sessions that have been run and limit results by both data source name and event name. This will show the information about them such as the id, status, and the analysis date range.
-     * All parameters are optional and will be used to limit the list returned.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName   Limits sessions to those with the specified name.
-     * @param eventName     Limits impact sessions to those for a particular event.
-     * @param query Additional request parmeters to filter and limit the response
-     * @return The List&lt;T&gt; of {@link com.nexosis.model.SessionResponse SessionResponse}  objects.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponses list(String dataSourceName, String eventName, ListQuery query) throws NexosisClientException;
-
-    /**
-     * List sessions that have been run and limit results by dataset name, event name, as well as start and end dates. This will show the information about them such as the id, status, and the analysis date range.
-     * All parameters are optional and will be used to limit the list returned.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName         Limits sessions to those with the specified name.
-     * @param eventName             Limits impact sessions to those for a particular event.
-     * @param query Additional request parmeters to filter and limit the response
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return The List&lt;T&gt; of {@link SessionResponse SessionResponse} objects
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponses list(String dataSourceName, String eventName, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Remove all sessions that have been run.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions
-     * <P>
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove() throws NexosisClientException;
+    SessionResponses list(SessionQuery query) throws NexosisClientException;
 
     /**
      * Remove sessions that have been run. All parameters are optional and will be used to limit the sessions removed.
      * <P>
      * DELETE to https://ml.nexosis.com/api/sessions
      * <P>
-     * @param dataSourceName Limits sessions to those with the specified name.
+     * @param criteria The criteria to be used to determine which sessions are removed.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    void remove(String dataSourceName) throws NexosisClientException;
+    void remove(SessionRemoveCriteria criteria) throws NexosisClientException;
 
     /**
-     * Remove sessions that have been run. All parameters are optional and will be used to limit the sessions removed.
+     * Remove the session.
      * <P>
      * DELETE to https://ml.nexosis.com/api/sessions
      * <P>
-     * @param type Limits sessions to only these type
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
+     * @param id The identifier of the session to remove.
+     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    void remove(SessionType type) throws NexosisClientException;
-
-    /**
-     * Remove sessions that have been run. All parameters are optional and will be used to limit the sessions removed.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName Limits sessions to those with the specified name.
-     * @param type Limits sessions to only these type
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String dataSourceName, SessionType type) throws NexosisClientException;
-
-    /**
-     * Remove sessions that have been run. All parameters are optional and will be used to limit the sessions removed.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName Limits sessions to those with the specified name.
-     * @param eventName     Limits impact sessions to those for a particular event.
-     * @param type Limits sessions to only these type
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String dataSourceName, String eventName, SessionType type) throws NexosisClientException;
-
-    /**
-     * Remove sessions that have been run. All parameters are optional and will be used to limit the sessions removed.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName        Limits sessions to those with the specified name.
-     * @param eventName             Limits impact sessions to those for a particular event.
-     * @param type                  Limits sessions to only these type
-     * @param requestedAfterDate    Limits sessions to those created on or after the specified date.
-     * @param requestedBeforeDate   Limits sessions to those created on or before the specified date.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String dataSourceName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate) throws NexosisClientException;
-    /**
-     * Remove sessions that have been run. All parameters are optional and will be used to limit the sessions removed.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions
-     * <P>
-     * @param dataSourceName         Limits sessions to those with the specified name.
-     * @param eventName              Limits impact sessions to those for a particular event.
-     * @param type                   Limits sessions to only these type
-     * @param requestedAfterDate     Limits sessions to those created on or after the specified date.
-     * @param requestedBeforeDate    Limits sessions to those created on or before the specified date.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(String dataSourceName, String eventName, SessionType type, DateTime requestedAfterDate, DateTime requestedBeforeDate, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
+    void remove(UUID id) throws NexosisClientException;
 
     /**
      * Get a specific session by id.
@@ -512,22 +99,10 @@ public interface ISessionClient {
     SessionResponse get(UUID id) throws NexosisClientException;
 
     /**
-     * Get a specific session by id.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions/{id}
-     * <P>
-     * @param id                      The identifier of the session.
-     * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A SessionResponse containing the reqeusted session.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResponse get(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
      * Lookup the status of the session.
-     *
+     * <P>
      * HEAD of https://ml.nexosis.com/api/sessions/{id}
-     *
+     * <P>
      * @param id The identifier of the session.
      * @return A {@link com.nexosis.model.SessionResultStatus} object.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
@@ -535,123 +110,76 @@ public interface ISessionClient {
     SessionResultStatus getStatus(UUID id) throws NexosisClientException;
 
     /**
-     * Lookup the status of the session.
-     * <P>
-     * HEAD of https://ml.nexosis.com/api/sessions/{id}
-     * <P>
-     * @param id                     The identifier of the session.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return SessionStatus
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResultStatus getStatus(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Remove the session.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions/{id}
-     * <P>
-     * @param id The identifier of the session to remove.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(UUID id) throws NexosisClientException;
-
-    /**
-     * Remove the session.
-     * <P>
-     * DELETE to https://ml.nexosis.com/api/sessions/{id}
-     * <P>
-     * @param id The identifier of the session to remove.
-     * @param httpMessageTransformer  A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void remove(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
      * Get the results of the session.
      * <P>
      * GET of https://ml.nexosis.com/api/sessions/{id}/results
      * <P>
-     * @param id The identifier of the session.
+     * @param query The {@link SessionResultQuery SessionQuery} with the criteria for which what result to return
      * @return A {@link SessionResult SessionResult} which contains the results of the run.
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResult getResults(UUID id) throws NexosisClientException;
+    SessionResult getResults(SessionResultQuery query) throws NexosisClientException;
 
     /**
-     * Get the results of the session.
+     * Get the results of the session and writes it to the output stream. Defaults to JSON. To write CSV, use
+     * SessionResultQuery.setContentType("text/csv").
      * <P>
      * GET of https://ml.nexosis.com/api/sessions/{id}/results
      * <P>
-     * @param id The identifier of the session.
-     * @param predictionInterval One of the availablePredictionIntervals indicated on the {@link SessionResponse SessionResponse} returned by the API.
-     * @return A {@link SessionResult SessionResult} which contains the results of the run.
+     * @param query     The {@link SessionResultQuery SessionQuery} with the criteria for which what result to return
+     * @param output    Output stream to write the session results to.
+     * @param query     Returns the Status of the job
      * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResult getResults(UUID id, String predictionInterval) throws NexosisClientException;
+    ReturnsStatus getResults(SessionResultQuery query, OutputStream output) throws NexosisClientException;
 
     /**
-     * Get the results of the session.
+     * Gets the confusion matrix for the classification model generated by a model-building session
+     * <p>
+     * GET of https://ml.nexosis.com/api/sessions/{id}/results/confusionmatrix
      * <P>
-     * GET of https://ml.nexosis.com/api/sessions/{id}/results
-     * <P>
-     * @param id                     The identifier of the session.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @return A SessionResult which contains the results of the run.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    SessionResult getResults(UUID id, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Get the results of the session.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions/{id}/results
-     * <P>
-     * @param id                     The identifier of the session.
-     * @param output                 Output stream to write the session results to.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    ReturnsStatus getResults(UUID id, OutputStream output) throws NexosisClientException;
-
-    /**
-     * Get the results of the session.
-     * <P>
-     * GET of https://ml.nexosis.com/api/sessions/{id}/results
-     * <P>
-     * @param id                     The identifier of the session.
-     * @param output                 Output stream to write the session results data to.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    ReturnsStatus getResults(UUID id, OutputStream output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
-     * Get results of the session written to a file as CSV. It will only write the values of the forecast or impact session and not any of the
-     * other data normally returned in a {@link SessionResult SessionResult}
-     * <P>
-     * @param id     The identifier of the session.
-     * @param output The {@link java.io.Writer Writer} where the results should be written.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void writeResults(UUID id, Writer output) throws NexosisClientException;
-
-    /**
-     * Get results of the session written to a file as CSV. It will only write the values of the forecast or impact session and not any of the
-     * other data normally returned in a {@link SessionResult SessionResult}
-     * <P>
-     * @param id                     The identifier of the session.
-     * @param output                 The {@link java.io.Writer Writer} where the results should be written.
-     * @param httpMessageTransformer A function that is called immediately before sending the request and after receiving a response which allows for message transformation.
-     * @throws NexosisClientException when 4xx or 5xx response is received from server, or errors in parsing the response.
-     */
-    void writeResults(UUID id, Writer output, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException;
-
-    /**
+     * Gets the confusion matrix for the model generated by a model-building session
+     * A confusion matrix describes the performance of the classification model generated by this session by
+     * showing how each record in the test set was classified by the model. The rows in the confusion matrix
+     * are actual classes from the test set, and the columns are classes predicted by the model for those rows.
+     * Each cell in the matrix contains the count of records in the test set with a particular actual value and
+     * predicted value. The headers for both rows and columns of the matrix can be found in the `classes`
+     * property of the response.
      *
      * @param id the identifier of a classification model building session
-     * @return an array of the classes in the classification model and a matrix of each classes results
-     * @throws NexosisClientException
+     * @return A {@link ConfusionMatrixResponse ConfusionMatrixResult} which contains the results of the run.
+     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
     ConfusionMatrixResponse getConfusionMatrix(UUID id) throws NexosisClientException;
 
+    /**
+     * Gets the scores of the entire dataset generated by a particular completed anomalies session
+     * <P>
+     *
+     * Gets the scores of the entire dataset generated by a particular completed anomalies session
+     * Anomaly detection scores are generated for every row in the data source used by the session. The target value in each row is negative if the row was identified as
+     * an outlier, and positive if the row was identified as "normal". The magnitude of the value provides a relative indicator of "how anomalous" or "how normal" the row is.
+     * <P>
+     * GET of https://ml.nexosis.com/api/sessions/{id}/results/anomalyscores
+     * <P>
+     * @param id
+     * @return A {@link SessionResult SessionResult} which contains the results of the run.
+     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    SessionResult getResultAnomalyScores(UUID id) throws NexosisClientException;
+
+    /**
+     * Gets the class scores for each result of a particular completed classification model session
+     * <p>
+     * GET of https://ml.nexosis.com/api/sessions/{id}/results/classscores
+     * <p>
+     * Gets the class scores for each result of a particular completed classification model session
+     * Whereas classification session results indicate the class chosen for each row in the test set, this endpoint returns the scores for each possible class
+     * for ech row in the test set. Higher scores indicate that the model is more confident that the row fits into the specified class, but the scores are not
+     * strict probabilities, and they are not comparable across sessions or data sources.
+     * @param id The identifier of the session.
+     * @return A {@link SessionResult SessionResult} which contains the results of the run.
+     * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
+     */
+    SessionResult getResultClassScores(UUID id) throws NexosisClientException;
 }

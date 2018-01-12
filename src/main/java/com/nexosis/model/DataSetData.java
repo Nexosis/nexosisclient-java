@@ -1,27 +1,24 @@
 package com.nexosis.model;
 
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "dataSetName",
+        "isTimeSeries",
+        "dataSetSize",
         "columns",
         "data",
-        "links"
 })
-public class DataSetData implements Serializable
+public class DataSetData extends Paged implements Serializable
 {
     public DataSetData() {
         columns = new Columns();
@@ -37,8 +34,11 @@ public class DataSetData implements Serializable
     @JsonProperty("dataSetName")
     private String dataSetName;
 
-    @JsonProperty("links")
-    private List<Link> links = null;
+    @JsonProperty("isTimeSeries")
+    private String isTimeSeries;
+
+    @JsonProperty("dataSetSize")
+    private String dataSetSize;
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -49,41 +49,41 @@ public class DataSetData implements Serializable
         return columns;
     }
 
-    //@JsonProperty("columns")
     public void setColumns(Columns columns) {
         this.columns = columns;
     }
 
-    //@JsonProperty("data")
     public List<Map<String, String>> getData() {
         return data;
     }
 
-    //@JsonProperty("data")
     public void setData(List<Map<String, String>> data) {
         this.data = data;
     }
 
-    //@JsonProperty("dataSetName")
     public String getDataSetName() {
         return dataSetName;
     }
 
-    //@JsonProperty("dataSetName")
     public void setDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
     }
 
-    //@JsonProperty("links")
-    public List<Link> getLinks() {
-        return links;
+    public String getIsTimeSeries() {
+        return isTimeSeries;
     }
 
-    //@JsonProperty("links")
-    public void setLinks(List<Link> links) {
-        this.links = links;
+    public void setIsTimeSeries(String isTimeSeries) {
+        this.isTimeSeries = isTimeSeries;
     }
 
+    public String getDataSetSize() {
+        return dataSetSize;
+    }
+
+    public void setDataSetSize(String dataSetSize) {
+        this.dataSetSize = dataSetSize;
+    }
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -96,7 +96,7 @@ public class DataSetData implements Serializable
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(dataSetName).append(columns).append(data).append(links).append(additionalProperties).toHashCode();
+        return new HashCodeBuilder().append(dataSetName).append(columns).append(data).append(additionalProperties).toHashCode();
     }
 
     @Override
@@ -108,7 +108,6 @@ public class DataSetData implements Serializable
             return false;
         }
         DataSetData rhs = ((DataSetData) other);
-        return new EqualsBuilder().append(dataSetName, rhs.dataSetName).append(columns, rhs.columns).append(data, rhs.data).append(links, rhs.links).append(additionalProperties, rhs.additionalProperties).isEquals();
+        return new EqualsBuilder().append(dataSetName, rhs.dataSetName).append(columns, rhs.columns).append(data, rhs.data).append(additionalProperties, rhs.additionalProperties).isEquals();
     }
-
 }

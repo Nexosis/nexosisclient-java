@@ -1,13 +1,14 @@
 package com.nexosis.ViewTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.PagingInfo;
 import com.nexosis.model.ViewDefinitionList;
+import com.nexosis.model.ViewQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,17 +53,13 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        ViewDefinitionList result = target.getViews().list(
-                "alpha",
-                "zulu",
-                0,
-                50,
-                null
-        );
+        ViewQuery query = new ViewQuery();
+        query.setDataSetName("alpha");
+        query.setPartialName("zulu");
+        query.setPage(new PagingInfo(0,50));
+        ViewDefinitionList result = target.getViews().list(query);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/views?partialName=alpha&dataSetName=zulu&pageSize=50&page=0", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/views?pageSize=50&page=0&partialName=zulu&dataSetName=alpha", request.getUrl());
     }
-
 }
-

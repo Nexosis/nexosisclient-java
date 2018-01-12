@@ -1,6 +1,5 @@
 package com.nexosis.SessionTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -10,6 +9,7 @@ import com.nexosis.impl.NexosisClient;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import java.io.IOException;
 import java.util.UUID;
 

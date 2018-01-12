@@ -1,12 +1,12 @@
 package com.nexosis.ModelsTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.ModelRemoveCriteria;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.UUID;
 
 public class RemoveTests {
     @Rule
@@ -46,7 +46,11 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getModels().remove(modelId);
+
+        ModelRemoveCriteria criteria = new ModelRemoveCriteria();
+        criteria.setModelId(modelId);
+
+        target.getModels().remove(criteria);
 
         Assert.assertEquals(fakeEndpoint + "/models/" + modelId.toString(), request.getUrl());
     }
@@ -72,10 +76,28 @@ public class RemoveTests {
             }
         };
 
-
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getModels().remove("data-source-name", DateTime.parse("2017-02-02T20:20:12Z"), DateTime.parse("2017-02-22T21:12Z"));
+        ModelRemoveCriteria criteria = new ModelRemoveCriteria();
+        criteria.setDataSourceName("data-source-name");
+        criteria.setCreatedAfterDate(DateTime.parse("2017-02-02T20:20:12Z"));
+        criteria.setCreatedBeforeDate(DateTime.parse("2017-02-22T21:12Z"));
+
+        target.getModels().remove(criteria);
 
         Assert.assertEquals(fakeEndpoint + "/models?createdBeforeDate=2017-02-22T21:12:00.000Z&createdAfterDate=2017-02-02T20:20:12.000Z&dataSourceName=data-source-name", request.getUrl());
     }
+
+    @Test
+    public void requireAtLeastOneRemoveCriteria() throws Exception
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("One of ModelRemoveCriteria.DataSourceName, ModelRemoveCriteria.ModelId should not be null or empty.");
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
+
+        ModelRemoveCriteria criteria = new ModelRemoveCriteria();
+        target.getModels().remove(criteria);
+
+    }
+
 }

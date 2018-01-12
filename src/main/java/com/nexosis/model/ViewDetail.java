@@ -1,10 +1,11 @@
 package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Map;
 
-public class ViewData extends ViewDefinition {
+public class ViewDetail extends ViewDefinition {
     @JsonProperty("data")
     private List<Map<String, String>> data = null;
 

@@ -1,12 +1,12 @@
 package com.nexosis.DataSetTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
+import com.nexosis.model.DataSetSummaryQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,7 +52,7 @@ public class ListTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getDataSets().list();
 
-        Assert.assertEquals(fakeEndpoint + "/data?pageSize=50&page=0", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/data", request.getUrl());
     }
 
     @Test
@@ -77,7 +77,9 @@ public class ListTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().list("partialSomething", null);
-        Assert.assertEquals(fakeEndpoint + "/data?partialName=partialSomething&pageSize=50&page=0", request.getUrl());
+        DataSetSummaryQuery query = new DataSetSummaryQuery();
+        query.setPartialName("partialSomething");
+        target.getDataSets().list(query);
+        Assert.assertEquals(fakeEndpoint + "/data?partialName=partialSomething", request.getUrl());
     }
 }
