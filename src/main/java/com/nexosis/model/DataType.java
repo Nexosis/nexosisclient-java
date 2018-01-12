@@ -11,7 +11,8 @@ public enum DataType {
     NUMERIC("numeric"),
     LOGICAL("logical"),
     DATE("date"),
-    NUMERICMEASURE("numericMeasure");
+    NUMERICMEASURE("numericMeasure"),
+    TEXT("text");
     private final String value;
     private final static Map<String, DataType> CONSTANTS = new HashMap<String, DataType>();
 
