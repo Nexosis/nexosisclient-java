@@ -5,16 +5,15 @@ This software is provided as a way to include Nexosis API functionality in your 
 
 *Pull requests are welcome*
 
-### Learn More or Get your Free API Key here:
+### Sign Up For Free API Key
+* [Read about the Nexosis API at our documentation](https://developers.nexosis.com)
+* [Client SDK Documentation](http://docs.nexosis.com/clients/)
+* [Register for a free community account and get your API Key](https://account.nexosis.com/account/register)
+* [RESTful API Documentation](https://developers.nexosis.com/docs/services/98847a3fbbe64f73aa959d3cededb3af)
+* Add the latest Nexosis Client Java Package at [mvnrepository.com](https://mvnrepository.com/artifact/com.nexosis/nexosisclient-java).
 
-You can read about the Nexosis API at our documentation site here: [https://developers.nexosis.com](https://developers.nexosis.com/docs/services/98847a3fbbe64f73aa959d3cededb3af)
 
-Register for a free community account and get your API Key here:
-https://account.nexosis.com/account/register
-
-Download the latest Nexosis Client Java Package at [mvnrepository.com](https://mvnrepository.com/artifact/com.nexosis/nexosisclient-java).
-
-Maven
+**Maven**
 ```xml
 <!-- https://mvnrepository.com/artifact/com.nexosis/nexosisclient-java -->
 <dependency>
@@ -24,13 +23,13 @@ Maven
 </dependency>
 ```
 
-Gradle
+**Gradle**
 ```groovy
 // https://mvnrepository.com/artifact/com.nexosis/nexosisclient-java
 compile group: 'com.nexosis', name: 'nexosisclient-java', version: '3.1.0'
 ```
 
-SBT
+**SBT**
 ```scala 
 // https://mvnrepository.com/artifact/com.nexosis/nexosisclient-java
 libraryDependencies += "com.nexosis" % "nexosisclient-java" % "3.1.0"
