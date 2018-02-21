@@ -3,14 +3,14 @@ This software is provided as a way to include Nexosis API functionality in your 
 
 [![Build Status](https://travis-ci.org/Nexosis/nexosisclient-java.svg?branch=master)](https://travis-ci.org/Nexosis/nexosisclient-java)
 
+*Pull requests are welcome*
+
 ### Learn More or Get your Free API Key here:
 
 You can read about the Nexosis API at our documentation site here: [https://developers.nexosis.com](https://developers.nexosis.com/docs/services/98847a3fbbe64f73aa959d3cededb3af)
 
 Register for a free community account and get your API Key here:
 https://account.nexosis.com/account/register
-
-*Pull requests are welcome*
 
 Download the latest Nexosis Client Java Package at [mvnrepository.com](https://mvnrepository.com/artifact/com.nexosis/nexosisclient-java).
 
