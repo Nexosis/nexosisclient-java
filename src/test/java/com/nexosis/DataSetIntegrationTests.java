@@ -5,7 +5,11 @@ import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.*;
 import org.joda.time.DateTime;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,12 +33,15 @@ public class DataSetIntegrationTests {
     @Test
     public void canSaveDataSet() throws NexosisClientException
     {
-        DataSetData data = DataSetGenerator.Run(
+        DataSetDetail data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00Z"),
                 DateTime.parse("2017-03-31T00:00Z"),
                 "foxtrot"
         );
-        DataSetSummary result = nexosisClient.getDataSets().create("whiskey", data);
+
+        IDataSetSource source = new DataSetDetailSource("whiskey", data);
+        DataSetSummary result = nexosisClient.getDataSets().create(source);
+
 
         Assert.assertEquals("whiskey", result.getDataSetName());
     }
@@ -42,31 +49,37 @@ public class DataSetIntegrationTests {
     @Test
     public void gettingDataSetGivesBackLinks() throws NexosisClientException
     {
-        DataSetData data = DataSetGenerator.Run(
+        DataSetDetail data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00Z"),
                 DateTime.parse("2017-03-31T00:00Z"),
                 "hotel"
         );
-        nexosisClient.getDataSets().create("whiskey", data);
-        DataSetData result = nexosisClient.getDataSets().get("whiskey");
+
+        IDataSetSource source = new DataSetDetailSource("whiskey", data);
+        nexosisClient.getDataSets().create(source);
+
+        DataSetDataQuery query = new DataSetDataQuery("whiskey");
+        DataSetData result = nexosisClient.getDataSets().get(query);
 
         Assert.assertEquals("whiskey",result.getDataSetName());
-        Assert.assertEquals(4, result.getLinks().size());
+        Assert.assertEquals(5, result.getLinks().size());
         Assert.assertEquals("self", result.getLinks().get(0).getRel());
-        Assert.assertEquals(baseURI + "/data/whiskey?pageSize=1000&page=0", result.getLinks().get(0).getHref());
+        Assert.assertEquals(baseURI + "/data/whiskey", result.getLinks().get(0).getHref());
     }
 
     @Test
     public void canGetDataSetThatHasBeenSaved() throws NexosisClientException {
-        DataSetData data = DataSetGenerator.Run(
+        DataSetDetail data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00Z"),
                 DateTime.parse("2017-03-31T00:00Z"),
                 "hotel"
         );
 
-        nexosisClient.getDataSets().create("india2", data);
+        IDataSetSource source = new DataSetDetailSource("india2", data);
+        nexosisClient.getDataSets().create(source);
 
-        DataSetData result = nexosisClient.getDataSets().get("india2");
+        DataSetDataQuery query = new DataSetDataQuery("india2");
+        DataSetData result = nexosisClient.getDataSets().get(query);
 
         Assert.assertTrue(result.getData().get(0).containsKey("hotel"));
         Assert.assertTrue(result.getData().get(0).containsKey("timestamp"));
@@ -78,19 +91,23 @@ public class DataSetIntegrationTests {
     @Test
     public void canPutMoreDataToSameDataSet() throws NexosisClientException
     {
-        DataSetData data = DataSetGenerator.Run(
+        DataSetDetail data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00:00Z"),
                 DateTime.parse("2017-01-31T00:00:00Z"),
                 "hotel");
 
-        nexosisClient.getDataSets().create("charley", data);
+        IDataSetSource source = new DataSetDetailSource("charley", data);
+        nexosisClient.getDataSets().create(source);
 
-        DataSetData moreData = DataSetGenerator.Run(DateTime.parse("2017-02-01T00:00Z"), DateTime.parse("2017-03-01T00:00Z"), "hotel");
-        nexosisClient.getDataSets().create("charley", moreData);
+        DataSetDetail moreData = DataSetGenerator.Run(DateTime.parse("2017-02-01T00:00Z"), DateTime.parse("2017-03-01T00:00Z"), "hotel");
+        IDataSetSource source2 = new DataSetDetailSource("charley", moreData);
+        nexosisClient.getDataSets().create(source2);
 
-        DataSetData result = nexosisClient.getDataSets().get("charley");
+        DataSetDataQuery query = new DataSetDataQuery("charley");
+        query.setPage(new PagingInfo(0,100));
+        DataSetData result = nexosisClient.getDataSets().get(query);
 
-        // TODO - these should probably be sorted??
+        // Might need sorted, currently tests pass as data seems to come back in the same order as submitted.
         //Collections.sort(result.getData());
 
         DateTime firstDate = DateTime.parse(result.getData().get(0).get("timestamp"));
@@ -109,10 +126,10 @@ public class DataSetIntegrationTests {
     @Test
     public void listsDataSetsRespectsPaging() throws NexosisClientException
     {
-        ListQuery query = new ListQuery();
-        query.setPageNumber(1);
-        query.setPageSize(2);
-        DataSetList list = nexosisClient.getDataSets().list(null, query);
+        DataSetSummaryQuery query = new DataSetSummaryQuery();
+        query.setPage(new PagingInfo(1,2));
+
+        DataSetList list = nexosisClient.getDataSets().list(query);
         Assert.assertEquals(2,list.getItems().size());
     }
 
@@ -121,16 +138,20 @@ public class DataSetIntegrationTests {
     {
         String id = UUID.randomUUID().toString(); //.ToString("N");
 
-        DataSetData data = DataSetGenerator.Run(
+        DataSetDetail data = DataSetGenerator.Run(
                 DateTime.parse("2017-01-01T00:00Z"),
                 DateTime.parse("2017-03-31T00:00Z"),
                 "hotel");
 
-        nexosisClient.getDataSets().create(id, data);
-        nexosisClient.getDataSets().remove(id, DataSetDeleteOptions.CASCADE_NONE);
+        IDataSetSource source = new DataSetDetailSource(id, data);
+        nexosisClient.getDataSets().create(source);
+        DataSetRemoveCriteria criteria = new DataSetRemoveCriteria(id);
+        criteria.setOption(DataSetDeleteOptions.CASCADE_NONE);
+        nexosisClient.getDataSets().remove(criteria);
 
         try {
-            nexosisClient.getDataSets().get(id);
+            DataSetDataQuery query = new DataSetDataQuery(id);
+            nexosisClient.getDataSets().get(query);
         } catch (NexosisClientException exception) {
             Assert.assertEquals(HttpStatusCodes.STATUS_CODE_NOT_FOUND, exception.getStatusCode());
             return;
@@ -149,16 +170,22 @@ public class DataSetIntegrationTests {
         File initialFile = new File(productFilePath);
         InputStream inputStream = new FileInputStream(initialFile);
 
-        nexosisClient.getDataSets().create(dataSetName, inputStream);
-        nexosisClient.getSessions().createForecast(
-                dataSetName,
-                "sales",
-                DateTime.parse("2017-03-25T0:00:00Z"),
-                DateTime.parse("2017-04-24T0:00:00Z"),
-                ResultInterval.DAY
-        );
+        IDataSetSource source = new DataSetStreamSource(dataSetName, inputStream);
+        nexosisClient.getDataSets().create(source);
 
-        DataSetList dataSets = nexosisClient.getDataSets().list(dataSetName,null);
+        ForecastSessionRequest request = new ForecastSessionRequest();
+        request.setDataSourceName(dataSetName);
+        request.setTargetColumn("sales");
+        request.setStartDate(DateTime.parse("2017-03-25T0:00:00Z"));
+        request.setStartDate(DateTime.parse("2017-04-24T0:00:00Z"));
+        request.setResultInterval(ResultInterval.DAY);
+
+        nexosisClient.getSessions().createForecast(request);
+
+        DataSetSummaryQuery query = new DataSetSummaryQuery();
+        query.setPartialName(dataSetName);
+
+        DataSetList dataSets = nexosisClient.getDataSets().list(query);
         String names = "";
         for (DataSetSummary summary : dataSets.getItems()) {
             names += names + summary.getDataSetName() + ", ";
@@ -167,5 +194,4 @@ public class DataSetIntegrationTests {
         names = names.substring(0,names.length()-2);
         System.out.println(names);
     }
-
 }

@@ -1,12 +1,12 @@
 package com.nexosis.impl;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.nexosis.*;
-import com.nexosis.model.AccountBalance;
+import com.nexosis.model.AccountQuotas;
 import com.nexosis.util.Action;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
 
 public class NexosisClient implements INexosisClient {
     private String key;
@@ -19,6 +19,8 @@ public class NexosisClient implements INexosisClient {
     private IImportClient imports;
     private IViewClient views;
     private IModelClient models;
+    private Action<HttpRequest, HttpResponse> httpMessageTransformer;
+
     /**
      * The client id and version sent as the User-Agent header
      */
@@ -38,11 +40,10 @@ public class NexosisClient implements INexosisClient {
         return key;
     }
 
-    /// <summary>
-    /// The URL endpoint the client will connect to.
-    /// </summary>
 
     /**
+     * The URL endpoint the client will connect to.
+     *
      * @return
      */
     public String getConfiguredUrl() {
@@ -116,17 +117,48 @@ public class NexosisClient implements INexosisClient {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public AccountBalance getAccountBalance() throws NexosisClientException {
-        return getAccountBalance(null);
+    public Action<HttpRequest, HttpResponse> getHttpMessageTransformer() {
+        return httpMessageTransformer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer) {
+        this.httpMessageTransformer = httpMessageTransformer;
+        UpdateChildClientTransformers();
+    }
+
+    private void UpdateChildClientTransformers()
+    {
+        //update them if not explicitly set on the child client
+        if (getSessions().getHttpMessageTransformer() == null) {
+            getSessions().setHttpMessageTransformer(httpMessageTransformer);
+        }
+
+        if (getDataSets().getHttpMessageTransformer() == null) {
+            getDataSets().setHttpMessageTransformer( httpMessageTransformer);
+        }
+
+        if (getImports().getHttpMessageTransformer() == null) {
+            getImports().setHttpMessageTransformer(httpMessageTransformer);
+        }
+
+        if (getViews().getHttpMessageTransformer() == null) {
+            getViews().setHttpMessageTransformer(httpMessageTransformer);
+        }
+
+        if (getModels().getHttpMessageTransformer() == null) {
+            getModels().setHttpMessageTransformer(httpMessageTransformer);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AccountBalance getAccountBalance(Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        return apiConnection.get(AccountBalance.class, "/data", null, httpMessageTransformer);
+    public AccountQuotas getAccountQuotas() throws NexosisClientException {
+        return apiConnection.get(AccountQuotas.class, "/data", null, httpMessageTransformer);
     }
 
     @Override

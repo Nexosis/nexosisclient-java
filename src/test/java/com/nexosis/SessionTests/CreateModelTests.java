@@ -1,29 +1,36 @@
 package com.nexosis.SessionTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import com.nexosis.model.ModelSessionDetail;
+import com.nexosis.model.ModelSessionRequest;
 import com.nexosis.model.PredictionDomain;
-import org.apache.http.protocol.ResponseServer;
-import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
-import java.util.*;
 
 public class CreateModelTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    private ObjectMapper mapper = new ObjectMapper();
     private String fakeEndpoint = "https://nada.nexosis.com/not-here";
     private String fakeApiKey = "abcdefg";
+
+    @Before
+    public void setUp() throws Exception {
+        mapper.registerModule(new JodaModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
     @Test
     public void setsDataSetNameWhenGiven() throws Exception {
@@ -48,52 +55,38 @@ public class CreateModelTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        ModelSessionDetail modelSession = new ModelSessionDetail();
-        modelSession.setDataSourceName("data-source-name");
-        modelSession.setTargetColumn("target-column");
-        modelSession.setPredictionDomain(PredictionDomain.REGRESSION);
-        modelSession.setCallbackUrl("http://this.is.a.callback.url");
-        target.getSessions().trainModel(modelSession);
+
+        ModelSessionRequest sessionRequest = new ModelSessionRequest();
+        sessionRequest.setDataSourceName("data-source-name");
+        sessionRequest.setTargetColumn("target-column");
+        sessionRequest.setPredictionDomain(PredictionDomain.REGRESSION);
+        sessionRequest.setCallbackUrl("http://this.is.a.callback.url");
+
+        target.getSessions().trainModel(sessionRequest);
 
         Assert.assertEquals(fakeEndpoint + "/sessions/model", request.getUrl());
-        String expected = "{\"dataSourceName\":\"data-source-name\",\"targetColumn\":\"target-column\",\"predictionDomain\":\"regression\",\"callbackUrl\":\"http://this.is.a.callback.url\",\"isEstimate\":false}";
-        Assert.assertEquals(expected, request.getContentAsString());
+        Assert.assertEquals(mapper.writeValueAsString(sessionRequest), request.getContentAsString());
     }
 
     @Test
     public void requiresNotNullDetail() throws Exception {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Object data cannot be null.");
+        thrown.expectMessage("Object ModelSessionRequest cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getSessions().trainModel((ModelSessionDetail)null);
+        target.getSessions().trainModel(null);
     }
 
     @Test
     public void requiresNotNullOrEmptyDataSourceName() throws Exception {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value ModelSessionDetail.getDataSourceName() cannot be null or empty.");
+        thrown.expectMessage("Value ModelSessionRequest.dataSourceName cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        ModelSessionDetail modelSession = new ModelSessionDetail();
-        modelSession.setDataSourceName(null);
-        modelSession.setTargetColumn("target-column");
-        modelSession.setPredictionDomain(PredictionDomain.REGRESSION);
 
-        target.getSessions().trainModel(modelSession);
-    }
-
-    @Test
-    public void requiredNotNullOrEmptyTargetColumn() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value ModelSessionDetail.getTargetColumn() cannot be null or empty.");
-
-        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        ModelSessionDetail modelSession = new ModelSessionDetail();
-        modelSession.setDataSourceName("data-source-name");
-        modelSession.setTargetColumn(null);
-        modelSession.setPredictionDomain(PredictionDomain.REGRESSION);
-
-        target.getSessions().trainModel(modelSession);
+        ModelSessionRequest sessionRequest = new ModelSessionRequest();
+        sessionRequest.setTargetColumn("target-column");
+        sessionRequest.setPredictionDomain(PredictionDomain.REGRESSION);
+        target.getSessions().trainModel(sessionRequest);
     }
 }

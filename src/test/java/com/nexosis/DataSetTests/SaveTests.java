@@ -3,7 +3,6 @@ package com.nexosis.DataSetTests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -19,7 +18,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,33 +38,43 @@ public class SaveTests {
     }
 
     @Test
+    public void requiresDataSetSourceToBeGiven() throws NexosisClientException
+    {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Object IDataSetSource cannot be null.");
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
+        target.getDataSets().create(null);
+    }
+
+    @Test
     public void requiresDataSetNameToBeGiven() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value dataSetName cannot be null or empty.");
+        thrown.expectMessage("Value IDataSetSource.Name cannot be null or empty.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getDataSets().create((String)null, (DataSetData)null);
+        target.getDataSets().create(new DataSetDetailSource(null, new DataSetDetail()));
     }
 
     @Test
     public void requiresDataSetListToBeGiven() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Object data cannot be null.");
+        thrown.expectMessage("Object DataSetDetailSource.Data cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getDataSets().create("foxtrot", (DataSetData)null);
+        target.getDataSets().create(new DataSetDetailSource("foxtrot",null));
     }
 
     @Test
     public void requiresFileToBeGiven() throws NexosisClientException
     {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Object input cannot be null.");
+        thrown.expectMessage("Object DataSetStreamSource.Data cannot be null.");
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
-        target.getDataSets().create("whiskey", (InputStream)null);
+        target.getDataSets().create(new DataSetStreamSource("whiskey", null));
     }
 
     @Test
@@ -94,7 +102,7 @@ public class SaveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().create("tango", stream, "text/csv");
+        target.getDataSets().create(new DataSetStreamSource("tango", stream));
 
         Assert.assertEquals(fakeEndpoint + "/data/tango", request.getUrl());
         Assert.assertEquals(fileContent, request.getContentAsString());
@@ -103,7 +111,7 @@ public class SaveTests {
     @Test
     public void willSaveDataGivenDirectly() throws Exception
     {
-        DataSetData data = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "something");
+        DataSetDetail data = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "something");
 
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
             @Override
@@ -125,7 +133,7 @@ public class SaveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().create("yankee", data);
+        target.getDataSets().create(new DataSetDetailSource("yankee", data));
 
         Assert.assertEquals(fakeEndpoint + "/data/yankee", request.getUrl());
         Assert.assertEquals(mapper.writeValueAsString(data),  request.getContentAsString());
@@ -139,7 +147,7 @@ public class SaveTests {
         props.setDataType(DataType.NUMERICMEASURE);
         columns.setColumnMetadata("Foo", props);
 
-        DataSetData data = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "something");
+        DataSetDetail data = DataSetGenerator.Run(DateTime.now().plusDays(-90), DateTime.now(), "something");
         data.setColumns(columns);
 
         final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
@@ -162,7 +170,7 @@ public class SaveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().create("yankee", data);
+        target.getDataSets().create(new DataSetDetailSource("yankee", data));
 
         Assert.assertEquals(fakeEndpoint + "/data/yankee", request.getUrl());
         Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());

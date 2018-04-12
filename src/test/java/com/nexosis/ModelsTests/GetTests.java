@@ -1,6 +1,5 @@
 package com.nexosis.ModelsTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -46,6 +45,6 @@ public class GetTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getModels().get(id);
-        Assert.assertEquals(fakeEndpoint + "/model/" + id.toString(), request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/models/" + id.toString(), request.getUrl());
     }
 }

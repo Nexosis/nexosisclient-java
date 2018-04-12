@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AccountBalance extends ReturnsCost {
+public class AccountQuotas extends ReturnsQuotas {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     @JsonAnyGetter
@@ -36,7 +36,7 @@ public class AccountBalance extends ReturnsCost {
         if ((other instanceof Algorithm) == false) {
             return false;
         }
-        AccountBalance rhs = ((AccountBalance) other);
+        AccountQuotas rhs = ((AccountQuotas) other);
         return new EqualsBuilder().append(additionalProperties, rhs.additionalProperties).isEquals();
     }
 }

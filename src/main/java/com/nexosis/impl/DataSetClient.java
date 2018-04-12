@@ -1,21 +1,18 @@
 package com.nexosis.impl;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.json.Json;
 import com.nexosis.IDataSetClient;
 import com.nexosis.model.*;
 import com.nexosis.util.Action;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import java.io.InputStream;
+
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.HashMap;
 
 public class DataSetClient implements IDataSetClient {
     private ApiConnection apiConnection;
+    private Action<HttpRequest, HttpResponse> httpMessageTransformer = null;
 
     public DataSetClient(ApiConnection apiConnection) {
         this.apiConnection = apiConnection;
@@ -24,53 +21,49 @@ public class DataSetClient implements IDataSetClient {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public DataSetSummary create(String dataSetName, DataSetData data) throws NexosisClientException {
-        return create(dataSetName, data, null);
+    public Action<HttpRequest, HttpResponse> getHttpMessageTransformer() {
+        return httpMessageTransformer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setHttpMessageTransformer(Action<HttpRequest, HttpResponse> httpMessageTransformer) {
+        this.httpMessageTransformer = httpMessageTransformer;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataSetSummary create(String dataSetName, DataSetData data, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-        Argument.IsNotNull(data, "data");
+    public DataSetSummary create(IDataSetSource source) throws NexosisClientException {
+        Argument.IsNotNull(source, "IDataSetSource");
+        Argument.IsNotNullOrEmpty(source.getName(), "IDataSetSource.Name");
 
-        return apiConnection.put(DataSetSummary.class, "data/" + dataSetName, null, data, httpMessageTransformer);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetSummary create(String dataSetName, InputStream input) throws NexosisClientException
-    {
-        return create(dataSetName, input, "text/csv", (Action<HttpRequest, HttpResponse>)null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetSummary create(String dataSetName, InputStream input, String contentType) throws NexosisClientException {
-        return create(dataSetName, input, contentType, (Action<HttpRequest, HttpResponse>)null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetSummary create(String dataSetName, InputStream input, String contentType, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException  {
-        Argument.IsNotNullOrEmpty(contentType, "contentType");
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-        Argument.IsNotNull(input, "input");
-
-        if ((!StringUtils.equals(contentType, "text/csv")) && (!StringUtils.equals(contentType, "application/json"))) {
-            throw new IllegalArgumentException("Argument contentType must be set to 'text/csv' or 'application/json'");
+        switch (source.getClass().getCanonicalName()) {
+            case "com.nexosis.model.DataSetDetailSource":
+                DataSetDetailSource detail =  (DataSetDetailSource)source;
+                Argument.IsNotNull(detail.getData(), "DataSetDetailSource.Data");
+                return apiConnection.put(
+                        DataSetSummary.class,
+                        "data/" + detail.getName(),
+                        null,
+                        detail.getData(),
+                        this.httpMessageTransformer
+                );
+            case "com.nexosis.model.DataSetStreamSource":
+                DataSetStreamSource stream = (DataSetStreamSource)source;
+                Argument.IsNotNull(stream.getData(), "DataSetStreamSource.Data");
+                return apiConnection.put(
+                        DataSetSummary.class,
+                        "data/" + stream.getName(),
+                        null, stream.getData(),
+                        stream.getContentType(),
+                        this.httpMessageTransformer
+                );
+            default:
+                throw new NexosisClientException("No DataSet create supported for " + source.getClass().getCanonicalName());
         }
-
-        return apiConnection.put(DataSetSummary.class, "data/" + dataSetName, null, input, contentType, httpMessageTransformer);
     }
 
     /**
@@ -78,165 +71,37 @@ public class DataSetClient implements IDataSetClient {
      */
     @Override
     public DataSetList list() throws NexosisClientException {
-        return this.list(null,null);
+        return this.list(null);
     }
+
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataSetList list(String nameFilter, ListQuery query) throws NexosisClientException {
-        return this.list(nameFilter, query, null);
-    }
+    public DataSetList list(DataSetSummaryQuery query) throws NexosisClientException {
+        Map<String, Object> parameters=null;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetList list(String nameFilter, ListQuery query, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        if(query == null)
-            query = new ListQuery();
-        Map<String,Object> queryParams = new HashMap<>();
-        queryParams.put("page", query.getPageNumber());
-        queryParams.put("pageSize", query.getPageSize());
-        if (!StringUtils.isEmpty(nameFilter)) {
-            queryParams.put("partialName", nameFilter);
+        if (query != null) {
+            parameters= query.toParameters();
         }
 
-        return apiConnection.get(DataSetList.class, "data", queryParams, httpMessageTransformer);
+        return apiConnection.get(DataSetList.class, "data", parameters, httpMessageTransformer);
     }
+
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DataSetData get(String dataSetName) throws NexosisClientException {
-        return get(dataSetName, 0, NexosisClient.getMaxPageSize(), new ArrayList<String>());
-    }
+    public DataSetData get(DataSetDataQuery query) throws NexosisClientException {
+        Argument.IsNotNull(query, "DataSetDataQuery");
+        Argument.IsNotNullOrEmpty(query.getName(), "DataSetDataQuery.Name");
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetData get(String dataSetName, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-        Argument.IsNotNull(includeColumns, "includeColumns");
-
-        Map<String,Object> parameters = new HashMap<String,Object>();
-        parameters.put("page", Integer.toString(pageNumber));
-        parameters.put("pageSize", Integer.toString(pageSize));
-        parameters.put("include",includeColumns);
-
-        return apiConnection.get(DataSetData.class,"data/" + dataSetName, parameters, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetData get(String dataSetName, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException {
-        return get(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSetData get(String dataSetName, int pageNumber, int pageSize, DateTime startDate, DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Map<String, Object> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
-        return apiConnection.get(DataSetData.class, "data/" + dataSetName, parameters, httpMessageTransformer);
-    }
-
-    private static Map<String,Object> ProcessDataSetGetParameters(String dataSetName, int pageNumber, int pageSize,
-                                                                                         DateTime startDate, DateTime endDate, Iterable<String> includeColumns)
-    {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-        Argument.IsNotNull(includeColumns, "includeColumns");
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("page", Integer.toString(pageNumber));
-        parameters.put("pageSize", Integer.toString(pageSize));
-        parameters.put("startDate", startDate.toDateTimeISO().toString());
-        parameters.put("endDate", endDate.toDateTimeISO().toString());
-        parameters.put("include", includeColumns);
-        return parameters;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void get(String dataSetName, OutputStream output) throws NexosisClientException
-    {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-        Argument.IsNotNull(output, "output");
-
-        apiConnection.get("data/" + dataSetName, null, null, output, "text/csv");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, Iterable<String> includeColumns) throws NexosisClientException
-    {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-        Argument.IsNotNull(includeColumns, "includeColumns");
-        Argument.IsNotNull(output, "output");
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("page", Integer.toString(pageNumber));
-        parameters.put("pageSize", Integer.toString(pageSize));
-        parameters.put("include",includeColumns);
-
-        apiConnection.get("data/" + dataSetName, parameters, null, output, "text/csv");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate,
-                          DateTime endDate, Iterable<String> includeColumns) throws NexosisClientException
-    {
-        get(dataSetName, output, pageNumber, pageSize, startDate, endDate, includeColumns, null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void get(String dataSetName, OutputStream output, int pageNumber, int pageSize, DateTime startDate,
-                          DateTime endDate, Iterable<String> includeColumns, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException
-    {
-        Argument.IsNotNull(output, "output");
-        Map<String, Object> parameters = ProcessDataSetGetParameters(dataSetName, pageNumber, pageSize, startDate, endDate, includeColumns);
-
-        apiConnection.get("data/" + dataSetName, parameters, httpMessageTransformer, output, "text/csv");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void remove(String dataSetName, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
-
-        Map<String, Object> parameters = new HashMap<>();
-        ArrayList<String> set = new ArrayList<>();
-
-        if (options.contains(DataSetDeleteOptions.CASCADE_FORECAST))
-            set.add("forecast");
-        if (options.contains(DataSetDeleteOptions.CASCADE_SESSION))
-            set.add( "session");
-        if (options.contains(DataSetDeleteOptions.CASCADE_VIEW))
-            set.add("view");
-
-        if (set.size() > 0) {
-            parameters.put("cascade", set);
+        if (query.getContentType() != Json.MEDIA_TYPE) {
+            throw new IllegalArgumentException("Content Type cannot be set to CSV unless you are writing it to a file. Use IDataSetClient.get(DataSetDataQuery query, OutputStream output).");
         }
-
-        apiConnection.delete("data/" + dataSetName, parameters, null);
+        return apiConnection.get(DataSetData.class, "data/" + query.getName(), query.toParameters(), this.httpMessageTransformer);
     }
 
 
@@ -244,30 +109,23 @@ public class DataSetClient implements IDataSetClient {
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName, DateTime startDate, DateTime endDate, EnumSet<DataSetDeleteOptions> options) throws NexosisClientException {
-        remove(dataSetName, startDate, endDate, options, null);
+    public void get(DataSetDataQuery query, OutputStream output) throws NexosisClientException {
+        Argument.IsNotNull(query, "DataSetDataQuery");
+        Argument.IsNotNullOrEmpty(query.getName(), "DataSetDataQuery.Name");
+        Argument.IsNotNull(output, "output");
+
+        Map<String, Object> parameters = query.toParameters();
+        apiConnection.get("data/" +  query.getName(), parameters, this.httpMessageTransformer, output, query.getContentType());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void remove(String dataSetName, DateTime startDate, DateTime endDate, EnumSet<DataSetDeleteOptions> options, Action<HttpRequest, HttpResponse> httpMessageTransformer) throws NexosisClientException {
-        Argument.IsNotNullOrEmpty(dataSetName, "dataSetName");
+    public void remove(DataSetRemoveCriteria criteria) throws NexosisClientException {
+        Argument.IsNotNullOrEmpty(criteria.getName(), "DataSetRemoveCriteria.Name");
 
-        Map<String,Object> parameters = new HashMap<>();
-        parameters.put("startDate", startDate.toDateTimeISO().toString());
-        parameters.put("endDate", endDate.toDateTimeISO().toString());
-
-        ArrayList<String> set = new ArrayList<>();
-        if (options.contains(DataSetDeleteOptions.CASCADE_FORECAST))
-            set.add("forecast");
-        if (options.contains(DataSetDeleteOptions.CASCADE_SESSION))
-            set.add( "sessions");
-
-        if (set.size() > 0) {
-            parameters.put("cascade",set);
-        }
-        apiConnection.delete("data/" + dataSetName, parameters, httpMessageTransformer);
+        Map<String, Object> parameters = criteria.toParameters();
+        apiConnection.delete("data/" + criteria.getName(), parameters, this.httpMessageTransformer);
     }
 }

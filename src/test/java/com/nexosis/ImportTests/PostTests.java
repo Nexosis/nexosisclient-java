@@ -3,7 +3,6 @@ package com.nexosis.ImportTests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -16,6 +15,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import java.io.IOException;
 
 public class PostTests {
@@ -39,7 +39,7 @@ public class PostTests {
         String region = "region-1";
         String path = "path.csv";
 
-        ImportData data = new ImportData();
+        ImportFromS3Request data = new ImportFromS3Request();
         data.setDataSetName(dataSetName);
         data.setPath(path);
         data.setBucket(bucket);
@@ -69,7 +69,15 @@ public class PostTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getImports().importFromS3(dataSetName, bucket, path, region, columns);
+
+        ImportFromS3Request detail = new ImportFromS3Request();
+        detail.setDataSetName(dataSetName);
+        detail.setBucket(bucket);
+        detail.setPath(path);
+        detail.setRegion(region);
+        detail.setColumns(columns);
+
+        target.getImports().importFromS3(detail);
         Assert.assertEquals(mapper.writeValueAsString(data), request.getContentAsString());
     }
 }

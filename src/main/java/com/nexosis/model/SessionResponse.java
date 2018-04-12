@@ -1,15 +1,15 @@
 package com.nexosis.model;
 
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.*;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.joda.time.DateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SessionResult.class)
 })
-public class SessionResponse extends ReturnsCost implements Serializable
+public class SessionResponse extends ReturnsQuotas implements Serializable
 {
     @JsonProperty("sessionId")
     private UUID sessionId;

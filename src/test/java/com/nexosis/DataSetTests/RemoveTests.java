@@ -1,6 +1,5 @@
 package com.nexosis.DataSetTests;
 
-import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.json.Json;
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -9,6 +8,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.impl.NexosisClientException;
 import com.nexosis.model.DataSetDeleteOptions;
+import com.nexosis.model.DataSetRemoveCriteria;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,9 +34,9 @@ public class RemoveTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint);
 
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Value dataSetName cannot be null or empty.");
+        thrown.expectMessage("Value DataSetRemoveCriteria.Name cannot be null or empty.");
 
-        target.getDataSets().remove(null, DataSetDeleteOptions.CASCADE_NONE);
+        target.getDataSets().remove(new DataSetRemoveCriteria(null));
     }
 
     @Test
@@ -62,9 +62,11 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().remove("sierra", DataSetDeleteOptions.CASCADE_BOTH);
+        DataSetRemoveCriteria criteria = new DataSetRemoveCriteria("sierra");
+        criteria.setOption(DataSetDeleteOptions.CASCADE_ALL);
+        target.getDataSets().remove(criteria);
 
-        Assert.assertEquals(fakeEndpoint + "/data/sierra?cascade=forecast&cascade=session", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/data/sierra?cascade=model&cascade=session&cascade=view", request.getUrl());
     }
 
     @Test public void doesNotSetCascadeWhenNoneOptionGiven() throws Exception
@@ -89,7 +91,9 @@ public class RemoveTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getDataSets().remove("november", DataSetDeleteOptions.CASCADE_NONE);
+        DataSetRemoveCriteria criteria = new DataSetRemoveCriteria("november");
+        criteria.setOption(DataSetDeleteOptions.CASCADE_NONE);
+        target.getDataSets().remove(criteria);
 
         Assert.assertEquals( fakeEndpoint+"/data/november", request.getUrl());
     }
@@ -118,12 +122,11 @@ public class RemoveTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
 
-        target.getDataSets().remove(
-                "oscar",
-                DateTime.parse("2015-10-12T00:00:00Z"),
-                DateTime.parse("2015-10-31T19:47:00Z"),
-                DataSetDeleteOptions.CASCADE_NONE
-        );
+        DataSetRemoveCriteria criteria = new DataSetRemoveCriteria("oscar");
+        criteria.setStartDate(DateTime.parse("2015-10-12T00:00:00Z"));
+        criteria.setEndDate(DateTime.parse("2015-10-31T19:47:00Z"));
+        criteria.setOption(DataSetDeleteOptions.CASCADE_NONE);
+        target.getDataSets().remove(criteria);
 
         Assert.assertEquals(fakeEndpoint + "/data/oscar?endDate=2015-10-31T19:47:00.000Z&startDate=2015-10-12T00:00:00.000Z", req.getUrl());
     }
