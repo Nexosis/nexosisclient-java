@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -62,9 +64,9 @@ public class DataSetIntegrationTests {
         DataSetData result = nexosisClient.getDataSets().get(query);
 
         Assert.assertEquals("whiskey",result.getDataSetName());
-        Assert.assertEquals(5, result.getLinks().size());
-        Assert.assertEquals("self", result.getLinks().get(0).getRel());
-        Assert.assertEquals(baseURI + "/data/whiskey", result.getLinks().get(0).getHref());
+        Assert.assertTrue(result.getLinks().size() >= 5);
+        List<String> validRels = Arrays.asList("self","data","first","last", "imports");
+        Assert.assertTrue(validRels.contains(result.getLinks().get(0).getRel()));
     }
 
     @Test
