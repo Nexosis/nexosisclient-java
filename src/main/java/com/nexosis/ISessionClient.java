@@ -193,7 +193,7 @@ public interface ISessionClient {
      * @throws NexosisClientException
      * @note timeseries outliers are available on forecast sessions only. A 404 will be returned for other sessions.
      */
-    SessionResult getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
+    OutliersResponse getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 
     /**
      *

@@ -193,10 +193,10 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResult getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+    public OutliersResponse getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
         if(pagingInfo == null)
             pagingInfo = PagingInfo.Default;
-        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/outliers", pagingInfo.toParameters(), this.httpMessageTransformer);
+        return apiConnection.get(OutliersResponse.class, "/sessions/" + id.toString() + "/results/outliers", pagingInfo.toParameters(), this.httpMessageTransformer);
     }
 
     /**

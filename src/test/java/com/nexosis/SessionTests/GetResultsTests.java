@@ -6,10 +6,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import com.google.api.client.testing.http.MockLowLevelHttpRequest;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
-import com.nexosis.model.ConfusionMatrixResponse;
-import com.nexosis.model.DistanceMetricResponse;
-import com.nexosis.model.FeatureImportanceResponse;
-import com.nexosis.model.SessionResultQuery;
+import com.nexosis.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -159,7 +156,7 @@ public class GetResultsTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getSessions().getResultClassScores(sessionId, null);
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/classscores", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/classscores?pageSize=50", request.getUrl());
     }
 
     @Test
@@ -188,7 +185,7 @@ public class GetResultsTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         target.getSessions().getResultAnomalyScores(sessionId, null);
 
-        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/anomalyscores", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/anomalyscores?pageSize=50", request.getUrl());
     }
 
     @Test
@@ -219,7 +216,7 @@ public class GetResultsTests {
 
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getData());
-        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/mahalanobisdistances", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/mahalanobisdistances?pageSize=50", request.getUrl());
     }
 
     @Test
@@ -250,8 +247,38 @@ public class GetResultsTests {
 
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getScores());
-        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/featureimportance", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/featureimportance?pageSize=50", request.getUrl());
     }
 
+    @Test
+    public void getTimeseriesOutliersReturnsThen() throws Exception {
+        UUID sessionId = UUID.randomUUID();
+        final String responseString = "{\"data\":[{\"timeStamp\":\"2011-10-05T14:48:00.000Z\",\"sales:actual\":\"229.09\",\"sales:smooth\":\"1743.42167102697\"},{\"timeStamp\":\"2011-10-07T14:48:00.000Z\",\"sales:actual\":\"0\",\"sales:smooth\":\"1920.29538270229\"}],\"pageNumber\":0,\"totalPages\":1,\"pageSize\":50,\"totalCount\":2,\"sessionId\":\"0162b017-328b-48b7-abcb-70406b3f480e\",\"type\":\"forecast\",\"status\":\"completed\",\"predictionDomain\":\"forecast\",\"supportsFeatureImportance\":true,\"availablePredictionIntervals\":[\"0.01\",\"0.05\",\"0.2\",\"0.5\",\"0.8\",\"0.95\",\"0.99\"],\"startDate\":\"2017-01-22T00:00:00+00:00\",\"endDate\":\"2017-01-30T00:00:00+00:00\",\"resultInterval\":\"day\",\"requestedDate\":\"2018-04-10T15:05:33.024901+00:00\",\"statusHistory\":[{\"date\":\"2018-04-10T15:05:33.024901+00:00\",\"status\":\"requested\"},{\"date\":\"2018-04-10T15:05:33.0633488+00:00\",\"status\":\"started\"},{\"date\":\"2018-04-10T15:34:28.9317356+00:00\",\"status\":\"completed\"}],\"extraParameters\":{},\"messages\":[{\"severity\":\"warning\",\"message\":\"You specified imputation 'mode' and aggregation 'sum' for column 'transactions'. You may wish to make these consistent\"},{\"severity\":\"informational\",\"message\":\"1476 observations were found in the dataset.\"},{\"severity\":\"informational\",\"message\":\"1476 daily observations were found in the dataset before 2017-01-30T23:59:59.9999999Z.\"}],\"name\":\"Forecast on LocationA\",\"dataSourceName\":\"LocationA\",\"dataSetName\":\"LocationA\",\"targetColumn\":\"sales\",\"algorithm\":{\"name\":\"Autoregressive Neural Network w/ Exogenous Variables, Annual\",\"description\":\"Forecasts using feed-forward neural networks with a single hidden layer and lagged inputs, with annual seasonality\",\"key\":\"\"},\"isEstimate\":false,\"links\":[{\"rel\":\"data\",\"href\":\"https://api.uat.nexosisdev.com/v1/data/LocationA\"},{\"rel\":\"first\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e/results/outliers?page=0\"},{\"rel\":\"last\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e/results/outliers?page=0\"},{\"rel\":\"self\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e/results/outliers\"},{\"rel\":\"prediction-interval:0.01\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.01\"},{\"rel\":\"prediction-interval:0.05\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.05\"},{\"rel\":\"prediction-interval:0.2\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.2\"},{\"rel\":\"prediction-interval:0.5\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.5\"},{\"rel\":\"prediction-interval:0.8\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.8\"},{\"rel\":\"prediction-interval:0.95\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.95\"},{\"rel\":\"prediction-interval:0.99\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e?predictionInterval=0.99\"},{\"rel\":\"contest\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e/contest\"},{\"rel\":\"featureImportance\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e/results/featureimportance\"},{\"rel\":\"outliers\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b017-328b-48b7-abcb-70406b3f480e/results/outliers\"},{\"rel\":\"vocabularies\",\"href\":\"https://api.uat.nexosisdev.com/v1/vocabulary?createdFromSession=0162b017-328b-48b7-abcb-70406b3f480e\"}]}";
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent(responseString);
+                return response;
+            }
+        };
+
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        OutliersResponse response = target.getSessions().getTimeseriesOutliers(sessionId, null);
+
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.getOutliers());
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/outliers?pageSize=50", request.getUrl());
+    }
 
 }
