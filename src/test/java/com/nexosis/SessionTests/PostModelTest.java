@@ -117,7 +117,7 @@ public class PostModelTest {
     public void includesContainsAnomaliesOptionWhenSpecified() throws Exception {
         AnomaliesModelSessionRequest anomRequest = (AnomaliesModelSessionRequest)Sessions.trainModel(
                 "data-source-name",
-                PredictionDomain.ANOMAlIES,
+                PredictionDomain.ANOMALIES,
                 "target-column",
                 new AnomaliesModelSessionRequest() {{
                     setContainsAnomalies(true);

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class AnomaliesModelSessionRequest extends ModelSessionRequest {
     public AnomaliesModelSessionRequest()
     {
-        setPredictionDomain(PredictionDomain.ANOMAlIES);
+        setPredictionDomain(PredictionDomain.ANOMALIES);
     }
 
     /**
