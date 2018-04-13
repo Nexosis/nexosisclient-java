@@ -2,46 +2,47 @@ package com.nexosis.model;
 
 import com.fasterxml.jackson.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DistanceMetric {
     @JsonProperty("anomaly")
-    private Float anomaly;
+    private double anomaly;
     @JsonProperty("mahalanobis_distance")
-    private Float distance;
-    private List<Map<String, String>> data = null;
+    private double distance;
+    private Map<String, String> data = new HashMap<String,String>();
 
     @JsonProperty("anomaly")
-    public Float getAnomaly() {
+    public double getAnomaly() {
         return anomaly;
     }
 
     @JsonProperty("anomaly")
     public void setAnomaly(String anomaly) {
-        this.anomaly = Float.parseFloat(anomaly);
+        this.anomaly = Double.parseDouble(anomaly);
     }
 
     @JsonProperty("mahalanobis_distance")
-    public Float getDistance() {
+    public double getDistance() {
         return distance;
     }
 
     @JsonProperty("mahalanobis_distance")
     public void setDistance(String distance) {
-        this.distance = Float.parseFloat(distance);
+        this.distance = Double.parseDouble(distance);
     }
 
 
     @JsonAnyGetter
-    public List<Map<String, String>> getData() {
+    public Map<String, String> getData() {
         return data;
     }
 
     @JsonAnySetter
-    public void setData(List<Map<String, String>> data) {
-        this.data = data;
+    public void setData(String name, String value){
+        this.data.put(name, value);
     }
 
 }

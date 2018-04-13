@@ -203,10 +203,10 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResult getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+    public DistanceMetricResponse getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
         if(pagingInfo == null)
             pagingInfo = PagingInfo.Default;
-        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/mahalanobisdistances", pagingInfo.toParameters(), this.httpMessageTransformer);
+        return apiConnection.get(DistanceMetricResponse.class, "/sessions/" + id.toString() + "/results/mahalanobisdistances", pagingInfo.toParameters(), this.httpMessageTransformer);
     }
 
     /**

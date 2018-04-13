@@ -203,7 +203,7 @@ public interface ISessionClient {
      * @throws NexosisClientException
      * @note distance metrics are only available on anomaly detection sessions. A 404 will be returned for other sessions.
      */
-    SessionResult getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
+    DistanceMetricResponse getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 
     /**
      *
