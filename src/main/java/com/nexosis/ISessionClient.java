@@ -186,32 +186,33 @@ public interface ISessionClient {
     SessionResult getResultClassScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 
     /**
+     * timeseries outliers are available on forecast sessions only. A 404 will be returned for other sessions.
      *
      * @param id The identifier of the session.
      * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
      * @return
      * @throws NexosisClientException
-     * @note timeseries outliers are available on forecast sessions only. A 404 will be returned for other sessions.
      */
     OutliersResponse getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 
     /**
+     * distance metrics are only available on anomaly detection sessions. A 404 will be returned for other sessions.
      *
      * @param id The identifier of the session.
      * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
      * @return
      * @throws NexosisClientException
-     * @note distance metrics are only available on anomaly detection sessions. A 404 will be returned for other sessions.
      */
     DistanceMetricResponse getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 
     /**
      *
+     * an indicator on the session called *supportsFeatureImportance* identifies if feature importance scores will be available
+     *
      * @param id The identifier of the session.
      * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
      * @return
      * @throws NexosisClientException
-     * @note an indicator on the session called *supportsFeatureImportance* identifies if feature importance scores will be available
      */
     FeatureImportanceResponse getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 }
