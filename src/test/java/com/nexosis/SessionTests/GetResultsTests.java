@@ -155,7 +155,7 @@ public class GetResultsTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().getResultClassScores(sessionId);
+        target.getSessions().getResultClassScores(sessionId, null);
 
         Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/classscores", request.getUrl());
     }
@@ -184,7 +184,7 @@ public class GetResultsTests {
         };
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
-        target.getSessions().getResultAnomalyScores(sessionId);
+        target.getSessions().getResultAnomalyScores(sessionId, null);
 
         Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/anomalyscores", request.getUrl());
     }

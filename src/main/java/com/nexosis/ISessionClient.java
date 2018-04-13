@@ -163,10 +163,11 @@ public interface ISessionClient {
      * GET of https://ml.nexosis.com/api/sessions/{id}/results/anomalyscores
      * <P>
      * @param id
+     * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
      * @return A {@link SessionResult SessionResult} which contains the results of the run.
      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResult getResultAnomalyScores(UUID id) throws NexosisClientException;
+    SessionResult getResultAnomalyScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 
     /**
      * Gets the class scores for each result of a particular completed classification model session
@@ -178,8 +179,39 @@ public interface ISessionClient {
      * for ech row in the test set. Higher scores indicate that the model is more confident that the row fits into the specified class, but the scores are not
      * strict probabilities, and they are not comparable across sessions or data sources.
      * @param id The identifier of the session.
+     * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
      * @return A {@link SessionResult SessionResult} which contains the results of the run.
      * @throws NexosisClientException Thrown when 4xx or 5xx response is received from server, or errors in parsing the response.
      */
-    SessionResult getResultClassScores(UUID id) throws NexosisClientException;
+    SessionResult getResultClassScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
+
+    /**
+     *
+     * @param id The identifier of the session.
+     * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
+     * @return
+     * @throws NexosisClientException
+     * @note timeseries outliers are available on forecast sessions only. A 404 will be returned for other sessions.
+     */
+    SessionResult getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
+
+    /**
+     *
+     * @param id The identifier of the session.
+     * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
+     * @return
+     * @throws NexosisClientException
+     * @note distance metrics are only available on anomaly detection sessions. A 404 will be returned for other sessions.
+     */
+    SessionResult getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
+
+    /**
+     *
+     * @param id The identifier of the session.
+     * @param pagingInfo Paging instructions. PageNumber: 0 and PageSize: 50 by default
+     * @return
+     * @throws NexosisClientException
+     * @note an indicator on the session called *supportsFeatureImportance* identifies if feature importance scores will be available
+     */
+    SessionResult getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 }
