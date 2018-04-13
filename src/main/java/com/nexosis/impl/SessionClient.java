@@ -213,10 +213,10 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResult getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+    public FeatureImportanceResponse getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
         if(pagingInfo == null)
             pagingInfo = PagingInfo.Default;
-        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/featureimportance", pagingInfo.toParameters(), this.httpMessageTransformer);
+        return apiConnection.get(FeatureImportanceResponse.class, "/sessions/" + id.toString() + "/results/featureimportance", pagingInfo.toParameters(), this.httpMessageTransformer);
     }
 
 

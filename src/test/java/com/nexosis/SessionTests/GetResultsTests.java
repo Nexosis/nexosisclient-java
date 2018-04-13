@@ -8,6 +8,7 @@ import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.nexosis.impl.NexosisClient;
 import com.nexosis.model.ConfusionMatrixResponse;
 import com.nexosis.model.DistanceMetricResponse;
+import com.nexosis.model.FeatureImportanceResponse;
 import com.nexosis.model.SessionResultQuery;
 import org.junit.Assert;
 import org.junit.Before;
@@ -220,4 +221,37 @@ public class GetResultsTests {
         Assert.assertNotNull(response.getData());
         Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/mahalanobisdistances", request.getUrl());
     }
+
+    @Test
+    public void getFeatureImportanceReturnsThen() throws Exception {
+        UUID sessionId = UUID.randomUUID();
+        final String responseString = "{\"featureImportance\":{\"cali\":0.0792953,\"ny:0\":0.089632705,\"ny:1\":0.092574164,\"florida\":0.09888547,\"R.D.Spend\":1,\"Administration\":0.69214404,\"Marketing.Spend\":0.95147604},\"pageNumber\":0,\"totalPages\":1,\"pageSize\":50,\"totalCount\":7,\"sessionId\":\"0162b010-4e5f-48d5-a4bb-16a7cf23a02d\",\"type\":\"model\",\"status\":\"completed\",\"predictionDomain\":\"regression\",\"supportsFeatureImportance\":true,\"availablePredictionIntervals\":[\"0.5\"],\"modelId\":\"8005a303-1bdb-427e-bc3f-e26f1e52fa8e\",\"requestedDate\":\"2018-04-10T14:58:01.403083+00:00\",\"statusHistory\":[{\"date\":\"2018-04-10T14:58:01.403083+00:00\",\"status\":\"requested\"},{\"date\":\"2018-04-10T14:58:01.5409783+00:00\",\"status\":\"started\"},{\"date\":\"2018-04-10T15:36:24.2317973+00:00\",\"status\":\"completed\"}],\"extraParameters\":{},\"messages\":[{\"severity\":\"informational\",\"message\":\"200 observations were found in the dataset.\"}],\"name\":\"Regression on 50Startups\",\"dataSourceName\":\"50Startups\",\"dataSetName\":\"50Startups\",\"targetColumn\":\"Profit\",\"algorithm\":{\"name\":\"XGBoost L1\",\"description\":\"eXtreme Gradient Boosting with lasso regularization\",\"key\":\"\"},\"isEstimate\":false,\"links\":[{\"rel\":\"data\",\"href\":\"https://api.uat.nexosisdev.com/v1/data/50Startups\"},{\"rel\":\"first\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b010-4e5f-48d5-a4bb-16a7cf23a02d/results/featureimportance?page=0\"},{\"rel\":\"last\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b010-4e5f-48d5-a4bb-16a7cf23a02d/results/featureimportance?page=0\"},{\"rel\":\"self\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b010-4e5f-48d5-a4bb-16a7cf23a02d/results/featureimportance\"},{\"rel\":\"prediction-interval:0.5\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b010-4e5f-48d5-a4bb-16a7cf23a02d?predictionInterval=0.5\"},{\"rel\":\"model\",\"href\":\"https://api.uat.nexosisdev.com/v1/models/8005a303-1bdb-427e-bc3f-e26f1e52fa8e\"},{\"rel\":\"contest\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b010-4e5f-48d5-a4bb-16a7cf23a02d/contest\"},{\"rel\":\"featureImportance\",\"href\":\"https://api.uat.nexosisdev.com/v1/sessions/0162b010-4e5f-48d5-a4bb-16a7cf23a02d/results/featureimportance\"},{\"rel\":\"vocabularies\",\"href\":\"https://api.uat.nexosisdev.com/v1/vocabulary?createdFromSession=0162b010-4e5f-48d5-a4bb-16a7cf23a02d\"}]}";
+        final MockLowLevelHttpRequest request = new MockLowLevelHttpRequest() {
+            @Override
+            public LowLevelHttpResponse execute() throws IOException {
+                MockLowLevelHttpResponse response = new MockLowLevelHttpResponse();
+                response.setStatusCode(200);
+                response.setContentType(Json.MEDIA_TYPE);
+                response.setContent(responseString);
+                return response;
+            }
+        };
+
+        MockHttpTransport transport = new MockHttpTransport() {
+            @Override
+            public MockLowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+                request.setUrl(url);
+                return request;
+            }
+        };
+
+        NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
+        FeatureImportanceResponse response = target.getSessions().getFeatureImportanceScores(sessionId, null);
+
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.getScores());
+        Assert.assertEquals(fakeEndpoint + "/sessions/" + sessionId + "/results/featureimportance", request.getUrl());
+    }
+
+
 }

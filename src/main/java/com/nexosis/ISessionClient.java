@@ -213,5 +213,5 @@ public interface ISessionClient {
      * @throws NexosisClientException
      * @note an indicator on the session called *supportsFeatureImportance* identifies if feature importance scores will be available
      */
-    SessionResult getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
+    FeatureImportanceResponse getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException;
 }
