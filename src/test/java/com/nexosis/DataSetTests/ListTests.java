@@ -78,8 +78,9 @@ public class ListTests {
 
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         DataSetSummaryQuery query = new DataSetSummaryQuery();
+        query.setSortBy("dataSetName");
         query.setPartialName("partialSomething");
         target.getDataSets().list(query);
-        Assert.assertEquals(fakeEndpoint + "/data?partialName=partialSomething", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/data?partialName=partialSomething&sortOrder=asc&sortBy=dataSetName", request.getUrl());
     }
 }

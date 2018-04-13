@@ -2,7 +2,9 @@ package com.nexosis.model;
 
 import org.joda.time.DateTime;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SessionQuery {
@@ -11,6 +13,8 @@ public class SessionQuery {
     private DateTime requestedBeforeDate;
     private String eventName;
     private PagingInfo page;
+    private String sortBy;
+    private SortOrder sortOrder = SortOrder.ASC;
 
     /**
      * Only sessions associated with this data source should be returned
@@ -63,6 +67,30 @@ public class SessionQuery {
         this.eventName = eventName;
     }
 
+    private List<String> validSortBy = Arrays.asList("id", "name", "type", "status", "datasourcename", "requesteddate");
+
+    /**
+     *
+     * @param sortBy - valid values are id, name, type, status, dataSourceName, and requestedDate
+     */
+    public void setSortBy(String sortBy){
+        if(sortBy != null && validSortBy.contains(sortBy.toLowerCase()))
+            this.sortBy = sortBy;
+        else
+            throw new IllegalArgumentException("The valid values for session sortBy are id, name, type, status, dataSourceName, and requestedDate");
+    }
+    public String getSortBy(){
+        return this.sortBy;
+    }
+
+    public void setSortOrder(SortOrder sortOrder){
+        this.sortOrder = sortOrder;
+    }
+
+    public SortOrder getSortOrder(){
+        return this.sortOrder;
+    }
+
     public Map<String, Object> toParameters() {
         Map<String, Object> parameters = new HashMap<>();
 
@@ -83,6 +111,11 @@ public class SessionQuery {
 
         if (page != null) {
             parameters.putAll(page.toParameters());
+        }
+
+        if (sortBy != null){
+            parameters.put("sortBy", sortBy);
+            parameters.put("sortOrder", sortOrder.toString());
         }
         return parameters;
     }

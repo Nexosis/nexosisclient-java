@@ -3,7 +3,9 @@ package com.nexosis.model;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ModelSummaryQuery {
@@ -12,6 +14,8 @@ public class ModelSummaryQuery {
     private DateTime createdAfterDate;
     private DateTime createdBeforeDate;
     private PagingInfo page;
+    private String sortBy;
+    private SortOrder sortOrder = SortOrder.ASC;
 
     /**
      * Limits models to those for a particular data source
@@ -57,6 +61,30 @@ public class ModelSummaryQuery {
         this.page = page;
     }
 
+    private List<String> validSortBy = Arrays.asList("id", "modelname", "datasourcename", "type", "createddate", "lastuseddate");
+
+    /**
+     *
+     * @param sortBy - valid values are id, modelName, dataSourceName, type, createdDate, and lastUsedDate
+     */
+    public void setSortBy(String sortBy){
+        if(sortBy != null && validSortBy.contains(sortBy.toLowerCase()))
+            this.sortBy = sortBy;
+        else
+            throw new IllegalArgumentException("The valid values for model sortBy are id, modelName, dataSourceName, type, createdDate, and lastUsedDate");
+    }
+    public String getSortBy(){
+        return this.sortBy;
+    }
+
+    public void setSortOrder(SortOrder sortOrder){
+        this.sortOrder = sortOrder;
+    }
+
+    public SortOrder getSortOrder(){
+        return this.sortOrder;
+    }
+
     /**
      * Converts the ModelClientParam object to a Map used to call the Nexosis API.
      *
@@ -80,7 +108,10 @@ public class ModelSummaryQuery {
         if (null != createdBeforeDate) {
             parameters.put("createdBeforeDate", createdBeforeDate.toDateTimeISO().toString());
         }
-
+        if (sortBy != null){
+            parameters.put("sortBy", sortBy);
+            parameters.put("sortOrder", sortOrder.toString());
+        }
         return parameters;
     }
 }

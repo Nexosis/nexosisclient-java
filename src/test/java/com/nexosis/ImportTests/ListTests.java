@@ -84,12 +84,13 @@ public class ListTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
 
         ImportDetailQuery query = new ImportDetailQuery();
+        query.setSortBy("id");
         query.setPage(new PagingInfo(0,1));
 
         ImportDetails result = target.getImports().list(query);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/imports?pageSize=1&page=0", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/imports?pageSize=1&sortBy=id&page=0&sortOrder=asc", request.getUrl());
     }
 
     @Test
