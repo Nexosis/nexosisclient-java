@@ -16,6 +16,8 @@ import java.util.UUID;
         "sessionId",
         "type",
         "status",
+        "predictionDomain",
+        "supportsFeatureImportance",
         "availablePredictionIntervals",
         "requestedDate",
         "statusHistory",
@@ -55,6 +57,8 @@ public class SessionResponse extends ReturnsQuotas implements Serializable
     private String eventName;
     @JsonProperty("predictionDomain")
     private PredictionDomain predictionDomain;
+    @JsonProperty("supportsFeatureImportance")
+    private Boolean supportsFeatureImportance = false;
     @JsonProperty("modelId")
     private UUID modelId;
     @JsonProperty("requestedDate")
@@ -177,6 +181,16 @@ public class SessionResponse extends ReturnsQuotas implements Serializable
         this.predictionDomain = predictionDomain;
     }
 
+    @JsonProperty("supportsFeatureImportance")
+    public Boolean getSupportsFeatureImportance(){
+        return supportsFeatureImportance;
+    }
+
+    @JsonProperty("supportsFeatureImportance")
+    public void setSupportsFeatureImportance(Boolean indicator){
+        this.supportsFeatureImportance = indicator;
+    }
+
     @JsonProperty("modelId")
     public UUID getModelId() {
         return modelId;
@@ -266,6 +280,7 @@ public class SessionResponse extends ReturnsQuotas implements Serializable
     public void setAvailablePredictionIntervals(String[] values){
         this.availablePredictionIntervals = values;
     }
+
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {

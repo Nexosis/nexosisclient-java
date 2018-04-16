@@ -173,15 +173,51 @@ public class SessionClient implements ISessionClient {
      * {@inheritDoc}
      */
     @Override
-    public SessionResult getResultAnomalyScores(UUID id) throws NexosisClientException {
-        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/anomalyscores", null, this.httpMessageTransformer);
+    public SessionResult getResultAnomalyScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+        if(pagingInfo == null)
+                pagingInfo = PagingInfo.Default;
+        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/anomalyscores", pagingInfo.toParameters(), this.httpMessageTransformer);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SessionResult getResultClassScores(UUID id) throws NexosisClientException {
-        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/classscores", null, this.httpMessageTransformer);
+    public SessionResult getResultClassScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+        if(pagingInfo == null)
+            pagingInfo = PagingInfo.Default;
+        return apiConnection.get(SessionResult.class, "/sessions/" + id.toString() + "/results/classscores", pagingInfo.toParameters(), this.httpMessageTransformer);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OutliersResponse getTimeseriesOutliers(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+        if(pagingInfo == null)
+            pagingInfo = PagingInfo.Default;
+        return apiConnection.get(OutliersResponse.class, "/sessions/" + id.toString() + "/results/outliers", pagingInfo.toParameters(), this.httpMessageTransformer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DistanceMetricResponse getDistanceMetrics(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+        if(pagingInfo == null)
+            pagingInfo = PagingInfo.Default;
+        return apiConnection.get(DistanceMetricResponse.class, "/sessions/" + id.toString() + "/results/mahalanobisdistances", pagingInfo.toParameters(), this.httpMessageTransformer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FeatureImportanceResponse getFeatureImportanceScores(UUID id, PagingInfo pagingInfo) throws NexosisClientException {
+        if(pagingInfo == null)
+            pagingInfo = PagingInfo.Default;
+        return apiConnection.get(FeatureImportanceResponse.class, "/sessions/" + id.toString() + "/results/featureimportance", pagingInfo.toParameters(), this.httpMessageTransformer);
+    }
+
+
 }

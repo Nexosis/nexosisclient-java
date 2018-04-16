@@ -54,6 +54,7 @@ public class ListTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
 
         SessionQuery query = new SessionQuery();
+        query.setSortBy("id");
         query.setDataSourceName("alpha");
         query.setEventName("zulu");
         query.setPage(new PagingInfo(0,50));
@@ -63,7 +64,7 @@ public class ListTests {
         SessionResponses result = target.getSessions().list(query);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(fakeEndpoint + "/sessions?requestedBeforeDate=2017-01-11T00:00:00.000Z&eventName=zulu&pageSize=50&requestedAfterDate=2017-01-01T00:00:00.000Z&page=0&dataSourceName=alpha", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/sessions?sortOrder=asc&requestedBeforeDate=2017-01-11T00:00:00.000Z&eventName=zulu&pageSize=50&sortBy=id&requestedAfterDate=2017-01-01T00:00:00.000Z&page=0&dataSourceName=alpha", request.getUrl());
     }
 
     @Test

@@ -2,7 +2,9 @@ package com.nexosis.model;
 
 import org.joda.time.DateTime;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ImportDetailQuery {
@@ -11,6 +13,8 @@ public class ImportDetailQuery {
     private DateTime requestedBeforeDate;
     private DateTime requestedAfterDate;
     private PagingInfo page;
+    private String sortBy;
+    private SortOrder sortOrder = SortOrder.ASC;
 
     /**
      * Limit imports to those with the specified name
@@ -56,6 +60,31 @@ public class ImportDetailQuery {
         this.page = page;
     }
 
+
+    private List<String> validSortBy = Arrays.asList("id", "datasetname", "requesteddate", "currentstatusdate");
+
+    /**
+     *
+     * @param sortBy - valid values are id, dataSetName, requestedDate, and currentStatusDate
+     */
+    public void setSortBy(String sortBy){
+        if(sortBy != null && validSortBy.contains(sortBy.toLowerCase()))
+            this.sortBy = sortBy;
+        else
+            throw new IllegalArgumentException("The valid values for import sortBy are id, dataSetName, requestedDate, and currentStatusDate");
+    }
+    public String getSortBy(){
+        return this.sortBy;
+    }
+
+    public void setSortOrder(SortOrder sortOrder){
+        this.sortOrder = sortOrder;
+    }
+
+    public SortOrder getSortOrder(){
+        return this.sortOrder;
+    }
+
     public Map<String,Object> toParameters() {
         Map<String, Object> parameters = new HashMap<>();
         if (this.page != null) {
@@ -71,7 +100,10 @@ public class ImportDetailQuery {
         if (requestedBeforeDate != null) {
             parameters.put("requestedBeforeDate", requestedBeforeDate.toDateTimeISO().toString());
         }
-
+        if (sortBy != null){
+            parameters.put("sortBy", sortBy);
+            parameters.put("sortOrder", sortOrder.toString());
+        }
         return parameters;
     }
 }

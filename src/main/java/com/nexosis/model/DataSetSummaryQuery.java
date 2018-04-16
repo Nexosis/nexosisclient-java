@@ -2,7 +2,9 @@ package com.nexosis.model;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Map;
 public class DataSetSummaryQuery {
     private String partialName;
     private PagingInfo page;
+    private String sortBy;
+    private SortOrder sortOrder = SortOrder.ASC;
 
     /**
      * Get partialname
@@ -47,6 +51,31 @@ public class DataSetSummaryQuery {
         this.page = page;
     }
 
+
+    private List<String> validSortBy = Arrays.asList("datasetname", "datasetsize", "rowcount", "datecreated", "lastmodified");
+
+    /**
+     *
+     * @param sortBy - valid values are dataSetName, dataSetSize, rowCount, dateCreated, and lastModified
+     */
+    public void setSortBy(String sortBy){
+        if(sortBy != null && validSortBy.contains(sortBy.toLowerCase()))
+            this.sortBy = sortBy;
+        else
+            throw new IllegalArgumentException("The valid values for dataset sortBy are dataSetName, dataSetSize, rowCount, dateCreated, and lastModified");
+    }
+    public String getSortBy(){
+        return this.sortBy;
+    }
+
+    public void setSortOrder(SortOrder sortOrder){
+        this.sortOrder = sortOrder;
+    }
+
+    public SortOrder getSortOrder(){
+        return this.sortOrder;
+    }
+
     public Map<String,Object> toParameters() {
         Map<String,Object> parameters = new HashMap<>();
 
@@ -57,7 +86,10 @@ public class DataSetSummaryQuery {
         if (!StringUtils.isEmpty(partialName)) {
             parameters.put("partialName", this.partialName);
         }
-
+        if (sortBy != null){
+            parameters.put("sortBy", sortBy);
+            parameters.put("sortOrder", sortOrder.toString());
+        }
         return parameters;
     }
 }

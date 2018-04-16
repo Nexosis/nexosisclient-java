@@ -73,12 +73,13 @@ public class ListTests {
         NexosisClient target = new NexosisClient(fakeApiKey, fakeEndpoint, transport);
         
         ModelSummaryQuery query = new ModelSummaryQuery();
+        query.setSortBy("id");
         query.setDataSourceName("data-source-name");
         query.setCreatedAfterDate(DateTime.parse("2017-01-01T00:00Z"));
         query.setCreatedBeforeDate(DateTime.parse("2017-01-11T00:00Z"));
         target.getModels().list(query);
 
-        Assert.assertEquals(fakeEndpoint + "/models?createdBeforeDate=2017-01-11T00:00:00.000Z&createdAfterDate=2017-01-01T00:00:00.000Z&dataSourceName=data-source-name", request.getUrl());
+        Assert.assertEquals(fakeEndpoint + "/models?sortOrder=asc&createdBeforeDate=2017-01-11T00:00:00.000Z&sortBy=id&createdAfterDate=2017-01-01T00:00:00.000Z&dataSourceName=data-source-name", request.getUrl());
     }
 
     @Test
