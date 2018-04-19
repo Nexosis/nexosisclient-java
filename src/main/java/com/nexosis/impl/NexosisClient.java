@@ -24,7 +24,7 @@ public class NexosisClient implements INexosisClient {
     /**
      * The client id and version sent as the User-Agent header
      */
-    public final static String CLIENT_VERSION = "Nexosis-Java-API-Client/1.3";
+    public final static String CLIENT_VERSION = "Nexosis-Java-API-Client/4.0.1";
 
     /**
      * The default URL of the api endpoint.
