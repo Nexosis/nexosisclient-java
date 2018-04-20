@@ -209,7 +209,7 @@ public class ApiConnection {
                     request = requestFactory.buildPostRequest(uri, inputStream);
                     break;
             }
-            request.getHeaders().setAccept(acceptType).setContentType(acceptType);
+            request.getHeaders().setAccept(acceptType).setContentType(contentType);
             return makeRequest(type, request, httpMessageTransformer);
         } catch (IOException ioe) {
             throw new NexosisClientException("Internal Error.", ioe);
