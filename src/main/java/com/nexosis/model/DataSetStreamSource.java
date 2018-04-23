@@ -49,10 +49,6 @@ public class DataSetStreamSource implements IDataSetSource {
         if (!contentType.equalsIgnoreCase("text/csv") && !contentType.startsWith("application/json")) {
             throw new IllegalArgumentException("contentType must be set to text/csv or application/json");
         }
-        // force to use application/json w/ utf-8
-        if (contentType.equalsIgnoreCase("application/json")) {
-            contentType = Json.MEDIA_TYPE;
-        }
 
         this.contentType = contentType;
     }
